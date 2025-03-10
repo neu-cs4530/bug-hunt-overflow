@@ -64,6 +64,7 @@ const userController = (socket: FakeSOSocket) => {
 
     try {
       const result = await saveUser(user);
+      console.log(result);
 
       if ('error' in result) {
         throw new Error(result.error);
