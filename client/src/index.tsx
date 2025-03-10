@@ -39,4 +39,5 @@ const App = () => {
 if (container) {
   const root = ReactDOM.createRoot(container);
   root.render(<App />);
+  console.log("Maggie attempting to push to main");
 }
