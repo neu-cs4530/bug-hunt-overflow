@@ -22,8 +22,8 @@ const Signup = () => {
   return (
     <div className='signup-container'>
       <div className='signup-card'>
-        <div className='login-header'>
-          <img src={logo} alt='Stack Overflow Logo' className='login-logo' />
+        <div className='signup-header'>
+          <img src={logo} alt='Stack Overflow Logo' className='signup-logo' />
           <h2>Sign Up</h2>
         </div>
         {err && <p className='error-message'>{err}</p>}

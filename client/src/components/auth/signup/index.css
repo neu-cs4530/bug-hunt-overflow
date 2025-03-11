@@ -19,7 +19,7 @@
 }
 
 /* Header with logo and title */
-.login-header {
+.signup-header {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +28,7 @@
 }
 
 /* Stack Overflow logo */
-.login-logo {
+.signup-logo {
   width: 30px;
   height: auto;
 }
