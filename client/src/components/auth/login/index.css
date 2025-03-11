@@ -1,104 +1,122 @@
-/* Container styles */
-.container {
+/* Container for centering */
+.login-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-color: #f7f7f7;
-  padding: 20px;
+  height: 100vh;
+  background-color: #f8f9fa;
 }
 
-/* Heading styles */
-.container h2 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.container h3 {
-  font-size: 1.5rem;
-  color: #555;
+/* Header with logo and title */
+.login-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 20px;
 }
 
-.container h4 {
-  font-size: 1rem;
-  color: #666;
-  margin: 15px 0 5px; /* Adjusted for better spacing */
-  text-align: left; /* Align text to the left */
-  width: 100%; /* Ensure alignment respects the form's width */
-  max-width: 400px; /* Match the form's max width */
+/* Stack Overflow logo */
+.login-logo {
+  width: 30px;
+  height: auto;
 }
 
-/* Form styles */
-form {
+/* Card-style login box */
+.login-card {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  max-width: 320px;
+  text-align: center;
 }
 
-/* Input styles */
+/* Heading */
+.login-card h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #232629;
+}
+
+/* Labels for inputs */
+.input-label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #525960;
+}
+
+/* Input fields */
 .input-text {
-  padding: 12px;
-  font-size: 16px;
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-  color: #333;
-  box-sizing: border-box;
-  transition:
-    border-color 0.3s,
-    box-shadow 0.3s;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #232629;
+  transition: border-color 0.3s ease;
 }
 
 .input-text:focus {
   border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.3);
 }
 
-/* Button styles */
+/* Password toggle */
+.show-password {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0;
+  font-size: 13px;
+  color: #525960;
+}
+
+/* Login button */
 .login-button {
-  padding: 12px;
+  width: 100%;
+  padding: 10px;
   font-size: 16px;
-  background-color: #007bff;
-  color: #fff;
+  font-weight: bold;
+  background-color: #0a95ff;
+  color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  margin-top: 10px;
+  transition: background 0.3s ease;
 }
 
 .login-button:hover {
-  background-color: #0056b3;
+  background-color: #0074cc;
 }
 
-.login-button:active {
-  background-color: #003f7f;
-}
-
-/* Signup link styles */
-.signup-link {
-  margin-top: 30px; /* Increased spacing */
+/* Error message */
+.error-message {
+  color: #d73a49;
   font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* Signup link */
+.signup-redirect {
+  font-size: 13px;
+  margin-top: 15px;
+  color: #6a737c;
+}
+
+.signup-redirect a {
   color: #007bff;
   text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s;
-  text-align: center; /* Center the link */
 }
 
-.signup-link:hover {
-  color: #0056b3;
+.signup-redirect a:hover {
   text-decoration: underline;
-}
-
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-top: 20px;
-  text-align: center;
 }
