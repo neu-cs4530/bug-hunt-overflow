@@ -1,4 +1,5 @@
 import NimModel from '../../models/nim.model';
+import BugHuntModel from '../../models/bughunt.model';
 import {
   BaseMove,
   GameInstance,
@@ -9,6 +10,7 @@ import {
 } from '../../types/types';
 import Game from './game';
 import NimGame from './nim';
+import BugHuntGame from './bughunt';
 
 /**
  * Manages the lifecycle of games, including creation, joining, and leaving games.
@@ -39,6 +41,12 @@ class GameManager {
       case 'Nim': {
         const newGame = new NimGame();
         await NimModel.create(newGame.toModel());
+
+        return newGame;
+      }
+      case 'BugHunt': {
+        const newGame = new BugHuntGame();
+        await BugHuntModel.create(newGame.toModel());
 
         return newGame;
       }
