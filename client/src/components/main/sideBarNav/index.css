@@ -1,43 +1,84 @@
+/* Sidebar Container */
 .sideBarNav {
   display: flex;
   flex-direction: column;
-  width: 15%;
-  border-right: dashed;
-  padding: 4% 0 4% 0;
-  align-items: center;
+  align-items: center; 
+  width: 220px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  border-right: 1px solid #d6d9dc;
+  padding: 20px;
+  gap: 10px;
+  transition: all 0.3s ease;
 }
 
-.menu_button:first-child {
-  margin-top: 0;
-}
-
+/* Menu Buttons */
 .menu_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 40px;
-  width: 80%;
-  margin-top: 20px;
+  width: 100%;
   border-radius: 5px;
   text-align: center;
-  line-height: 40px;
-  color: cornflowerblue;
+  font-size: 14px;
+  font-weight: bold;
+  color: #525960;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  text-decoration: none;
 }
 
+/* Menu Hover Effect */
+.menu_button:hover {
+  background-color: #e4e6e8;
+  color: #0056b3;
+}
+
+/* Selected Menu */
 .menu_selected {
-  background: #cccccc;
+  background: #d6d9dc;
+  color: #000;
 }
 
+/* Dropdown Button */
+.menu_dropdown {
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #000;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+/* Submenu Container */
 .additional-options {
   display: flex;
   flex-direction: column;
-  padding: 4% 0 4% 0;
   align-items: center;
+  padding: 10px 0;
+  width: 100%;
+  background-color: #f1f2f3;
+  border-radius: 5px;
+  gap: 5px;
+  transition: all 0.3s ease;
 }
 
+/* Submenu Items */
 .message-options {
-  width: max-content;
+  font-size: 13px;
+  width: 90%;
 }
 
 .message-option-selected {
   background: #3090e2;
   color: white;
-  width: 110%;
+  border-radius: 5px;
+  padding: 8px;
+  width: 100%;
 }
