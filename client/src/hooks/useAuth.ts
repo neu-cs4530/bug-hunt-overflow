@@ -101,7 +101,7 @@ const useAuth = (authType: 'login' | 'signup') => {
       }
 
       setUser(user);
-      navigate('/home');
+      navigate('/');
     } catch (error) {
       setErr((error as Error).message);
     }

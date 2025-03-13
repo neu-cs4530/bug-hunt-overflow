@@ -1,6 +1,7 @@
 import { ChangeEvent, useState, KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useLoginContext from './useLoginContext';
+import useUserCache from './useUserCache';
 
 /**
  * Custom hook to manage the state and logic for a header input field.
@@ -17,6 +18,7 @@ import useLoginContext from './useLoginContext';
 const useHeader = () => {
   const navigate = useNavigate();
   const { setUser } = useLoginContext();
+  const { clearUserCache } = useUserCache();
 
   const [val, setVal] = useState<string>('');
 
@@ -42,7 +44,7 @@ const useHeader = () => {
       const searchParams = new URLSearchParams();
       searchParams.set('search', e.currentTarget.value);
 
-      navigate(`/home?${searchParams.toString()}`);
+      navigate(`/?${searchParams.toString()}`);
     }
   };
 
@@ -52,6 +54,7 @@ const useHeader = () => {
   const handleSignOut = () => {
     setUser(null);
     navigate('/');
+    clearUserCache();
   };
 
   return {
