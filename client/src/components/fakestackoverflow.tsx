@@ -41,7 +41,6 @@ const ProtectedRoute = ({
  */
 const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const { user, setUser } = useUserCache();
-  console.log(user);
 
   return (
     <LoginContext.Provider value={{ setUser }}>
