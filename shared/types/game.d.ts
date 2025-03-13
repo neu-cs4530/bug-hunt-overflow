@@ -4,7 +4,7 @@ import { Request } from 'express';
  * Type representing the possible game types as a literal.
  * This is derived from the GAME_TYPES constant.
  */
-export type GameType = 'Nim';
+export type GameType = 'Nim' | 'Bug Hunt';
 
 /**
  * Type representing the unique identifier for a game instance.
@@ -86,6 +86,14 @@ export interface NimGameState extends WinnableGameState {
   player1?: string;
   player2?: string;
   remainingObjects: number;
+}
+
+/**
+ * Represents state of a Bug Hunt game, including:
+ * - ``
+ */
+export interface BugHuntGameState extends GameState {
+  // TODO: detail game state once finalized from server
 }
 
 /**

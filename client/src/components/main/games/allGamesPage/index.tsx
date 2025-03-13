@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import useAllGamesPage from '../../../../hooks/useAllGamesPage';
 import GameCard from './gameCard';
@@ -34,6 +33,7 @@ const AllGamesPage = () => {
           <div className='modal-content'>
             <h2>Select Game Type</h2>
             <button onClick={() => handleSelectGameType('Nim')}>Nim</button>
+            <button onClick={() => handleSelectGameType('Bug Hunt')}>Bug Hunt</button>
             <button onClick={handleToggleModal}>Cancel</button>
           </div>
         </div>

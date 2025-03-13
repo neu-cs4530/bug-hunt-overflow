@@ -40,7 +40,20 @@ const useGamePage = () => {
     };
 
     if (gameID) {
-      handleJoinGame(gameID);
+      // for testing bug hunt
+      if (gameID === 'bg') {
+        setGameInstance({
+          gameID,
+          gameType: 'Bug Hunt',
+          players: [],
+          state: {
+            status: 'IN_PROGRESS',
+          },
+        });
+        setJoinedGameID(gameID);
+      } else {
+        handleJoinGame(gameID);
+      }
     }
 
     const handleGameUpdate = (updatedState: GameUpdatePayload) => {
