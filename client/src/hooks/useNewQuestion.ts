@@ -107,7 +107,7 @@ const useNewQuestion = () => {
     const res = await addQuestion(question);
 
     if (res && res._id) {
-      navigate('/home');
+      navigate('/');
     }
   };
 

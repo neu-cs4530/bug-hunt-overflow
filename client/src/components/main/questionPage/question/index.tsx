@@ -1,4 +1,3 @@
-import React from 'react';
 import { ObjectId } from 'mongodb';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
@@ -33,7 +32,7 @@ const QuestionView = ({ question }: QuestionProps) => {
     const searchParams = new URLSearchParams();
     searchParams.set('tag', tagName);
 
-    navigate(`/home?${searchParams.toString()}`);
+    navigate(`/?${searchParams.toString()}`);
   };
 
   /**

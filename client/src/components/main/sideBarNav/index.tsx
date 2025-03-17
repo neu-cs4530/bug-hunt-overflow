@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './index.css';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ const SideBarNav = () => {
   return (
     <div className='sideBarNav'>
       <NavLink
-        to='/home'
+        to='/'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
         Questions
       </NavLink>

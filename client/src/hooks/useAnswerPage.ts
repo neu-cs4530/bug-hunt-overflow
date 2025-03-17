@@ -36,7 +36,7 @@ const useAnswerPage = () => {
 
   useEffect(() => {
     if (!qid) {
-      navigate('/home');
+      navigate('/');
       return;
     }
 

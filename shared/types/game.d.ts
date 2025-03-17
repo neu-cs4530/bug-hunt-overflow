@@ -4,7 +4,7 @@ import { Request } from 'express';
  * Type representing the possible game types as a literal.
  * This is derived from the GAME_TYPES constant.
  */
-export type GameType = 'Nim' | 'Bug Hunt';
+export type GameType = 'Nim' | 'BugHunt';
 
 /**
  * Type representing the unique identifier for a game instance.
@@ -18,6 +18,18 @@ export type GameInstanceID = string;
  * - `OVER`: The game has finished.
  */
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
+
+/**
+ * Interface representing a buggy file for BugHunt, which includes:
+ * code: The code which is partially buggy
+ * description: A description of what the code is supposed to do
+ * buggyLines: The line numbers where bugs are present
+ */
+export interface BuggyFile {
+  code: string;
+  description: string;
+  buggyLines: number[];
+}
 
 /**
  * Interface representing the state of a game, which includes:
@@ -89,11 +101,22 @@ export interface NimGameState extends WinnableGameState {
 }
 
 /**
- * Represents state of a Bug Hunt game, including:
- * - ``
+ * Interface representing a move in a BugHunt game.
+ * - `selectedLines`: The lines selected by the user where
+ *                    they think a bug is present
  */
-export interface BugHuntGameState extends GameState {
-  // TODO: detail game state once finalized from server
+export interface BugHuntMove extends BaseMove {
+  selectedLines: number[];
+}
+
+/**
+ * Interface representing the state of a BugHunt game, which inludes:
+ * - `moves`: A list of moves made in the game
+ * - `buggyFile`: The buggy file the users will play with
+ */
+export interface BugHuntGameState extends WinnableGameState {
+  moves: ReadonlyArray<GameMove<BugHuntMove>>;
+  buggyFile?: BuggyFile;
 }
 
 /**
