@@ -22,7 +22,7 @@ const useTagPage = () => {
     const searchParams = new URLSearchParams();
     searchParams.set('tag', tagName);
 
-    navigate(`/home?${searchParams.toString()}`);
+    navigate(`/?${searchParams.toString()}`);
   };
 
   useEffect(() => {

@@ -25,7 +25,7 @@ const useAnswerForm = () => {
   useEffect(() => {
     if (!qid) {
       setTextErr('Question ID is missing.');
-      navigate('/home');
+      navigate('/');
       return;
     }
 
