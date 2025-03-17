@@ -81,3 +81,15 @@
   background: #218838;
   border-color: #218838;
 }
+
+.search-container {
+  margin-bottom: 10px;
+}
+
+input[type='text'] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+}
