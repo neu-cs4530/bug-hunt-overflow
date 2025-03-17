@@ -18,7 +18,7 @@ const bughuntGameStateSchema = new Schema(
     moves: [
       {
         gameID: { type: Schema.Types.ObjectId },
-        player: { type: String },
+        playerID: { type: String },
         move: { selectedLines: [{ type: Number, required: true }] },
       },
     ],
@@ -31,8 +31,8 @@ const bughuntGameStateSchema = new Schema(
     logs: [
       {
         player: { type: String },
-        sentAt: { type: Date },
-        joinType: {
+        createdAt: { type: Date },
+        type: {
           type: String,
           enum: ['CREATED_GAME', 'JOINED'],
           required: true,

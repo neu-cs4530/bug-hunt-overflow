@@ -19,7 +19,7 @@ export type GameInstanceID = string;
  */
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'DAILY';
 
-export type JoinType = 'CREATED_GAME' | 'JOINED';
+export type Type = 'CREATED_GAME' | 'JOINED';
 
 /**
  * Interface representing a buggy file for BugHunt, which includes:
@@ -123,8 +123,8 @@ export interface BugHuntGameState extends WinnableGameState {
   updatedAt: Date;
   logs: {
     player: string;
-    sentAt: Date;
-    joinType: JoinType;
+    createdAt: Date;
+    type: Type;
   };
   scores: {
     player: string;
