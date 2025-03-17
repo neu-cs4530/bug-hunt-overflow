@@ -17,7 +17,9 @@ export type GameInstanceID = string;
  * - `WAITING_TO_START`: The game is waiting for players to join or ready up.
  * - `OVER`: The game has finished.
  */
-export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
+export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'DAILY';
+
+export type JoinType = 'CREATED_GAME' | 'JOINED';
 
 /**
  * Interface representing a buggy file for BugHunt, which includes:
@@ -116,7 +118,19 @@ export interface BugHuntMove extends BaseMove {
  */
 export interface BugHuntGameState extends WinnableGameState {
   moves: ReadonlyArray<GameMove<BugHuntMove>>;
-  buggyFile?: BuggyFile;
+  buggyFile?: ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  logs: {
+    player: string;
+    sentAt: Date;
+    joinType: JoinType;
+  };
+  scores: {
+    player: string;
+    timeMilliseconds: number;
+    accuracy: number;
+  };
 }
 
 /**

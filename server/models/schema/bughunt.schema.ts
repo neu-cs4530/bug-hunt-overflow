@@ -1,20 +1,6 @@
 import { Schema } from 'mongoose';
 
 /**
- * Mongoose schema for the BugHunt buggy file.
- *
- * This schema defines the structure of a buggy file. It includes the following fields:
- * - `code`: A string containing the contents of the buggy file
- * - `description`: A string description of the buggy file's intended purpose
- * - `buggyLines`: An array of numbers representing the line numbers where the bugs are
- */
-const buggyFileSchema = new Schema({
-  code: { type: String, require: true },
-  description: { type: String, require: true },
-  buggyLines: [{ type: Number }],
-});
-
-/**
  * Mongoose schema for the BugHunt game state.
  *
  * This schema defines the structure of the game state specific to the BugHunt game. It includes the following fields:
@@ -27,12 +13,45 @@ const buggyFileSchema = new Schema({
  *    - `'OVER'`: The game is finished.
  * - `buggyFile`: The buggy file users are finding the bugs in
  */
-const bughuntGameStateSchema = new Schema({
-  moves: [{ selectedLines: [{ type: Number, required: true }] }],
-  winners: [{ type: String }],
-  status: { type: String, enum: ['IN_PROGRESS', 'WAITING_TO_START', 'OVER'], required: true },
-  buggyFile: { type: buggyFileSchema },
-});
+const bughuntGameStateSchema = new Schema(
+  {
+    moves: [
+      {
+        gameID: { type: Schema.Types.ObjectId },
+        player: { type: String },
+        move: { selectedLines: [{ type: Number, required: true }] },
+      },
+    ],
+    winners: [{ type: String }],
+    status: {
+      type: String,
+      enum: ['IN_PROGRESS', 'WAITING_TO_START', 'OVER', 'DAILY'],
+      required: true,
+    },
+    logs: [
+      {
+        player: { type: String },
+        sentAt: { type: Date },
+        joinType: {
+          type: String,
+          enum: ['CREATED_GAME', 'JOINED'],
+          required: true,
+        },
+      },
+    ],
+    scores: [
+      {
+        player: { type: String },
+        timeMilliseconds: { type: Number },
+        accuracy: { type: Number },
+      },
+    ],
+    buggyFile: Schema.Types.ObjectId,
+  },
+  {
+    timestamps: true,
+  },
+);
 
 const bugHuntSchema = new Schema({
   state: { type: bughuntGameStateSchema, required: true },
