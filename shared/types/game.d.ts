@@ -19,7 +19,12 @@ export type GameInstanceID = string;
  */
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'DAILY';
 
-export type Type = 'CREATED_GAME' | 'JOINED';
+/**
+ * Type represents the possible log types in a game. Should describe the action.
+ * - `CREATED_GAME`: A log indicating the game was created.
+ * - `JOINED`: A log of who joined the game.
+ */
+export type LogType = 'CREATED_GAME' | 'JOINED';
 
 /**
  * Interface representing a buggy file for BugHunt, which includes:
@@ -112,25 +117,45 @@ export interface BugHuntMove extends BaseMove {
 }
 
 /**
+ * Interface representing a log entry in a game.
+ * - `player`: Username of who the log relates to.
+ * - `createdAt`: When the log was created.
+ * - `type`: Enum of what the type (or action) the log relates to.
+ */
+export interface GameLog {
+  player: string;
+  createdAt: Date;
+  type: LogType;
+}
+
+/**
+ * Inteface representing a score entry in a Bug Hunt game.
+ * - `player`: Username of the player who scored.
+ * - `timeMilliseconds`: The amount of time (in milliseconds) that it took the user to complete the game.
+ * - `accuracy`: An accuracy percentage (0 - 100) denoting how many correct guesses the player made during the game.
+ */
+export interface BugHuntScore {
+  player: string;
+  timeMilliseconds: number;
+  accuracy: number;
+}
+
+/**
  * Interface representing the state of a BugHunt game, which inludes:
- * - `moves`: A list of moves made in the game
- * - `buggyFile`: The buggy file the users will play with
+ * - `moves`: A list of moves made in the game.
+ * - `buggyFile`: The buggy file the users will play with.
+ * - `createdAt`: When the game sate was initially created.
+ * - `updatedAt`: When the game state was last updated.
+ * - `logs`: A list of logs from player actions in the game.
+ * - `scores`: A list of scores for players that have finished the game.
  */
 export interface BugHuntGameState extends WinnableGameState {
   moves: ReadonlyArray<GameMove<BugHuntMove>>;
   buggyFile?: ObjectId;
   createdAt: Date;
   updatedAt: Date;
-  logs: {
-    player: string;
-    createdAt: Date;
-    type: Type;
-  };
-  scores: {
-    player: string;
-    timeMilliseconds: number;
-    accuracy: number;
-  };
+  logs: ReadonlyArray<GameLog>;
+  scores: ReadonlyArray<BugHuntScore>;
 }
 
 /**
