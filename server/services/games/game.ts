@@ -66,6 +66,12 @@ abstract class Game<StateType extends GameState, MoveType> {
   protected abstract _join(playerID: string): void;
 
   /**
+   * Abstract method for handling a player starting the game.
+   * @param playerID The player ID who started the game.
+   */
+  protected abstract _start(playerID: string): Promise<void>;
+
+  /**
    * Abstract method for handling a player leaving the game.
    * @param playerID The player ID to leave.
    */
@@ -78,6 +84,14 @@ abstract class Game<StateType extends GameState, MoveType> {
   public join(playerID: string): void {
     this._join(playerID);
     this._players.push(playerID);
+  }
+
+  /**
+   * Starts a game.
+   * @param playerID The player ID who started the game.
+   */
+  public async start(playerID: string): Promise<void> {
+    await this._start(playerID);
   }
 
   /**

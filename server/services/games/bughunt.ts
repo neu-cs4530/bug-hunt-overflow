@@ -1,6 +1,13 @@
-import { GameMove, BugHuntGameState, BugHuntMove } from '../../types/types';
+import {
+  GameMove,
+  BugHuntGameState,
+  BugHuntMove,
+  LogType,
+  GameLog,
+  BuggyFile,
+} from '../../types/types';
+import BuggyFileModel from '../../models/buggyFile.model';
 import { MAX_BUGHUNT_GUESSES, MAX_BUGHUNT_PLAYERS } from '../../types/constants';
-import BUGGY_FILES from '../../types/buggyFileConstants';
 import Game from './game';
 
 /**
@@ -9,6 +16,7 @@ import Game from './game';
  * This class contains the game logic for playing a game of BugHunt
  */
 class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
+  private _buggyLines: number[] = [];
   /**
    * Constructor for the BugHunt class, initializes the game state and type.
    */
@@ -54,6 +62,11 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   private _validateMove(gameMove: GameMove<BugHuntMove>): void {
     const { playerID, move } = gameMove;
 
+    // Ensure the game is in progress.
+    if (this.state.status !== 'IN_PROGRESS') {
+      throw new Error('Invalid move: game is not in progress');
+    }
+
     if (this._playerHasLost(playerID)) {
       throw new Error('Invalid move: player already guessed the maximum number of times');
     }
@@ -62,16 +75,11 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error('Invalid move: player has already won');
     }
 
-    // Ensure the game is in progress.
-    if (this.state.status !== 'IN_PROGRESS') {
-      throw new Error('Invalid move: game is not in progress');
-    }
-
     if (!this.state.buggyFile) {
       throw new Error('Game error: Buggy file was never chosen');
     }
 
-    if (move.selectedLines.length !== this.state.buggyFile.buggyLines.length) {
+    if (move.selectedLines.length !== this._buggyLines.length) {
       throw new Error(
         'Invalid move: number of lines selected does not match the number of bugs in the file',
       );
@@ -104,7 +112,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error('Game error: Buggy file was never selected');
     }
     const guessedLines = [...move.move.selectedLines].sort();
-    const correctLines = [...this.state.buggyFile.buggyLines].sort();
+    const correctLines = [...this._buggyLines].sort();
     for (let i = 0; i < guessedLines.length; ++i) {
       if (guessedLines[i] !== correctLines[i]) {
         return this.state.winners;
@@ -152,16 +160,74 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error('Cannot join game: max number of players already in game');
     }
 
-    if (this.state.buggyFile === undefined) {
-      const randI = Math.floor(Math.random() * BUGGY_FILES.length);
-      this.state = { ...this.state, buggyFile: BUGGY_FILES[randI] };
+    let logType: LogType;
+    if (this._players.length === 0) {
+      logType = 'CREATED_GAME';
+    } else {
+      logType = 'JOINED';
     }
 
-    this._players = [...this._players, playerID];
+    const playerJoinedLog: GameLog = {
+      player: playerID,
+      createdAt: new Date(),
+      type: logType,
+    };
+
+    this.state = {
+      ...this.state,
+      logs: [...this.state.logs, playerJoinedLog],
+    };
 
     if (this._players.length === MAX_BUGHUNT_PLAYERS - 1) {
-      this.state = { ...this.state, status: 'IN_PROGRESS' };
+      this.state = {
+        ...this.state,
+        status: 'IN_PROGRESS',
+      };
     }
+  }
+
+  /**
+   * Selects a random buggy file from the DB and updates the state with its id.
+   */
+  private async _selectRandBuggyFile(): Promise<void> {
+    const buggyFiles: BuggyFile[] = await BuggyFileModel.find();
+    if (buggyFiles.length === 0) {
+      throw new Error('Cannot select buggy file: no files found');
+    }
+    const randI = Math.floor(Math.random() * buggyFiles.length);
+    this._buggyLines = [...buggyFiles[randI].buggyLines];
+    this.state = { ...this.state, buggyFile: buggyFiles[randI]._id };
+  }
+
+  /**
+   * Starts the game. The game can only be started if it is waiting to start.
+   * @param playerID The ID of the player starting the game.
+   * @throws Will throw an error if the game cannot be started successfully
+   */
+  protected async _start(playerID: string): Promise<void> {
+    if (this.state.status !== 'WAITING_TO_START') {
+      throw new Error('Cannot start game: game already started');
+    }
+
+    if (this._players.length === 0) {
+      throw new Error('Cannot start game: no players');
+    }
+
+    if (!this.state.logs.some(log => log.player === playerID && log.type === 'CREATED_GAME')) {
+      throw new Error('Cannot start game: not game admin');
+    }
+    await this._selectRandBuggyFile();
+    const gameStartedLog: GameLog = {
+      player: playerID,
+      createdAt: new Date(),
+      type: 'STARTED',
+    };
+
+    this.state = {
+      ...this.state,
+      status: 'IN_PROGRESS',
+      logs: [...this.state.logs, gameStartedLog],
+    };
   }
 
   /**
@@ -173,7 +239,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     if (!this._players.includes(playerID)) {
       throw new Error(`Cannot leave game: player ${playerID} is not in the game.`);
     }
-    this._players = this._players.filter(pID => pID !== playerID);
+
     if (this.state.status === 'IN_PROGRESS') {
       if (this._players.length === 0) {
         this.state = {
