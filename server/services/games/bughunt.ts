@@ -17,6 +17,10 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       {
         status: 'WAITING_TO_START',
         moves: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        logs: [],
+        scores: [],
       },
       'BugHunt',
     );
