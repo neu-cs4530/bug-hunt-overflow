@@ -5,6 +5,7 @@ import {
   LogType,
   GameLog,
   BuggyFile,
+  BugHuntScore,
 } from '../../types/types';
 import BuggyFileModel from '../../models/buggyFile.model';
 import { MAX_BUGHUNT_GUESSES, MAX_BUGHUNT_PLAYERS } from '../../types/constants';
@@ -67,16 +68,16 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error('Invalid move: game is not in progress');
     }
 
+    if (!this.state.buggyFile) {
+      throw new Error('Game error: Buggy file was never chosen');
+    }
+
     if (this._playerHasLost(playerID)) {
       throw new Error('Invalid move: player already guessed the maximum number of times');
     }
 
     if (this._playerHasWon(playerID)) {
       throw new Error('Invalid move: player has already won');
-    }
-
-    if (!this.state.buggyFile) {
-      throw new Error('Game error: Buggy file was never chosen');
     }
 
     if (move.selectedLines.length !== this._buggyLines.length) {
@@ -102,26 +103,65 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   }
 
   /**
-   * Based on the given move, add the player to the winners list if they correctly guessed all
-   * of the buggy lines of code.
-   * @param move The BugHunt GameMove that was played
-   * @returns an updated list of winners based on the move
+   * Get the accuracy of the given Bug Hunt move
+   * @param move the BugHuntMove to check the accuracy of
+   * @returns a float between 0-1 of the move correctness
+   *          (0 being all wrong, 1 being all correct)
    */
-  private _addWinners(move: GameMove<BugHuntMove>): readonly string[] | undefined {
-    if (!this.state.buggyFile) {
-      throw new Error('Game error: Buggy file was never selected');
-    }
+  private _getMoveCorrectness(move: GameMove<BugHuntMove>): number {
     const guessedLines = [...move.move.selectedLines].sort();
     const correctLines = [...this._buggyLines].sort();
+    let sum: number = 0;
     for (let i = 0; i < guessedLines.length; ++i) {
-      if (guessedLines[i] !== correctLines[i]) {
-        return this.state.winners;
+      if (guessedLines[i] === correctLines[i]) {
+        sum += 1;
       }
     }
-    if (this.state.winners === undefined) {
-      return [move.playerID];
+    return sum / correctLines.length;
+  }
+
+  /**
+   * Get the score (time and accuracy) of the given player.
+   * @param playerID the ID of the player to get the score of
+   * @returns the players BugHunt score
+   */
+  private _getPlayerScore(playerID: string): BugHuntScore {
+    const moves = this.state.moves.filter(move => move.playerID === playerID);
+    const accuracy =
+      moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) / moves.length;
+    const currentTimeMS = new Date().getMilliseconds();
+    const startTimeMS = this.state.logs
+      .filter(log => log.type === 'STARTED')[0]
+      .createdAt.getMilliseconds();
+    const timeMilliseconds = currentTimeMS - startTimeMS;
+    return {
+      player: playerID,
+      accuracy,
+      timeMilliseconds,
+    };
+  }
+
+  /**
+   * Check if this move causes a player to win/lose, then update the score/winners accordingly.
+   * @param move the BugHuntMove to check for a win or loss.
+   */
+  private _updateScore(move: GameMove<BugHuntMove>): void {
+    if (this._getMoveCorrectness(move) === 1) {
+      let updatedWinners: readonly string[] = [move.playerID];
+      if (this.state.winners !== undefined) {
+        updatedWinners = [...this.state.winners, move.playerID];
+      }
+      this.state = {
+        ...this.state,
+        winners: updatedWinners,
+        scores: [...this.state.scores, this._getPlayerScore(move.playerID)],
+      };
+    } else if (this._playerHasLost(move.playerID)) {
+      this.state = {
+        ...this.state,
+        scores: [...this.state.scores, this._getPlayerScore(move.playerID)],
+      };
     }
-    return [...this.state.winners, move.playerID];
   }
 
   /**
@@ -131,14 +171,12 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   public applyMove(move: GameMove<BugHuntMove>): void {
     this._validateMove(move);
 
-    const updatedMoves = [...this.state.moves, move];
-
     this.state = {
       ...this.state,
-      moves: updatedMoves,
-      winners: this._addWinners(move),
+      moves: [...this.state.moves, move],
     };
 
+    this._updateScore(move);
     this._checkGameOver();
   }
 
