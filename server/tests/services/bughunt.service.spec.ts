@@ -36,6 +36,15 @@ describe('BugHunt Service', () => {
       ]);
     });
 
+    it('should return an empty array if no games are found for the date', async () => {
+      const mockDate = '2025-03-25';
+      mockingoose(BugHuntModel).toReturn([], 'find'); // Simulate no games found
+    
+      const result = await getDailyBugHuntScores(mockDate);
+    
+      expect(result).toEqual([]); // Expect an empty array
+    });
+
     it('should throw an error if a database error occurs', async () => {
       const mockDate = '2025-03-25';
       mockingoose(BugHuntModel).toReturn(new Error('Database error'), 'find');
@@ -44,12 +53,5 @@ describe('BugHunt Service', () => {
       );
     });
 
-    it('should return an error if the date format is invalid', async () => {
-      const invalidDate = 'invalid-date';
-
-      await expect(getDailyBugHuntScores(invalidDate)).rejects.toThrow(
-        `No daily games found for the date ${invalidDate}`,
-      );
-    });
   });
 });

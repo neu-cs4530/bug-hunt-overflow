@@ -20,7 +20,7 @@ export const getDailyBugHuntScores = async (date: string) => {
     ).lean();
 
     if (!games || games.length === 0) {
-      throw new Error(`No daily games found for the date ${date}`);
+      return [];
     }
 
     // Extract scores and player names from the games
