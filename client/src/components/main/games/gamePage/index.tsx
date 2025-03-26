@@ -1,7 +1,14 @@
 import './index.css';
+import { useMemo } from 'react';
 import NimGamePage from '../nimGamePage';
 import useGamePage from '../../../../hooks/useGamePage';
-import { BugHuntGameState, GameInstance, GameType, NimGameState } from '../../../../types/types';
+import {
+  BugHuntGameState,
+  GameInstance,
+  GameStatus,
+  GameType,
+  NimGameState,
+} from '../../../../types/types';
 import BugHuntGamePage from '../bugHuntGamePage';
 
 /**
@@ -14,6 +21,17 @@ import BugHuntGamePage from '../bugHuntGamePage';
  */
 const GamePage = () => {
   const { gameInstance, error, handleLeaveGame } = useGamePage();
+
+  const title = useMemo(
+    () =>
+      gameInstance?.gameType
+        ? {
+            Nim: 'Nim Game',
+            BugHunt: 'Bug Hunt Game',
+          }[gameInstance.gameType]
+        : 'Unknown',
+    [gameInstance?.gameType],
+  );
 
   /**
    * Renders the appropriate game component based on the game type.
@@ -34,24 +52,42 @@ const GamePage = () => {
     }
   };
 
+  const renderGameStatus = (gameStatus: GameStatus) => {
+    if (!gameStatus) return <></>;
+
+    switch (gameStatus) {
+      case 'IN_PROGRESS':
+        return <p className='game-status in-progress'>In Progress</p>;
+      case 'WAITING_TO_START':
+        return <p className='game-status waiting'>Waiting to Start</p>;
+      case 'OVER':
+        return <p className='game-status over'>Game Over</p>;
+      case 'DAILY':
+        return <p className='game-status daily'>Daily Game</p>;
+      default:
+        return <></>;
+    }
+  };
+
+  if (!gameInstance) {
+    return <div>Missing game instance</div>;
+  }
+
   return (
     <div className='game-page'>
       <header className='game-header'>
-        <h1>Nim Game</h1>
-        <p className='game-status'>
-          Status: {gameInstance ? gameInstance.state.status : 'Not started'}
-        </p>
+        <h1>{title}</h1>
+        {renderGameStatus(gameInstance.state.status)}
+        <div className='game-controls'>
+          <button className='btn-leave-game' onClick={handleLeaveGame}>
+            Leave Game
+          </button>
+        </div>
       </header>
 
-      <div className='game-controls'>
-        <button className='btn-leave-game' onClick={handleLeaveGame}>
-          Leave Game
-        </button>
-      </div>
-
-      {gameInstance && renderGameComponent(gameInstance.gameType)}
-
       {error && <div className='game-error'>{error}</div>}
+
+      {renderGameComponent(gameInstance.gameType)}
     </div>
   );
 };

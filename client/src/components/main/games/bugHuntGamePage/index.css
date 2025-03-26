@@ -1,0 +1,16 @@
+.bug-hunt-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border: solid 1px lightgray;
+  border-left: none;
+  border-right: none;
+  margin-bottom: 1.5rem;
+}
+
+.bug-hunt-header .selected-lines {
+  flex-grow: 1;
+}
+
+.bug-hunt-code {
+}

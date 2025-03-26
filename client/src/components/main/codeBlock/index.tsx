@@ -45,7 +45,7 @@ export const CodeLine = (props: CodeLineProps) => {
         ...style,
       }}>
       <span className='code-line-number'>{lineNumber}</span>
-      <code className='highlight-javascript'>{children}</code>
+      <code>{children}</code>
     </pre>
   );
 };

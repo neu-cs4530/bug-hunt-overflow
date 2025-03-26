@@ -1,9 +1,17 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useUserContext from './useUserContext';
-import { GameInstance, GameMove, BugHuntMove, BugHuntGameState } from '../types/types';
+import {
+  GameInstance,
+  GameMove,
+  BugHuntMove,
+  BugHuntGameState,
+  SafeBuggyFile,
+} from '../types/types';
 import { CodeLineStyle } from '../components/main/codeBlock';
+import { startGame } from '../services/gamesService';
+import { getBuggyFile } from '../services/bugHuntService';
 
-const SELECTED_LINE_BACKGROUND_COLOR = 'lightcoral';
+const SELECTED_LINE_BACKGROUND_COLOR = 'lightskyblue';
 
 /**
  * Custom hook to manage the state and logic for the "BugHunt" game page,
@@ -18,7 +26,10 @@ const SELECTED_LINE_BACKGROUND_COLOR = 'lightcoral';
 
 const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const { user, socket } = useUserContext();
+
+  const [buggyFile, setBuggyFile] = useState<SafeBuggyFile>();
   const [selectedLines, setSelectedLines] = useState<number[]>([]);
+  const [isCreator, setIsCreator] = useState(false);
 
   /**
    *
@@ -40,7 +51,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   /**
    *
    */
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const move: GameMove<BugHuntMove> = {
       playerID: user.username,
       gameID: gameInstance.gameID,
@@ -51,7 +62,18 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       gameID: gameInstance.gameID,
       move,
     });
-  };
+  }, [gameInstance.gameID, selectedLines, socket, user.username]);
+
+  const handleStartGame = useCallback(async () => {
+    if (!isCreator) return;
+
+    try {
+      await startGame(gameInstance.gameID, user.username);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
+  }, [isCreator, gameInstance.gameID, user.username]);
 
   /**
    *
@@ -66,9 +88,36 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     [setSelectedLines],
   );
 
+  const loadBuggyFile = useCallback(async (id: string) => {
+    try {
+      const file = await getBuggyFile(id);
+      setBuggyFile(file);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(`Error retrieving buggy file: ${error}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    const creatorLog = gameInstance.state.logs.find(log => log.type === 'CREATED_GAME');
+    if (creatorLog && creatorLog.player === user.username) {
+      setIsCreator(true);
+    }
+  }, [gameInstance.state.logs, user.username]);
+
+  useEffect(() => {
+    const buggyFileId = gameInstance.state.buggyFile;
+    if (buggyFileId) {
+      loadBuggyFile(buggyFileId);
+    }
+  }, [gameInstance.state.buggyFile, loadBuggyFile]);
+
   return {
     selectedLines,
     lineStyles,
+    isCreator,
+    buggyFile,
+    handleStartGame,
     handleSubmit,
     handleSelectLine,
   };
