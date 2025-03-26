@@ -1,7 +1,7 @@
 import './index.css';
 import NimGamePage from '../nimGamePage';
 import useGamePage from '../../../../hooks/useGamePage';
-import { GameInstance, NimGameState } from '../../../../types/types';
+import { BugHuntGameState, GameInstance, GameType, NimGameState } from '../../../../types/types';
 import BugHuntGamePage from '../bugHuntGamePage';
 
 /**
@@ -21,14 +21,14 @@ const GamePage = () => {
    * @returns A React component corresponding to the specified game type, or a
    * fallback message for unknown types.
    */
-  const renderGameComponent = (gameType: string) => {
+  const renderGameComponent = (gameType: GameType) => {
     if (!gameInstance) return null;
 
     switch (gameType) {
       case 'Nim':
         return <NimGamePage gameInstance={gameInstance as GameInstance<NimGameState>} />;
-      case 'Bug Hunt':
-        return <BugHuntGamePage />;
+      case 'BugHunt':
+        return <BugHuntGamePage gameInstance={gameInstance as GameInstance<BugHuntGameState>} />;
       default:
         return <div>Unknown game type</div>;
     }

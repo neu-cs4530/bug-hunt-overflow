@@ -44,7 +44,7 @@ const useGamePage = () => {
       if (gameID === 'bg') {
         setGameInstance({
           gameID,
-          gameType: 'Bug Hunt',
+          gameType: 'BugHunt',
           players: [],
           state: {
             status: 'IN_PROGRESS',

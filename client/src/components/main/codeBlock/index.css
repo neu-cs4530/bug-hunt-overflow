@@ -1,0 +1,25 @@
+pre {
+  font-family: Consolas, monospace !important;
+}
+
+.code-block.interactive .code-line {
+  cursor: pointer;
+  overflow: auto;
+}
+
+.code-block.interactive .code-line:hover {
+  background-color: lightgray;
+}
+
+.code-line {
+  display: flex;
+  align-items: center;
+  padding: 0.05rem;
+}
+
+.code-line-number {
+  width: 2.5rem;
+  margin-right: 1rem;
+  text-align: right;
+  color: darkslategray;
+}
