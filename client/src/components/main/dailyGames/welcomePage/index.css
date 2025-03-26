@@ -15,11 +15,9 @@
     width: 350px;
 }
   
-.logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
+.logo-image {
+    width: 100px; /* adjust as needed */
+    height: auto;
 }
   
 .diamond {
