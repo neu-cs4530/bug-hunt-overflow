@@ -1,9 +1,11 @@
 import { BuggyFile } from '@fake-stack-overflow/shared/types/game';
 
+type CreateBuggyFile = Omit<BuggyFile, '_id'>;
+
 /**
  * File constants that represent buggy files the players will have to find bugs in.
  */
-const file1: BuggyFile = {
+const file1: CreateBuggyFile = {
   code: `class Transaction {
     constructor(
       public type: "Deposit" | "Withdrawal",
@@ -66,7 +68,7 @@ const file1: BuggyFile = {
   buggyLines: [24, 17, 18, 25, 23, 45],
 };
 
-const file2: BuggyFile = {
+const file2: CreateBuggyFile = {
   code: `class Item {
     constructor(
       public name: string,
@@ -135,7 +137,7 @@ const file2: BuggyFile = {
   buggyLines: [24, 26, 36, 44, 45],
 };
 
-const file3: BuggyFile = {
+const file3: CreateBuggyFile = {
   code: `const ItemSchema = new mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true }
@@ -189,7 +191,7 @@ app.get('/deleteItem/:name', async (req, res) => {
   buggyLines: [11, 30, 40, 24, 14, 42, 38, 36],
 };
 
-const file4: BuggyFile = {
+const file4: CreateBuggyFile = {
   code: `class StringManipulator {
   static reverse(str: string): string {
     let reversed = '';
@@ -269,7 +271,7 @@ const file4: BuggyFile = {
   buggyLines: [4, 15, 13, 32, 51, 64],
 };
 
-const file5: BuggyFile = {
+const file5: CreateBuggyFile = {
   code: `function mergeSort(arr: number[]): number[] {
     if (arr.length <= 1) {
         return arr;
@@ -306,5 +308,5 @@ function merge(left: number[], right: number[]): number[] {
 /**
  * A list of all the buggy files available in the game.
  */
-const BUGGY_FILES: BuggyFile[] = [file1, file2, file3, file4, file5];
+const BUGGY_FILES: CreateBuggyFile[] = [file1, file2, file3, file4, file5];
 export default BUGGY_FILES;
