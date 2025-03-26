@@ -15,12 +15,12 @@ const bugHuntScoresController = () => {
    */
   router.get('/getDailyScores', async (req: Request, res: Response): Promise<void> => {
     const { date } = req.query;
-  
+
     if (!date || typeof date !== 'string') {
       res.status(400).send('Invalid or missing date parameter');
       return;
     }
-  
+
     try {
       const scores = await getDailyBugHuntScores(date);
       res.status(200).json(scores);

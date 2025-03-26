@@ -15,7 +15,9 @@ describe('BugHunt Controller', () => {
 
       getDailyBugHuntScoresSpy.mockResolvedValueOnce(mockScores);
 
-      const response = await supertest(app).get('/bughunt/getDailyScores').query({ date: mockDate });
+      const response = await supertest(app)
+        .get('/bughunt/getDailyScores')
+        .query({ date: mockDate });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockScores);
@@ -35,7 +37,9 @@ describe('BugHunt Controller', () => {
 
       getDailyBugHuntScoresSpy.mockRejectedValueOnce(new Error('Database error'));
 
-      const response = await supertest(app).get('/bughunt/getDailyScores').query({ date: mockDate });
+      const response = await supertest(app)
+        .get('/bughunt/getDailyScores')
+        .query({ date: mockDate });
 
       expect(response.status).toBe(500);
       expect(response.text).toContain('Error fetching daily BugHunt scores: Database error');

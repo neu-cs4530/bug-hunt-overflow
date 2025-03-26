@@ -39,9 +39,9 @@ describe('BugHunt Service', () => {
     it('should return an empty array if no games are found for the date', async () => {
       const mockDate = '2025-03-25';
       mockingoose(BugHuntModel).toReturn([], 'find'); // Simulate no games found
-    
+
       const result = await getDailyBugHuntScores(mockDate);
-    
+
       expect(result).toEqual([]); // Expect an empty array
     });
 
@@ -52,6 +52,5 @@ describe('BugHunt Service', () => {
         'Error retrieving daily BugHunt scores: Error: Database error',
       );
     });
-
   });
 });
