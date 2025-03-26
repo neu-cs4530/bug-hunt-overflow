@@ -1,4 +1,4 @@
-import { BuggyFile } from '@fake-stack-overflow/shared';
+import { BuggyFile } from '../../shared/types/game';
 
 /**
  * File constants that represent buggy files the players will have to find bugs in.
