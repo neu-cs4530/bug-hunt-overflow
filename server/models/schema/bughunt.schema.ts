@@ -11,7 +11,18 @@ import { Schema } from 'mongoose';
  *    - `'IN_PROGRESS'`: The game is ongoing.
  *    - `'WAITING_TO_START'`: The game is waiting to start.
  *    - `'OVER'`: The game is finished.
- * - `buggyFile`: The buggy file users are finding the bugs in
+ * - `logs`: A log of who created, joined, or started a game and when. It includes:
+ *    - `player`: The player whose event was logged
+ *    - `createdAt`: The time the event was logged
+ *    - `type`: The type of event which can be one of:
+ *       - `'CREATED_GAME'`: The game was created
+ *       - `'JOINED'`: The game was joined
+ *       - `'STARTED'`: The game was started
+ * - `scores`: An array of players who finished and their play time / accuracy. It includes:
+ *    - `player`: The player whose scored these metrics
+ *    - `timeMilliseconds`: The time in ms it took for the player to finish
+ *    - `accuracy`: The accuracy of the player's guesses
+ * - `buggyFile`: The ID of the buggy file users are finding the bugs in
  */
 const bughuntGameStateSchema = new Schema(
   {
@@ -34,7 +45,7 @@ const bughuntGameStateSchema = new Schema(
         createdAt: { type: Date },
         type: {
           type: String,
-          enum: ['CREATED_GAME', 'JOINED'],
+          enum: ['CREATED_GAME', 'JOINED', 'STARTED'],
           required: true,
         },
       },

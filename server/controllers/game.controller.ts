@@ -89,6 +89,33 @@ const gameController = (socket: FakeSOSocket) => {
   };
 
   /**
+   * Starts a game with the specified game ID, and emits the updated game state.
+   * @param req The request object containing the game ID and player ID.
+   * @param res The response object to send the result.
+   */
+  const startGame = async (req: GameRequest, res: Response) => {
+    try {
+      if (!isGameRequestValid(req)) {
+        res.status(400).send('Invalid request');
+        return;
+      }
+
+      const { gameID, playerID } = req.body;
+
+      const game = await GameManager.getInstance().startGame(gameID, playerID);
+
+      if ('error' in game) {
+        throw new Error(game.error);
+      }
+
+      socket.to(gameID).emit('gameUpdate', { gameInstance: game });
+      res.status(200).json(game);
+    } catch (error) {
+      res.status(500).send(`Error when starting game: ${(error as Error).message}`);
+    }
+  };
+
+  /**
    * Leaves the game with the specified game ID and player ID, and emits the updated game state.
    * @param req The request object containing the game ID and player ID.
    * @param res The response object to send the result.
@@ -178,6 +205,7 @@ const gameController = (socket: FakeSOSocket) => {
   // Register routes
   router.post('/create', createGame);
   router.post('/join', joinGame);
+  router.post('/start', startGame);
   router.post('/leave', leaveGame);
   router.get('/games', getGames);
 
