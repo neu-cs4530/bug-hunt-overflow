@@ -120,6 +120,32 @@ class GameManager {
   }
 
   /**
+   * Starts an existing game.
+   * @param gameID The ID of the game to start.
+   * @param playerID The ID of the player starting the game.
+   * @returns The game instance or an error message.
+   */
+  public async startGame(
+    gameID: GameInstanceID,
+    playerID: string,
+  ): Promise<GameInstance<GameState> | { error: string }> {
+    try {
+      const gameToStart = this.getGame(gameID);
+
+      if (gameToStart === undefined) {
+        throw new Error('Game requested does not exist.');
+      }
+
+      await gameToStart.start(playerID);
+      await gameToStart.saveGameState();
+
+      return gameToStart.toModel();
+    } catch (error) {
+      return { error: (error as Error).message };
+    }
+  }
+
+  /**
    * Allows a player to leave a game.
    * @param gameID The ID of the game to leave.
    * @param playerID The ID of the player leaving the game.

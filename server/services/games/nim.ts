@@ -122,6 +122,17 @@ class NimGame extends Game<NimGameState, NimMove> {
   }
 
   /**
+   * Manually starts the nim game. However, Nim cannot be manually started, it starts
+   * once 2 players join the game. Thus this will always throw an error unless manual
+   * starting is implemented.
+   * @param playerID The ID of the player starting the game.
+   * @throws Will throw an error everytime because Nim cannot be started manually
+   */
+  protected async _start(playerID: string): Promise<void> {
+    throw new Error('Cannot start game: Nim cannot be started manually');
+  }
+
+  /**
    * Removes a player from the game. If a player leaves during an ongoing game, the game ends.
    * @param playerID The ID of the player leaving the game.
    * @throws Will throw an error if the player is not in the game.
