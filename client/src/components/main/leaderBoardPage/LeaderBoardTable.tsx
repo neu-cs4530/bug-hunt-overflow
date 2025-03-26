@@ -4,20 +4,27 @@ import './LeaderBoardTable.css';
 
 const LeaderBoardTable = () => {
   const [sortRanking, setSortRanking] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { data, loading, error } = useLeaderBoard('2025-03-25');
 
   const handleSortRanking = () => {
     setSortRanking(!sortRanking);
   };
 
-  const sortedData = data
-    ? [...data].sort((a, b) => {
-        if (sortRanking) {
-          return a.timeMilliseconds - b.timeMilliseconds; // Sort by time in ascending order
-        }
-        return 0;
-      })
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filteredData = data
+    ? data.filter(item => item.player.toLowerCase().includes(searchQuery))
     : [];
+
+  const sortedData = filteredData.sort((a, b) => {
+    if (sortRanking) {
+      return a.timeMilliseconds - b.timeMilliseconds; // Sort by time in ascending order
+    }
+    return 0;
+  });
 
   if (loading) {
     return <div>Loading leaderboard...</div>;
@@ -29,6 +36,15 @@ const LeaderBoardTable = () => {
 
   return (
     <div className='leaderboard-table'>
+      <div className='search-container'>
+        <input
+          type='text'
+          placeholder='Search by player name...'
+          value={searchQuery}
+          onChange={handleSearchChange}
+          className='search-input'
+        />
+      </div>
       <table>
         <thead>
           <tr>
