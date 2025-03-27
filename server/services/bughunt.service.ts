@@ -1,4 +1,17 @@
+import { BuggyFile, SafeBuggyFile } from '@fake-stack-overflow/shared';
+import BuggyFileModel from '../models/buggyFile.model';
 import BugHuntModel from '../models/bughunt.model';
+
+const makeBuggyFileSafe = (buggyFile: BuggyFile): SafeBuggyFile => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { _id, code, description } = buggyFile;
+  return {
+    _id,
+    code,
+    description,
+  };
+};
+
 /**
  * Fetches the scores and player names for BugHunt games marked as 'DAILY' for a specific date.
  * @param date The date to filter games by (in YYYY-MM-DD format).
@@ -35,6 +48,23 @@ export const getDailyBugHuntScores = async (date: string) => {
     return scores;
   } catch (error) {
     throw new Error(`Error retrieving daily BugHunt scores: ${error}`);
+  }
+};
+
+/**
+ * Retrieves a buggy file.
+ * @param id the ObjectId of the buggy file.
+ * @returns the buggy file, without the answers
+ */
+export const getBuggyFile = async (id: string): Promise<SafeBuggyFile | null> => {
+  try {
+    const buggyFile = await BuggyFileModel.findById(id).lean();
+    if (!buggyFile) {
+      return null;
+    }
+    return makeBuggyFileSafe(buggyFile);
+  } catch (error) {
+    throw new Error(`Error retrieving buggy file: ${error}`);
   }
 };
 
