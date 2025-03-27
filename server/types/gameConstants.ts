@@ -16,4 +16,4 @@ export const MAX_BUGHUNT_GUESSES = 4;
 /**
  * The maximum number of players that can join a game of BugHunt.
  */
-export const MAX_BUGHUNT_PLAYERS = 1;
+export const MAX_BUGHUNT_PLAYERS = 30;

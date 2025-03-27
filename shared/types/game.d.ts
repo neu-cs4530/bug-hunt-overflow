@@ -23,8 +23,9 @@ export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'DAILY';
  * Type represents the possible log types in a game. Should describe the action.
  * - `CREATED_GAME`: A log indicating the game was created.
  * - `JOINED`: A log of who joined the game.
+ * - `STARTED`: A log of who started the game.
  */
-export type LogType = 'CREATED_GAME' | 'JOINED';
+export type LogType = 'CREATED_GAME' | 'JOINED' | 'STARTED';
 
 /**
  * Interface representing a buggy file for BugHunt, which includes:
@@ -33,6 +34,7 @@ export type LogType = 'CREATED_GAME' | 'JOINED';
  * buggyLines: The line numbers where bugs are present
  */
 export interface BuggyFile {
+  _id: ObjectId;
   code: string;
   description: string;
   buggyLines: number[];
