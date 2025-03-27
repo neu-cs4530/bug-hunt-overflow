@@ -61,7 +61,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    * @param gameMove The BugHunt GameMove that was played
    */
   private _validateMove(gameMove: GameMove<BugHuntMove>): void {
-    const { playerID, move } = gameMove;
+    const { playerID } = gameMove;
 
     // Ensure the game is in progress.
     if (this.state.status !== 'IN_PROGRESS') {
@@ -78,12 +78,6 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
 
     if (this._playerHasWon(playerID)) {
       throw new Error('Invalid move: player has already won');
-    }
-
-    if (move.selectedLines.length !== this._buggyLines.length) {
-      throw new Error(
-        'Invalid move: number of lines selected does not match the number of bugs in the file',
-      );
     }
   }
 
@@ -109,15 +103,13 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    *          (0 being all wrong, 1 being all correct)
    */
   private _getMoveCorrectness(move: GameMove<BugHuntMove>): number {
-    const guessedLines = [...move.move.selectedLines].sort();
-    const correctLines = [...this._buggyLines].sort();
     let sum: number = 0;
-    for (let i = 0; i < guessedLines.length; ++i) {
-      if (guessedLines[i] === correctLines[i]) {
+    move.move.selectedLines.forEach(lineNum => {
+      if (this._buggyLines.includes(lineNum)) {
         sum += 1;
       }
-    }
-    return sum / correctLines.length;
+    });
+    return sum / move.move.selectedLines.length;
   }
 
   /**
