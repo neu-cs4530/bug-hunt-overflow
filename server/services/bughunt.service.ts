@@ -38,4 +38,49 @@ export const getDailyBugHuntScores = async (date: string) => {
   }
 };
 
-export default getDailyBugHuntScores;
+/**
+ * Fetches the number of consecutive daily games a player has completed starting from today.
+ * @param playerID The ID of the player.
+ * @returns The number of consecutive daily games completed.
+ */
+export const getConsecutiveDailyGames = async (playerID: string): Promise<number> => {
+  try {
+    const today = new Date();
+    const startOfToday = new Date(today.toISOString().split('T')[0] + 'T00:00:00.000Z');
+
+    // Query for all daily games completed by the player, sorted by date descending
+    const games = await BugHuntModel.find(
+      {
+        'state.status': 'DAILY',
+        'state.scores.player': playerID,
+      },
+      'state.createdAt', 
+    )
+      .sort({ 'state.createdAt': -1 })
+      .lean();
+
+    if (!games || games.length === 0) {
+      return 0;
+    }
+
+    let streak = 0;
+    let currentDate = startOfToday;
+
+    for (const game of games) {
+      const gameDate = new Date(game.state.createdAt.toISOString().split('T')[0] + 'T00:00:00.000Z');
+
+      // Check if the game is on the current streak date
+      if (gameDate.getTime() === currentDate.getTime()) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1); // Move to the previous day
+      } else if (gameDate.getTime() < currentDate.getTime() - 86400000) {
+        // Break the streak if there's a gap
+        break;
+      }
+    }
+
+    return streak;
+  } catch (error) {
+    throw new Error(`Error retrieving consecutive daily games: ${error}`);
+  }
+};
