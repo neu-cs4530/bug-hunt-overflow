@@ -1,5 +1,5 @@
 import BugHuntModel from '../../models/bughunt.model';
-import { getDailyBugHuntScores , getConsecutiveDailyGames} from '../../services/bughunt.service';
+import { getDailyBugHuntScores, getConsecutiveDailyGames } from '../../services/bughunt.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');

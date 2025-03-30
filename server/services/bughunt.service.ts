@@ -46,7 +46,7 @@ export const getDailyBugHuntScores = async (date: string) => {
 export const getConsecutiveDailyGames = async (playerID: string): Promise<number> => {
   try {
     const today = new Date();
-    const startOfToday = new Date(today.toISOString().split('T')[0] + 'T00:00:00.000Z');
+    const startOfToday = new Date(`${today.toISOString().split('T')[0]}T00:00:00.000Z`);
 
     // Query for all daily games completed by the player, sorted by date descending
     const games = await BugHuntModel.find(
@@ -54,7 +54,7 @@ export const getConsecutiveDailyGames = async (playerID: string): Promise<number
         'state.status': 'DAILY',
         'state.scores.player': playerID,
       },
-      'state.createdAt', 
+      'state.createdAt',
     )
       .sort({ 'state.createdAt': -1 })
       .lean();
@@ -64,10 +64,12 @@ export const getConsecutiveDailyGames = async (playerID: string): Promise<number
     }
 
     let streak = 0;
-    let currentDate = startOfToday;
+    const currentDate = startOfToday;
 
     for (const game of games) {
-      const gameDate = new Date(game.state.createdAt.toISOString().split('T')[0] + 'T00:00:00.000Z');
+      const gameDate = new Date(
+        `${game.state.createdAt.toISOString().split('T')[0]}T00:00:00.000Z`,
+      );
 
       // Check if the game is on the current streak date
       if (gameDate.getTime() === currentDate.getTime()) {

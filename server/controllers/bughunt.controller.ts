@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { getDailyBugHuntScores, getConsecutiveDailyGames} from '../services/bughunt.service';
+import { getDailyBugHuntScores, getConsecutiveDailyGames } from '../services/bughunt.service';
 
 /**
  * Controller for handling BugHunt scores-related routes.

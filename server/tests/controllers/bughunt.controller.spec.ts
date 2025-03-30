@@ -5,7 +5,6 @@ import * as bugHuntService from '../../services/bughunt.service';
 const getDailyBugHuntScoresSpy = jest.spyOn(bugHuntService, 'getDailyBugHuntScores');
 const getConsecutiveDailyGamesSpy = jest.spyOn(bugHuntService, 'getConsecutiveDailyGames');
 
-
 describe('BugHunt Controller', () => {
   describe('GET /bughunt/getDailyScores', () => {
     it('should return 200 with daily BugHunt scores for a valid date', async () => {
@@ -87,6 +86,4 @@ describe('BugHunt Controller', () => {
       expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID);
     });
   });
-
-  
 });
