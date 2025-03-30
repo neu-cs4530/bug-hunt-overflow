@@ -3,6 +3,8 @@ import { app } from '../../app';
 import * as bugHuntService from '../../services/bughunt.service';
 
 const getDailyBugHuntScoresSpy = jest.spyOn(bugHuntService, 'getDailyBugHuntScores');
+const getConsecutiveDailyGamesSpy = jest.spyOn(bugHuntService, 'getConsecutiveDailyGames');
+
 
 describe('BugHunt Controller', () => {
   describe('GET /bughunt/getDailyScores', () => {
@@ -46,4 +48,45 @@ describe('BugHunt Controller', () => {
       expect(getDailyBugHuntScoresSpy).toHaveBeenCalledWith(mockDate);
     });
   });
+
+  describe('GET /bughunt/getConsecutiveDailyGames', () => {
+    it('should return 200 with the streak for a valid playerID', async () => {
+      const mockPlayerID = 'player1';
+      const mockStreak = 3;
+
+      getConsecutiveDailyGamesSpy.mockResolvedValueOnce(mockStreak);
+
+      const response = await supertest(app)
+        .get('/bughunt/getConsecutiveDailyGames')
+        .query({ playerID: mockPlayerID });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ streak: mockStreak });
+      expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID);
+    });
+
+    it('should return 400 if the playerID parameter is missing', async () => {
+      const response = await supertest(app).get('/bughunt/getConsecutiveDailyGames');
+
+      expect(response.status).toBe(400);
+      expect(response.text).toBe('Invalid or missing playerID parameter');
+      expect(getConsecutiveDailyGamesSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return 500 if the service throws an error', async () => {
+      const mockPlayerID = 'player1';
+
+      getConsecutiveDailyGamesSpy.mockRejectedValueOnce(new Error('Database error'));
+
+      const response = await supertest(app)
+        .get('/bughunt/getConsecutiveDailyGames')
+        .query({ playerID: mockPlayerID });
+
+      expect(response.status).toBe(500);
+      expect(response.text).toContain('Error fetching consecutive daily games: Database error');
+      expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID);
+    });
+  });
+
+  
 });
