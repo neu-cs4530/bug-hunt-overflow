@@ -489,8 +489,6 @@ const populate = async () => {
     await bugHuntGameCreate(bugHuntGame4);
     console.log('BugHunt games populated');
 
-    console.log('Database populated');
-
     /**
      * BUGGY FILES
      */
@@ -500,7 +498,7 @@ const populate = async () => {
     });
     await Promise.all(buggyFilePromises);
 
-    await console.log('Database populated');
+    console.log('Database populated');
   } catch (err) {
     console.log('ERROR: ' + err);
   } finally {
