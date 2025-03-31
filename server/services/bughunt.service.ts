@@ -99,12 +99,9 @@ export const compareBuggyFileLines = async (
  * @param playerID The ID of the player.
  * @returns The number of consecutive daily games completed.
  */
-export const getConsecutiveDailyGames = async (
-  playerID: string,
-  date: string,
-): Promise<number> => {
+export const getConsecutiveDailyGames = async (playerID: string, date: string): Promise<number> => {
   try {
-    const today = new Date(`${date}T00:00:00.000Z`)
+    const today = new Date(`${date}T00:00:00.000Z`);
     const startOfToday = new Date(`${today.toISOString().split('T')[0]}T00:00:00.000Z`);
     // Query for all daily games completed by the player, sorted by date descending
     const games = await BugHuntModel.find(
@@ -120,7 +117,6 @@ export const getConsecutiveDailyGames = async (
     if (!games || games.length === 0) {
       return 0;
     }
-
 
     let streak = 0;
     const currentDate = startOfToday;

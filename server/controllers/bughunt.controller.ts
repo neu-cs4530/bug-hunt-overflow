@@ -3,7 +3,7 @@ import {
   compareBuggyFileLines,
   getBuggyFile,
   getDailyBugHuntScores,
-  getConsecutiveDailyGames
+  getConsecutiveDailyGames,
 } from '../services/bughunt.service';
 import { BuggyFileValidateRequest } from '../types/types';
 

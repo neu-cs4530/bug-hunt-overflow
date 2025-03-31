@@ -46,18 +46,18 @@ export const getBuggyFile = async (id: string): Promise<SafeBuggyFile> => {
  * @throws Error if the request fails or the response status is not 200.
  */
 export const getConsecutiveDailyGames = async (
- playerID: string,
- date: string,
+  playerID: string,
+  date: string,
 ): Promise<{ streak: number }> => {
- const res = await api.get(`${BUG_HUNT_API_URL}/getConsecutiveDailyGames`, {
-   params: { playerID, date },
- });
+  const res = await api.get(`${BUG_HUNT_API_URL}/getConsecutiveDailyGames`, {
+    params: { playerID, date },
+  });
 
- if (res.status !== 200) {
-   throw new Error('Error when fetching consecutive daily games streak');
- }
+  if (res.status !== 200) {
+    throw new Error('Error when fetching consecutive daily games streak');
+  }
   return res.data;
-}
+};
 
 /**
  * Validates the provided lines with the correct buggy file lines, returning the array of correct guesses.
