@@ -29,7 +29,7 @@ const LeaderBoardRow = ({
 
 const LeaderBoardTable = () => {
   const today = new Date().toISOString().split('T')[0];
-  const [sortRanking, setSortRanking] = useState(false);
+  const [sortRanking, setSortRanking] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState(today);
   const { data, loading, error } = useLeaderBoard(selectedDate);
