@@ -32,6 +32,7 @@ export const getDailyBugHuntScores = async (date: string) => {
       },
       'state.scores',
     ).lean();
+    // eslint-disable-next-line no-console
     console.log('Found games:', games);
 
     if (!games || games.length === 0) {
