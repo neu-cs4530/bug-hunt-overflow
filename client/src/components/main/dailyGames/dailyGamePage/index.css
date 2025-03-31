@@ -1,34 +1,73 @@
-.bug-hunt-header {
+.game-container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+}
+  
+.hud {
+    display: flex;
+    gap: 15px;
+}
+  
+.hud p {
     display: flex;
     align-items: center;
-    padding: 0.5rem;
-    border: solid 1px lightgray;
-    border-left: none;
-    border-right: none;
-    margin-bottom: 1.5rem;
+    gap: 5px;
 }
   
-.bug-hunt-header .selected-lines {
-    flex-grow: 1;
+.leave-game {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
 }
   
-.bug-hunt-hud {
-    flex-grow: 1;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+.code-container {
+    background: #222;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-family: monospace;
 }
   
-.bug-hunt-hud-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+.code-line {
+    padding: 5px;
+    cursor: pointer;
 }
   
-.bug-hunt-hud-item .base-icon {
-    fill: gray !important;
+.code-line:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
   
-.bug-hunt-code {
+.selected {
+    background: rgba(0, 255, 0, 0.3);
+}
+  
+.submit-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+  
+.submit-btn:disabled {
+    background: gray;
+    cursor: not-allowed;
 }
   
