@@ -1,3 +1,4 @@
+import { SafeBuggyFile } from '@fake-stack-overflow/shared';
 import api from './config';
 
 const BUG_HUNT_API_URL = `${process.env.REACT_APP_SERVER_URL}/bughunt`;
@@ -9,7 +10,7 @@ const BUG_HUNT_API_URL = `${process.env.REACT_APP_SERVER_URL}/bughunt`;
  * @returns A promise resolving to the list of BugHunt scores.
  * @throws Error if the request fails or the response status is not 200.
  */
-const getDailyBugHuntScores = async (
+export const getDailyBugHuntScores = async (
   date: string,
 ): Promise<{ player: string; timeMilliseconds: number; accuracy: number }[]> => {
   const res = await api.get(`${BUG_HUNT_API_URL}/getDailyScores`, {
@@ -23,4 +24,35 @@ const getDailyBugHuntScores = async (
   return res.data;
 };
 
-export default getDailyBugHuntScores;
+/**
+ * Fetches the buggy file with a specific id.
+ * @param id the id of the buggy file.
+ * @retruns safe buggy file object (without answers).
+ * @throws if the response status is not 200.
+ */
+export const getBuggyFile = async (id: string): Promise<SafeBuggyFile> => {
+  const res = await api.get(`${BUG_HUNT_API_URL}/buggyFiles/${id}`);
+
+  if (res.status !== 200) {
+    throw new Error('Error while fetcing buggy file');
+  }
+
+  return res.data;
+};
+
+/**
+ * Validates the provided lines with the correct buggy file lines, returning the array of correct guesses.
+ * @param id the id of the buggy file.
+ * @param lines the lines to compare against the buggy file's correct lines.
+ * @retruns the correct lines from the provided guess
+ * @throws if the response status is not 200.
+ */
+export const validateBuggyFileLines = async (id: string, lines: number[]): Promise<number[]> => {
+  const res = await api.post(`${BUG_HUNT_API_URL}/buggyFiles/${id}/validate`, { lines });
+
+  if (res.status !== 200) {
+    throw new Error('Error while validating lines against buggy file answers');
+  }
+
+  return res.data;
+};
