@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useLeaderBoard from '../../../hooks/useLeaderBoard';
 import useConsecutiveDailyGames from '../../../hooks/useConsecutiveDailyGames';
 import './LeaderBoardTable.css';
@@ -17,9 +18,20 @@ const LeaderBoardRow = ({
   selectedDate: string;
 }) => {
   const { streak } = useConsecutiveDailyGames(item.player, selectedDate);
+  const navigate = useNavigate();
+
+  const handleViewProfile = () => {
+    navigate(`/user/${item.player}`);
+  };
+
   return (
     <tr>
-      <td>{item.player}</td>
+      <td>
+        {item.player}
+        <button onClick={handleViewProfile} className='view-profile-button'>
+          View Profile
+        </button>
+      </td>
       <td>{item.timeMilliseconds}</td>
       <td>{item.accuracy}</td>
       <td>{streak && streak >= 3 ? `${streak} 🔥` : streak || '-'}</td>

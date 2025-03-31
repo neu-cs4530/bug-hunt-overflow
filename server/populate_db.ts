@@ -384,7 +384,7 @@ const populate = async () => {
       moves: [
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player1',
+          playerID: 'sana',
           move: { selectedLines: [1, 2, 3] },
         },
         {
@@ -393,14 +393,14 @@ const populate = async () => {
           move: { selectedLines: [4, 5, 6] },
         },
       ],
-      winners: ['player1'],
+      winners: ['sana'],
       status: 'DAILY',
       logs: [
-        { player: 'player1', createdAt: new Date('2025-03-31T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'sana', createdAt: new Date('2025-03-31T10:00:00.000Z'), type: 'STARTED' },
         { player: 'player2', createdAt: new Date('2025-03-31T10:05:00.000Z'), type: 'JOINED' },
       ],
       scores: [
-        { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
+        { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
       buggyFile: new mongoose.Types.ObjectId().toString(),
@@ -412,16 +412,16 @@ const populate = async () => {
       moves: [
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player1',
+          playerID: 'sana',
           move: { selectedLines: [7, 8, 9] },
         },
       ],
-      winners: ['player1'],
+      winners: ['sana'],
       status: 'DAILY',
       logs: [
-        { player: 'player1', createdAt: new Date('2025-03-30T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'sana', createdAt: new Date('2025-03-30T10:00:00.000Z'), type: 'STARTED' },
       ],
-      scores: [{ player: 'player1', timeMilliseconds: 1100, accuracy: 98 }],
+      scores: [{ player: 'sana', timeMilliseconds: 1100, accuracy: 98 }],
       buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-30T10:00:00.000Z'),
       updatedAt: new Date('2025-03-30T10:20:00.000Z'),
@@ -431,7 +431,7 @@ const populate = async () => {
       moves: [
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player1',
+          playerID: 'sana',
           move: { selectedLines: [1, 2, 3] },
         },
         {
@@ -440,14 +440,14 @@ const populate = async () => {
           move: { selectedLines: [4, 5, 6] },
         },
       ],
-      winners: ['player1'],
+      winners: ['sana'],
       status: 'DAILY',
       logs: [
-        { player: 'player1', createdAt: new Date('2025-03-29T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'sana', createdAt: new Date('2025-03-29T10:00:00.000Z'), type: 'STARTED' },
         { player: 'player2', createdAt: new Date('2025-03-29T10:05:00.000Z'), type: 'JOINED' },
       ],
       scores: [
-        { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
+        { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
       buggyFile: new mongoose.Types.ObjectId().toString(),
@@ -459,7 +459,7 @@ const populate = async () => {
       moves: [
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player1',
+          playerID: 'sana',
           move: { selectedLines: [1, 2, 3] },
         },
         {
@@ -468,14 +468,14 @@ const populate = async () => {
           move: { selectedLines: [4, 5, 6] },
         },
       ],
-      winners: ['player1'],
+      winners: ['sana'],
       status: 'DAILY',
       logs: [
-        { player: 'player1', createdAt: new Date('2025-03-23T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'sana', createdAt: new Date('2025-03-23T10:00:00.000Z'), type: 'STARTED' },
         { player: 'player2', createdAt: new Date('2025-03-23T10:05:00.000Z'), type: 'JOINED' },
       ],
       scores: [
-        { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
+        { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
       buggyFile: new mongoose.Types.ObjectId().toString(),
