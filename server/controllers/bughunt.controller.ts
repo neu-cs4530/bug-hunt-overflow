@@ -4,6 +4,7 @@ import {
   getBuggyFile,
   getDailyBugHuntScores,
   getConsecutiveDailyGames,
+  getAllDailyGamesForPlayer,
 } from '../services/bughunt.service';
 import { BuggyFileValidateRequest } from '../types/types';
 
@@ -113,6 +114,27 @@ const bugHuntScoresController = () => {
       res.status(200).json({ streak });
     } catch (error) {
       res.status(500).send(`Error fetching consecutive daily games: ${(error as Error).message}`);
+    }
+  });
+
+  /**
+   * Endpoint to fetch all daily games a player has completed.
+   * @param req The HTTP request object containing the playerID as a query parameter.
+   * @param res The HTTP response object to send back the games or an error message.
+   */
+  router.get('/getAllDailyGamesForPlayer', async (req: Request, res: Response): Promise<void> => {
+    const { playerID } = req.query;
+
+    if (!playerID || typeof playerID !== 'string') {
+      res.status(400).send('Invalid or missing playerID parameter');
+      return;
+    }
+
+    try {
+      const games = await getAllDailyGamesForPlayer(playerID);
+      res.status(200).json(games);
+    } catch (error) {
+      res.status(500).send(`Error fetching daily games for player: ${(error as Error).message}`);
     }
   });
 

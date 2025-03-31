@@ -140,3 +140,43 @@ export const getConsecutiveDailyGames = async (playerID: string, date: string): 
     throw new Error(`Error retrieving consecutive daily games: ${error}`);
   }
 };
+
+/**
+ * Fetches all daily games a player has completed.
+ * @param playerID The ID of the player.
+ * @returns An array of objects containing the date, accuracy, and time of each game.
+ */
+export const getAllDailyGamesForPlayer = async (
+  playerID: string,
+): Promise<{ date: string; accuracy: number; timeMilliseconds: number }[]> => {
+  try {
+    const games = await BugHuntModel.find(
+      {
+        'state.status': 'DAILY',
+        'state.scores.player': playerID,
+      },
+      'state.createdAt state.scores',
+    )
+      .sort({ 'state.createdAt': -1 })
+      .lean();
+
+    if (!games || games.length === 0) {
+      return [];
+    }
+
+    // Extract the relevant data for each game
+    const playerGames = games.flatMap(game =>
+      game.state.scores
+        .filter(score => score.player === playerID)
+        .map(score => ({
+          date: new Date(game.state.createdAt).toISOString().split('T')[0],
+          accuracy: score.accuracy,
+          timeMilliseconds: score.timeMilliseconds,
+        })),
+    );
+
+    return playerGames;
+  } catch (error) {
+    throw new Error(`Error retrieving daily games for player: ${error}`);
+  }
+};

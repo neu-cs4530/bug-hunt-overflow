@@ -389,7 +389,7 @@ const populate = async () => {
         },
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player2',
+          playerID: 'saltyPeter',
           move: { selectedLines: [4, 5, 6] },
         },
       ],
@@ -397,11 +397,11 @@ const populate = async () => {
       status: 'DAILY',
       logs: [
         { player: 'sana', createdAt: new Date('2025-03-31T10:00:00.000Z'), type: 'STARTED' },
-        { player: 'player2', createdAt: new Date('2025-03-31T10:05:00.000Z'), type: 'JOINED' },
+        { player: 'saltyPeter', createdAt: new Date('2025-03-31T10:05:00.000Z'), type: 'JOINED' },
       ],
       scores: [
         { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
-        { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
+        { player: 'saltyPeter', timeMilliseconds: 1500, accuracy: 90 },
       ],
       buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-31T10:00:00.000Z'),
@@ -436,7 +436,7 @@ const populate = async () => {
         },
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player2',
+          playerID: 'saltyPeter',
           move: { selectedLines: [4, 5, 6] },
         },
       ],
@@ -444,11 +444,11 @@ const populate = async () => {
       status: 'DAILY',
       logs: [
         { player: 'sana', createdAt: new Date('2025-03-29T10:00:00.000Z'), type: 'STARTED' },
-        { player: 'player2', createdAt: new Date('2025-03-29T10:05:00.000Z'), type: 'JOINED' },
+        { player: 'saltyPeter', createdAt: new Date('2025-03-29T10:05:00.000Z'), type: 'JOINED' },
       ],
       scores: [
         { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
-        { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
+        { player: 'saltyPeter', timeMilliseconds: 1500, accuracy: 90 },
       ],
       buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-29T10:00:00.000Z'),
@@ -464,7 +464,7 @@ const populate = async () => {
         },
         {
           gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'player2',
+          playerID: 'saltyPeter',
           move: { selectedLines: [4, 5, 6] },
         },
       ],
@@ -472,11 +472,11 @@ const populate = async () => {
       status: 'DAILY',
       logs: [
         { player: 'sana', createdAt: new Date('2025-03-23T10:00:00.000Z'), type: 'STARTED' },
-        { player: 'player2', createdAt: new Date('2025-03-23T10:05:00.000Z'), type: 'JOINED' },
+        { player: 'saltyPeter', createdAt: new Date('2025-03-23T10:05:00.000Z'), type: 'JOINED' },
       ],
       scores: [
         { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
-        { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
+        { player: 'saltyPeter', timeMilliseconds: 1500, accuracy: 90 },
       ],
       buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-23T10:00:00.000Z'),

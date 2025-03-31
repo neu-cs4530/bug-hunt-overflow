@@ -75,3 +75,23 @@ export const validateBuggyFileLines = async (id: string, lines: number[]): Promi
 
   return res.data;
 };
+
+/**
+ * Fetches all daily games a player has completed.
+ * @param playerID - The ID of the player for whom to fetch the games.
+ * @returns A promise resolving to an array of objects containing the date, accuracy, and time of each game.
+ * @throws Error if the request fails or the response status is not 200.
+ */
+export const getAllDailyGamesForPlayer = async (
+  playerID: string,
+): Promise<{ date: string; accuracy: number; timeMilliseconds: number }[]> => {
+  const res = await api.get(`${BUG_HUNT_API_URL}/getAllDailyGamesForPlayer`, {
+    params: { playerID },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error when fetching all daily games for player');
+  }
+
+  return res.data;
+};
