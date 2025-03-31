@@ -13,7 +13,7 @@ import DailyGamePage from './dailyGamePage';
 const DailyGames = () => (
   <Routes>
     <Route path='/' element={<DailyGamesWelcomePage />} />
-    <Route path='/dailyGame' element={<DailyGamePage gameInstance={gameInstance as GameInstance<BugHuntGameState/>} />
+    <Route path='/dailyGame' element={<DailyGamePage />} />
   </Routes>
 );
 

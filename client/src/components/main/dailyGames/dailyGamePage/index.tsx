@@ -5,11 +5,11 @@ import useBugHuntGamePage from '../../../../hooks/useBugHuntGamePage';
 import { BugIcon, ClockIcon, QuestionMarkCircleIcon } from '../../../icons';
 import { CodeBlock } from '../../codeBlock';
 
-interface BugHuntGamePageProps {
-  gameInstance: GameInstance<BugHuntGameState>;
-}
+// interface BugHuntGamePageProps {
+//   gameInstance: GameInstance<BugHuntGameState>;
+// }
 
-const DailyGamePage = (props: BugHuntGamePageProps) => {
+const DailyGamePage = () => {
   const date = new Date();
 
   const formattedDate = date.toLocaleDateString('en-US', {
@@ -19,20 +19,24 @@ const DailyGamePage = (props: BugHuntGamePageProps) => {
     day: 'numeric',
   });
 
-  const { gameInstance } = props;
+  function handleSubmit() {
+    throw new Error('Function not implemented.');
+  }
+
+  // const { gameInstance } = props;
   // const { user } = useUserContext();
-  const {
-    selectedLines,
-    correctLines,
-    lineStyles,
-    isCreator,
-    buggyFile,
-    stopwatch,
-    movesRemaining,
-    handleStartGame,
-    handleSelectLine,
-    handleSubmit,
-  } = useBugHuntGamePage(gameInstance);
+  // const {
+  //   selectedLines,
+  //   correctLines,
+  //   lineStyles,
+  //   isCreator,
+  //   buggyFile,
+  //   stopwatch,
+  //   movesRemaining,
+  //   handleStartGame,
+  //   handleSelectLine,
+  //   handleSubmit,
+  // } = useBugHuntGamePage(gameInstance);
 
   return (
     <>
@@ -40,31 +44,26 @@ const DailyGamePage = (props: BugHuntGamePageProps) => {
         <div className='bug-hunt-hud'>
           <p className='bug-hunt-hud-item'>
             <ClockIcon />
-            <span>{stopwatch}</span>
           </p>
           <p className='bug-hunt-hud-item'>
             <BugIcon />
-            <span>
-              {correctLines.length}/{buggyFile?.numberOfBugs} Bugs Found
-            </span>
+            <span>10 Bugs Found</span>
           </p>
           <p className='bug-hunt-hud-item'>
             <QuestionMarkCircleIcon />
-            <span>{movesRemaining} Guesses Remaining</span>
+            <span>7 Guesses Remaining</span>
           </p>
         </div>
 
         <button
           className='btn-submit'
-          disabled={selectedLines.length === 0}
-          onClick={() => {
-            handleSubmit();
-          }}>
+          // disabled={selectedLines.length === 0}
+          onClick={() => {}}>
           Submit Answer
         </button>
       </div>
       <div className='bug-hunt-code'>
-        {buggyFile ? (
+        {/* {buggyFile ? (
           <CodeBlock
             code={buggyFile?.code}
             lineStyles={lineStyles}
@@ -72,7 +71,7 @@ const DailyGamePage = (props: BugHuntGamePageProps) => {
           />
         ) : (
           <></>
-        )}
+        )} */}
       </div>
     </>
   );

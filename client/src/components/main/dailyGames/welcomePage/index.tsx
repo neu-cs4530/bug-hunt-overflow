@@ -14,22 +14,7 @@ const DailyGamesWelcomePage = () => {
   const navigate = useNavigate();
 
   const handlePlayClick = () => {
-    const gameInstance: GameInstance<BugHuntGameState> = {
-      gameID: 'LeOe9VBIw4DtKSzRShvfk',
-      gameType: 'BugHunt',
-      state: {
-        // Add mock or real state properties here
-        status: 'IN_PROGRESS',
-      },
-      players: [
-        {
-          id: 'player1',
-          name: 'Player One',
-          score: 0,
-        },
-      ],
-    };
-    navigate('/dailyGames/dailyGame', { state: { gameInstance } });
+    navigate('/dailyGames/dailyGame');
   };
 
   const date = new Date();
