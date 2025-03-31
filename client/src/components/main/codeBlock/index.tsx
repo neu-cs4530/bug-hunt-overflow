@@ -6,6 +6,7 @@ import { useMemo } from 'react';
  */
 export type CodeLineStyle = Partial<{
   backgroundColor: string;
+  cursor: string;
 }>;
 
 /**

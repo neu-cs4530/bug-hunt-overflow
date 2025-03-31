@@ -2,13 +2,12 @@ import {
   GameMove,
   BugHuntGameState,
   BugHuntMove,
-  LogType,
   GameLog,
   BuggyFile,
   BugHuntScore,
 } from '../../types/types';
 import BuggyFileModel from '../../models/buggyFile.model';
-import { MAX_BUGHUNT_GUESSES, MAX_BUGHUNT_PLAYERS } from '../../types/constants';
+import { BUGHUNT_MAX_GUESSES, BUGHUNT_MAX_PLAYERS } from '../../types/constants';
 import Game from './game';
 
 /**
@@ -42,7 +41,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    */
   private _playerHasLost(playerID: string): boolean {
     return (
-      this.state.moves.filter(move => move.playerID === playerID).length >= MAX_BUGHUNT_GUESSES
+      this.state.moves.filter(move => move.playerID === playerID).length >= BUGHUNT_MAX_GUESSES
     );
   }
 
@@ -109,7 +108,8 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
         sum += 1;
       }
     });
-    return sum / move.move.selectedLines.length;
+
+    return sum / this._buggyLines.length;
   }
 
   /**
@@ -172,6 +172,13 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     this._checkGameOver();
   }
 
+  private _addGameLog(log: GameLog): void {
+    this.state = {
+      ...this.state,
+      logs: [...this.state.logs, log],
+    };
+  }
+
   /**
    * Joins a player to the game. The game can only be joined if it is waiting to start.
    * @param playerID The ID of the player joining the game.
@@ -186,29 +193,34 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error('Cannot join game: player already in game');
     }
 
-    if (this._players.length >= MAX_BUGHUNT_PLAYERS) {
+    if (this._players.length >= BUGHUNT_MAX_PLAYERS) {
       throw new Error('Cannot join game: max number of players already in game');
     }
 
-    let logType: LogType;
-    if (this._players.length === 0) {
-      logType = 'CREATED_GAME';
-    } else {
-      logType = 'JOINED';
-    }
-
-    const playerJoinedLog: GameLog = {
+    const baseLog = {
       player: playerID,
       createdAt: new Date(),
-      type: logType,
     };
 
-    this.state = {
-      ...this.state,
-      logs: [...this.state.logs, playerJoinedLog],
-    };
+    const hasCreator = this.state.logs.find(log => log.type === 'CREATED_GAME');
+    if (!hasCreator) {
+      this._addGameLog({
+        ...baseLog,
+        type: 'CREATED_GAME',
+      });
+    }
 
-    if (this._players.length === MAX_BUGHUNT_PLAYERS - 1) {
+    const playerAlreadyJoined = this.state.logs.find(
+      log => log.type === 'JOINED' && log.player === playerID,
+    );
+    if (!playerAlreadyJoined) {
+      this._addGameLog({
+        ...baseLog,
+        type: 'JOINED',
+      });
+    }
+
+    if (this._players.length === BUGHUNT_MAX_PLAYERS - 1) {
       this.state = {
         ...this.state,
         status: 'IN_PROGRESS',

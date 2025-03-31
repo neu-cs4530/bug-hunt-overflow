@@ -12,5 +12,22 @@
   flex-grow: 1;
 }
 
+.bug-hunt-hud {
+  flex-grow: 1;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.bug-hunt-hud-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.bug-hunt-hud-item .base-icon {
+  fill: gray !important;
+}
+
 .bug-hunt-code {
 }

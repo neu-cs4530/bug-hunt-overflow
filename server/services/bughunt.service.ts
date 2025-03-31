@@ -4,11 +4,12 @@ import BugHuntModel from '../models/bughunt.model';
 
 const makeBuggyFileSafe = (buggyFile: BuggyFile): SafeBuggyFile => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { _id, code, description } = buggyFile;
+  const { _id, code, description, buggyLines } = buggyFile;
   return {
     _id,
     code,
     description,
+    numberOfBugs: buggyLines.length,
   };
 };
 
@@ -63,6 +64,29 @@ export const getBuggyFile = async (id: string): Promise<SafeBuggyFile | null> =>
       return null;
     }
     return makeBuggyFileSafe(buggyFile);
+  } catch (error) {
+    throw new Error(`Error retrieving buggy file: ${error}`);
+  }
+};
+
+/**
+ * Compares the correct buggy line numbers with the provided line numbers.
+ * @param id the ObjectId of the buggy file.
+ * @param lines the array of line numbers to compare to the correct answers.
+ * @returns the array of correct line numbers from the provided lines array.
+ */
+export const compareBuggyFileLines = async (
+  id: string,
+  lines: number[],
+): Promise<number[] | null> => {
+  try {
+    const buggyFile = await BuggyFileModel.findById(id).lean();
+    if (!buggyFile) {
+      return null;
+    }
+
+    const correctLines = [...new Set(lines)].filter(num => buggyFile.buggyLines.includes(num));
+    return correctLines;
   } catch (error) {
     throw new Error(`Error retrieving buggy file: ${error}`);
   }
