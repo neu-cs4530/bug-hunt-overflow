@@ -23,7 +23,7 @@ const DailyGamesBarChart: React.FC<DailyGamesBarChartProps> = ({ games }) => {
     datasets: [
       {
         label: 'Accuracy (%)',
-        data: games.map(game => game.accuracy),
+        data: games.map(game => game.accuracy * 100), // Convert accuracy to percentage
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -36,8 +36,8 @@ const DailyGamesBarChart: React.FC<DailyGamesBarChartProps> = ({ games }) => {
     labels: games.map(game => game.date),
     datasets: [
       {
-        label: 'Time (ms)',
-        data: games.map(game => game.timeMilliseconds),
+        label: 'Time (s)', // Update label to indicate seconds
+        data: games.map(game => game.timeMilliseconds / 1000), // Convert ms to seconds
         backgroundColor: 'rgba(255, 99, 132, 0.6)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -78,7 +78,7 @@ const DailyGamesBarChart: React.FC<DailyGamesBarChartProps> = ({ games }) => {
 
       {/* Time Chart */}
       <div>
-        <h3>Time (ms)</h3>
+        <h3>Time (s)</h3>
         <Bar
           data={timeData}
           options={{
