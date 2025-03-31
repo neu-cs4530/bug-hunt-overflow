@@ -6,11 +6,16 @@ import { NavLink, useLocation } from 'react-router-dom';
  * Sidebar Navigation component for navigating between different sections.
  */
 const SideBarNav = () => {
-  const [showOptions, setShowOptions] = useState(false);
+  const [showOptionsMessaging, setShowOptionsMessaging] = useState(false);
+  const [showOptionsGames, setShowOptionsGames] = useState(false);
   const location = useLocation();
 
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
+  const toggleOptionsMessaging = () => {
+    setShowOptionsMessaging(!showOptionsMessaging);
+  };
+
+  const toggleOptionsGames = () => {
+    setShowOptionsGames(!showOptionsGames);
   };
 
   const isActiveOption = (path: string) =>
@@ -30,11 +35,11 @@ const SideBarNav = () => {
         Tags
       </NavLink>
 
-      <button className='menu_button' onClick={toggleOptions}>
+      <button className='menu_button' onClick={toggleOptionsMessaging}>
         Messaging
       </button>
 
-      {showOptions && (
+      {showOptionsMessaging && (
         <div className='additional-options'>
           <NavLink
             to='/messaging'
@@ -49,17 +54,31 @@ const SideBarNav = () => {
         </div>
       )}
 
+      <button className='menu_button' onClick={toggleOptionsGames}>
+        Games
+      </button>
+
+      {showOptionsGames && (
+        <div className='additional-options'>
+          <NavLink
+            to='/games'
+            className={`menu_button message-options ${isActiveOption('/games')}`}>
+            Community Games
+          </NavLink>
+          <NavLink
+            to='/dailyGames'
+            className={`menu_button message-options ${isActiveOption('/dailyGames')}`}>
+            Daily Games
+          </NavLink>
+        </div>
+      )}
+
       <NavLink
         to='/users'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
         Users
       </NavLink>
 
-      <NavLink
-        to='/games'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        Games
-      </NavLink>
       <NavLink
         to='/leaderboard'
         id='menu_leaderboard'
