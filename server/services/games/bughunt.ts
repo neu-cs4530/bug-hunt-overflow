@@ -185,12 +185,12 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    * @throws Will throw an error if the player cannot join.
    */
   protected _join(playerID: string): void {
-    if (this.state.status !== 'WAITING_TO_START') {
-      throw new Error('Cannot join game: already started');
+    if (this._players.includes(playerID)) {
+      return;
     }
 
-    if (this._players.includes(playerID)) {
-      throw new Error('Cannot join game: player already in game');
+    if (this.state.status !== 'WAITING_TO_START') {
+      throw new Error('Cannot join game: already started');
     }
 
     if (this._players.length >= BUGHUNT_MAX_PLAYERS) {

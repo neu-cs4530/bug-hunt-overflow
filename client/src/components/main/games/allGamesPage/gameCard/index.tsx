@@ -1,6 +1,7 @@
-import React from 'react';
 import './index.css';
+import { useCallback } from 'react';
 import { GameInstance, GameState } from '../../../../../types/types';
+import useUserContext from '../../../../../hooks/useUserContext';
 
 /**
  * Component to display a game card with details about a specific game instance.
@@ -14,22 +15,42 @@ const GameCard = ({
 }: {
   game: GameInstance<GameState>;
   handleJoin: (gameID: string) => void;
-}) => (
-  <div className='game-item'>
-    <p>
-      <strong>Game ID:</strong> {game.gameID} | <strong>Status:</strong> {game.state.status}
-    </p>
-    <ul className='game-players'>
-      {game.players.map((player: string) => (
-        <li key={`${game.gameID}-${player}`}>{player}</li>
-      ))}
-    </ul>
-    {game.state.status === 'WAITING_TO_START' && (
+}) => {
+  const { user } = useUserContext();
+
+  const renderJoinButton = useCallback(() => {
+    if (game.players.includes(user.username)) {
+      return (
+        <button className='btn-join-game' onClick={() => handleJoin(game.gameID)}>
+          Rejoin Game
+        </button>
+      );
+    }
+
+    if (game.state.status !== 'WAITING_TO_START') {
+      return <></>;
+    }
+
+    return (
       <button className='btn-join-game' onClick={() => handleJoin(game.gameID)}>
         Join Game
       </button>
-    )}
-  </div>
-);
+    );
+  }, [game.gameID, game.players, game.state.status, handleJoin, user.username]);
+
+  return (
+    <div className='game-item'>
+      <p>
+        <strong>Game ID:</strong> {game.gameID} | <strong>Status:</strong> {game.state.status}
+      </p>
+      <ul className='game-players'>
+        {game.players.map((player: string) => (
+          <li key={`${game.gameID}-${player}`}>{player}</li>
+        ))}
+      </ul>
+      {renderJoinButton()}
+    </div>
+  );
+};
 
 export default GameCard;

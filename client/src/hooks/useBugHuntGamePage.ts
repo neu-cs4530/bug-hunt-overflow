@@ -59,6 +59,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       }),
       ...makeCodeLineStyle(wrongLines, {
         backgroundColor: WRONG_LINE_BACKGROUND_COLOR,
+        cursor: 'default',
       }),
     }),
     [correctLines, selectedLines, wrongLines],
@@ -99,13 +100,18 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     return new Date(playerJoinLog?.createdAt);
   }, [gameInstance.state.logs, user.username]);
 
+  const playerMoves = useMemo(
+    () => gameInstance.state.moves.filter(move => move.playerID === user.username),
+    [gameInstance.state.moves, user.username],
+  );
+
   /**
    * The number of moves the user has remaining.
    */
-  const movesRemaining = useMemo<number>(() => {
-    const playerMoves = gameInstance.state.moves.filter(move => move.playerID === user.username);
-    return BUGHUNT_MAX_GUESSES - playerMoves.length;
-  }, [gameInstance.state.moves, user.username]);
+  const movesRemaining = useMemo<number>(
+    () => BUGHUNT_MAX_GUESSES - playerMoves.length,
+    [playerMoves.length],
+  );
 
   const loadBuggyFile = useCallback(
     async (id: string) => {
@@ -120,33 +126,31 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     [setBuggyFile],
   );
 
+  const padTime = (n: number) => String(n).padStart(2, '0');
+
   /**
-   * Runs the stopwatch, updating the stopwatch state variable every second.
-   * @param start is the Date (from now) that the stopwatch should start on. This is useful for people rejoining sessions.
+   * Updates the stopwatch to the difference in time between now and start time provided.
+   * @param start is the Date object of when the stopwatch started. This is useful for people rejoining sessions.
    */
-  const runStopwatch = useCallback((start: Date): NodeJS.Timeout => {
-    const padTime = (n: number) => String(n).padStart(2, '0');
+  const updateStopwatch = useCallback((start: Date) => {
+    const now = new Date();
 
-    return setInterval(() => {
-      const now = new Date();
+    let diffMs = Math.abs(now.getTime() - start.getTime());
 
-      let diffMs = Math.abs(now.getTime() - start.getTime());
+    const hourMs = 1000 * 60 * 60;
+    const hours = Math.floor(diffMs / hourMs);
+    diffMs -= hours * hourMs;
 
-      const hourMs = 1000 * 60 * 60;
-      const hours = Math.floor(diffMs / hourMs);
-      diffMs -= hours * hourMs;
+    const minuteMs = 1000 * 60;
+    const minutes = Math.floor(diffMs / minuteMs);
+    diffMs -= minutes * minuteMs;
 
-      const minuteMs = 1000 * 60;
-      const minutes = Math.floor(diffMs / minuteMs);
-      diffMs -= minutes * minuteMs;
+    const seconds = Math.floor(diffMs / 1000);
 
-      const seconds = Math.floor(diffMs / 1000);
-
-      setStopwatch(`${padTime(hours)}:${padTime(minutes)}:${padTime(seconds)}`);
-    }, 1000);
+    setStopwatch(`${padTime(hours)}:${padTime(minutes)}:${padTime(seconds)}`);
   }, []);
 
-  const validateSelectedLines = useCallback(
+  const validateLineNumbers = useCallback(
     async (lines: number[]) => {
       const buggyFileId = gameInstance.state.buggyFile;
       if (!buggyFileId) {
@@ -174,16 +178,23 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
    */
   const handleSelectLine = useCallback(
     (lineNumber: number) => {
-      if (correctLines.includes(lineNumber)) {
+      if (correctLines.includes(lineNumber) || wrongLines.includes(lineNumber)) {
         return;
       }
 
-      setSelectedLines(curr =>
-        // remove or add
-        curr.includes(lineNumber) ? curr.filter(n => n !== lineNumber) : [...curr, lineNumber],
-      );
+      setSelectedLines(curr => {
+        if (curr.includes(lineNumber)) {
+          return curr.filter(n => n !== lineNumber);
+        }
+
+        if (selectedLines.length + correctLines.length - 1 >= (buggyFile?.numberOfBugs ?? 0)) {
+          return curr;
+        }
+
+        return [...curr, lineNumber];
+      });
     },
-    [correctLines],
+    [buggyFile?.numberOfBugs, correctLines, selectedLines.length, wrongLines],
   );
 
   /**
@@ -191,7 +202,9 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
    */
   const handleSubmit = useCallback(async () => {
     if (selectedLines.length === 0) {
-      // TODO: Need to throw error here
+      return;
+    }
+    if (gameInstance.state.status === 'OVER') {
       return;
     }
 
@@ -206,16 +219,17 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       move,
     });
 
-    await validateSelectedLines(selectedLines);
+    await validateLineNumbers(selectedLines);
 
     setSelectedLines([]);
   }, [
     correctLines,
     gameInstance.gameID,
+    gameInstance.state.status,
     selectedLines,
     socket,
     user.username,
-    validateSelectedLines,
+    validateLineNumbers,
   ]);
 
   /**
@@ -231,6 +245,15 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       console.error(err);
     }
   }, [isCreator, gameInstance.state.status, gameInstance.gameID, user.username]);
+
+  // Load validated line numbers in. Only run on first load
+  useEffect(() => {
+    playerMoves.forEach(move => {
+      validateLineNumbers(move.move.selectedLines);
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load buggy file from ID in game state
   useEffect(() => {
@@ -248,13 +271,14 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       // Get the later of the two dates
       const laterDate =
         gameStartDate.getTime() > playerJoinDate.getTime() ? gameStartDate : playerJoinDate;
-      stopwatchInterval = runStopwatch(laterDate);
+      updateStopwatch(laterDate); // run once at start
+      stopwatchInterval = setInterval(() => updateStopwatch(laterDate), 1000);
     }
 
     return () => {
       clearInterval(stopwatchInterval);
     };
-  }, [gameStartDate, playerJoinDate, runStopwatch]);
+  }, [gameStartDate, playerJoinDate, updateStopwatch]);
 
   return {
     selectedLines,
