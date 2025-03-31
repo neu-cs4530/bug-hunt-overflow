@@ -403,7 +403,7 @@ const populate = async () => {
         { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-25T10:00:00.000Z'),
       updatedAt: new Date('2025-03-25T10:30:00.000Z'),
     };
@@ -422,7 +422,7 @@ const populate = async () => {
         { player: 'player3', createdAt: new Date('2025-03-24T10:00:00.000Z'), type: 'STARTED' },
       ],
       scores: [{ player: 'player3', timeMilliseconds: 1100, accuracy: 98 }],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-24T10:00:00.000Z'),
       updatedAt: new Date('2025-03-24T10:20:00.000Z'),
     };
@@ -450,7 +450,7 @@ const populate = async () => {
         { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-24T10:00:00.000Z'),
       updatedAt: new Date('2025-03-24T10:30:00.000Z'),
     };
@@ -478,12 +478,11 @@ const populate = async () => {
         { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-23T10:00:00.000Z'),
       updatedAt: new Date('2025-03-23T10:30:00.000Z'),
     };
 
-  
     await bugHuntGameCreate(bugHuntGame1);
     await bugHuntGameCreate(bugHuntGame2);
     await bugHuntGameCreate(bugHuntGame3);
@@ -502,7 +501,6 @@ const populate = async () => {
     await Promise.all(buggyFilePromises);
 
     await console.log('Database populated');
-
   } catch (err) {
     console.log('ERROR: ' + err);
   } finally {
