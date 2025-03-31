@@ -52,16 +52,17 @@ describe('BugHunt Controller', () => {
     it('should return 200 with the streak for a valid playerID', async () => {
       const mockPlayerID = 'player1';
       const mockStreak = 3;
+      const mockDate = '2025-03-25';
 
       getConsecutiveDailyGamesSpy.mockResolvedValueOnce(mockStreak);
 
       const response = await supertest(app)
         .get('/bughunt/getConsecutiveDailyGames')
-        .query({ playerID: mockPlayerID });
+        .query({ playerID: mockPlayerID, date: mockDate });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ streak: mockStreak });
-      expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID);
+      expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID, mockDate);
     });
 
     it('should return 400 if the playerID parameter is missing', async () => {
@@ -74,16 +75,17 @@ describe('BugHunt Controller', () => {
 
     it('should return 500 if the service throws an error', async () => {
       const mockPlayerID = 'player1';
+      const mockDate = '2025-03-25';
 
       getConsecutiveDailyGamesSpy.mockRejectedValueOnce(new Error('Database error'));
 
       const response = await supertest(app)
         .get('/bughunt/getConsecutiveDailyGames')
-        .query({ playerID: mockPlayerID });
+        .query({ playerID: mockPlayerID, date: mockDate });
 
       expect(response.status).toBe(500);
       expect(response.text).toContain('Error fetching consecutive daily games: Database error');
-      expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID);
+      expect(getConsecutiveDailyGamesSpy).toHaveBeenCalledWith(mockPlayerID, mockDate);
     });
   });
 });

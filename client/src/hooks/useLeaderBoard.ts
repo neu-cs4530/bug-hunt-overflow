@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import getDailyBugHuntScores from '../services/bugHuntService';
+import { getDailyBugHuntScores } from '../services/bugHuntService';
 
 interface LeaderBoardData {
   player: string;

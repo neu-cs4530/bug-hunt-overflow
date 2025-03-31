@@ -13,6 +13,7 @@ import {
   Question,
   Tag,
   User,
+  BugHuntGameState,
 } from './types/types';
 import {
   Q1_DESC,
@@ -58,6 +59,8 @@ import {
 } from './data/posts_strings';
 import CommentModel from './models/comments.model';
 import UserModel from './models/users.model';
+import BugHuntModel from './models/bughunt.model';
+
 
 // Pass URL of your mongoDB instance as first argument(e.g., mongodb://127.0.0.1:27017/fake_so)
 const userArgs = process.argv.slice(2);
@@ -108,6 +111,24 @@ async function commentCreate(
     commentDateTime: commentDateTime,
   };
   return await CommentModel.create(commentDetail);
+}
+
+/**
+ * Creates a new BugHunt game document in the database.
+ */
+/**
+ * Creates a new BugHunt game document in the database.
+ */
+async function bugHuntGameCreate(gameState: BugHuntGameState): Promise<void> {
+  if (!gameState || !gameState.status || !gameState.moves || !gameState.scores) {
+    throw new Error('Invalid BugHunt Game State');
+  }
+
+  await BugHuntModel.create({
+    gameID: new mongoose.Types.ObjectId().toString(), // Generate a unique gameID
+    state: gameState,
+    gameType: 'BugHunt', // Ensure the required gameType field is included
+  });
 }
 
 /**
@@ -342,6 +363,116 @@ const populate = async () => {
       [],
       [c12],
     );
+
+    const bugHuntGame1: BugHuntGameState = {
+      moves: [
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player1',
+          move: { selectedLines: [1, 2, 3] },
+        },
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player2',
+          move: { selectedLines: [4, 5, 6] },
+        },
+      ],
+      winners: ['player1'],
+      status: 'DAILY',
+      logs: [
+        { player: 'player1', createdAt: new Date('2025-03-31T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'player2', createdAt: new Date('2025-03-31T10:05:00.000Z'), type: 'JOINED' },
+      ],
+      scores: [
+        { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
+        { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
+      ],
+      buggyFile: new mongoose.Types.ObjectId(),
+      createdAt: new Date('2025-03-31T10:00:00.000Z'),
+      updatedAt: new Date('2025-03-31T10:30:00.000Z'),
+    };
+
+    const bugHuntGame2: BugHuntGameState = {
+      moves: [
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player1',
+          move: { selectedLines: [7, 8, 9] },
+        },
+      ],
+      winners: ['player1'],
+      status: 'DAILY',
+      logs: [
+        { player: 'player1', createdAt: new Date('2025-03-30T10:00:00.000Z'), type: 'STARTED' },
+      ],
+      scores: [{ player: 'player1', timeMilliseconds: 1100, accuracy: 98 }],
+      buggyFile: new mongoose.Types.ObjectId(),
+      createdAt: new Date('2025-03-30T10:00:00.000Z'),
+      updatedAt: new Date('2025-03-30T10:20:00.000Z'),
+    };
+
+    const bugHuntGame3: BugHuntGameState = {
+      moves: [
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player1',
+          move: { selectedLines: [1, 2, 3] },
+        },
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player2',
+          move: { selectedLines: [4, 5, 6] },
+        },
+      ],
+      winners: ['player1'],
+      status: 'DAILY',
+      logs: [
+        { player: 'player1', createdAt: new Date('2025-03-29T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'player2', createdAt: new Date('2025-03-29T10:05:00.000Z'), type: 'JOINED' },
+      ],
+      scores: [
+        { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
+        { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
+      ],
+      buggyFile: new mongoose.Types.ObjectId(),
+      createdAt: new Date('2025-03-29T10:00:00.000Z'),
+      updatedAt: new Date('2025-03-29T10:30:00.000Z'),
+    };
+
+    const bugHuntGame4: BugHuntGameState = {
+      moves: [
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player1',
+          move: { selectedLines: [1, 2, 3] },
+        },
+        {
+          gameID: new mongoose.Types.ObjectId().toString(),
+          playerID: 'player2',
+          move: { selectedLines: [4, 5, 6] },
+        },
+      ],
+      winners: ['player1'],
+      status: 'DAILY',
+      logs: [
+        { player: 'player1', createdAt: new Date('2025-03-23T10:00:00.000Z'), type: 'STARTED' },
+        { player: 'player2', createdAt: new Date('2025-03-23T10:05:00.000Z'), type: 'JOINED' },
+      ],
+      scores: [
+        { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
+        { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
+      ],
+      buggyFile: new mongoose.Types.ObjectId(),
+      createdAt: new Date('2025-03-23T10:00:00.000Z'),
+      updatedAt: new Date('2025-03-23T10:30:00.000Z'),
+    };
+
+  
+    await bugHuntGameCreate(bugHuntGame1);
+    await bugHuntGameCreate(bugHuntGame2);
+    await bugHuntGameCreate(bugHuntGame3);
+    await bugHuntGameCreate(bugHuntGame4);
+    console.log('BugHunt games populated');
 
     console.log('Database populated');
   } catch (err) {

@@ -35,15 +35,20 @@ const bugHuntScoresController = () => {
    * @param res The HTTP response object to send back the streak or an error message.
    */
   router.get('/getConsecutiveDailyGames', async (req: Request, res: Response): Promise<void> => {
-    const { playerID } = req.query;
+    const { playerID, date } = req.query;
 
     if (!playerID || typeof playerID !== 'string') {
       res.status(400).send('Invalid or missing playerID parameter');
       return;
     }
 
+    if (!date || typeof date !== 'string') {
+      res.status(400).send('Invalid date parameter');
+      return;
+    }
+
     try {
-      const streak = await getConsecutiveDailyGames(playerID);
+      const streak = await getConsecutiveDailyGames(playerID, date);
       res.status(200).json({ streak });
     } catch (error) {
       res.status(500).send(`Error fetching consecutive daily games: ${(error as Error).message}`);

@@ -1,3 +1,4 @@
+import { mock } from 'node:test';
 import BugHuntModel from '../../models/bughunt.model';
 import { getDailyBugHuntScores, getConsecutiveDailyGames } from '../../services/bughunt.service';
 
@@ -63,6 +64,7 @@ describe('BugHunt Service - getConsecutiveDailyGames', () => {
 
   it('should return the correct streak for consecutive daily games', async () => {
     const mockPlayerID = 'player1';
+    const mockDate = '2025-03-30'; // Match the most recent game's date
     const mockGames = [
       {
         state: {
@@ -86,23 +88,26 @@ describe('BugHunt Service - getConsecutiveDailyGames', () => {
 
     mockingoose(BugHuntModel).toReturn(mockGames, 'find');
 
-    const result = await getConsecutiveDailyGames(mockPlayerID);
+    const result = await getConsecutiveDailyGames(mockPlayerID, mockDate);
 
     expect(result).toBe(3); // Expect a streak of 3 days
   });
 
   it('should return 0 if no games are found', async () => {
     const mockPlayerID = 'player1';
+    const mockDate = '2025-03-25';
 
     mockingoose(BugHuntModel).toReturn([], 'find'); // Simulate no games found
 
-    const result = await getConsecutiveDailyGames(mockPlayerID);
+    const result = await getConsecutiveDailyGames(mockPlayerID, mockDate);
 
     expect(result).toBe(0); // Expect a streak of 0
   });
 
   it('should break the streak if there is a gap in consecutive days', async () => {
     const mockPlayerID = 'player1';
+    const mockDate = '2025-03-30'; // Match the most recent game's date
+
     const mockGames = [
       {
         state: {
@@ -120,17 +125,18 @@ describe('BugHunt Service - getConsecutiveDailyGames', () => {
 
     mockingoose(BugHuntModel).toReturn(mockGames, 'find');
 
-    const result = await getConsecutiveDailyGames(mockPlayerID);
+    const result = await getConsecutiveDailyGames(mockPlayerID, mockDate);
 
     expect(result).toBe(1); // Expect a streak of 1 day
   });
 
   it('should throw an error if a database error occurs', async () => {
     const mockPlayerID = 'player1';
+    const mockDate = '2025-03-25';
 
     mockingoose(BugHuntModel).toReturn(new Error('Database error'), 'find');
 
-    await expect(getConsecutiveDailyGames(mockPlayerID)).rejects.toThrow(
+    await expect(getConsecutiveDailyGames(mockPlayerID, mockDate)).rejects.toThrow(
       'Error retrieving consecutive daily games: Error: Database error',
     );
   });

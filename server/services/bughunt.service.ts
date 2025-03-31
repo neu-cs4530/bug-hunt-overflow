@@ -14,7 +14,7 @@ export const getDailyBugHuntScores = async (date: string) => {
     const games = await BugHuntModel.find(
       {
         'state.status': 'DAILY',
-        'createdAt': { $gte: startOfDay, $lte: endOfDay },
+        'state.createdAt': { $gte: startOfDay, $lte: endOfDay },
       },
       'state.scores',
     ).lean();
@@ -43,11 +43,13 @@ export const getDailyBugHuntScores = async (date: string) => {
  * @param playerID The ID of the player.
  * @returns The number of consecutive daily games completed.
  */
-export const getConsecutiveDailyGames = async (playerID: string): Promise<number> => {
+export const getConsecutiveDailyGames = async (
+  playerID: string,
+  date: string,
+): Promise<number> => {
   try {
-    const today = new Date();
+    const today = new Date(`${date}T00:00:00.000Z`)
     const startOfToday = new Date(`${today.toISOString().split('T')[0]}T00:00:00.000Z`);
-
     // Query for all daily games completed by the player, sorted by date descending
     const games = await BugHuntModel.find(
       {
@@ -62,6 +64,7 @@ export const getConsecutiveDailyGames = async (playerID: string): Promise<number
     if (!games || games.length === 0) {
       return 0;
     }
+
 
     let streak = 0;
     const currentDate = startOfToday;
@@ -80,7 +83,6 @@ export const getConsecutiveDailyGames = async (playerID: string): Promise<number
         break;
       }
     }
-
     return streak;
   } catch (error) {
     throw new Error(`Error retrieving consecutive daily games: ${error}`);

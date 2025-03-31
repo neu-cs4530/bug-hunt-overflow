@@ -23,4 +23,26 @@ const getDailyBugHuntScores = async (
   return res.data;
 };
 
-export default getDailyBugHuntScores;
+/**
+ * Fetches the number of consecutive daily games a player has completed.
+ *
+ * @param playerID - The ID of the player for whom to fetch the streak.
+ * @returns A promise resolving to the streak count.
+ * @throws Error if the request fails or the response status is not 200.
+ */
+const getConsecutiveDailyGames = async (
+  playerID: string,
+  date: string,
+): Promise<{ streak: number }> => {
+  const res = await api.get(`${BUG_HUNT_API_URL}/getConsecutiveDailyGames`, {
+    params: { playerID, date },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error when fetching consecutive daily games streak');
+  }
+
+  return res.data;
+};
+
+export { getDailyBugHuntScores, getConsecutiveDailyGames };
