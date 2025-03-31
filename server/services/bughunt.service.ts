@@ -14,10 +14,11 @@ export const getDailyBugHuntScores = async (date: string) => {
     const games = await BugHuntModel.find(
       {
         'state.status': 'DAILY',
-        'createdAt': { $gte: startOfDay, $lte: endOfDay },
+        'state.createdAt': { $gte: startOfDay, $lte: endOfDay },
       },
       'state.scores',
     ).lean();
+    console.log('Found games:', games);
 
     if (!games || games.length === 0) {
       return [];
@@ -37,5 +38,3 @@ export const getDailyBugHuntScores = async (date: string) => {
     throw new Error(`Error retrieving daily BugHunt scores: ${error}`);
   }
 };
-
-export default getDailyBugHuntScores;
