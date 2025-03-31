@@ -178,7 +178,12 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
    */
   const handleSelectLine = useCallback(
     (lineNumber: number) => {
-      if (correctLines.includes(lineNumber) || wrongLines.includes(lineNumber)) {
+      if (
+        correctLines.includes(lineNumber) ||
+        wrongLines.includes(lineNumber) ||
+        gameInstance.state.status === 'OVER' ||
+        movesRemaining === 0
+      ) {
         return;
       }
 
@@ -187,14 +192,21 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
           return curr.filter(n => n !== lineNumber);
         }
 
-        if (selectedLines.length + correctLines.length - 1 >= (buggyFile?.numberOfBugs ?? 0)) {
+        if (selectedLines.length + correctLines.length >= (buggyFile?.numberOfBugs ?? 0)) {
           return curr;
         }
 
         return [...curr, lineNumber];
       });
     },
-    [buggyFile?.numberOfBugs, correctLines, selectedLines.length, wrongLines],
+    [
+      buggyFile?.numberOfBugs,
+      correctLines,
+      gameInstance.state.status,
+      movesRemaining,
+      selectedLines.length,
+      wrongLines,
+    ],
   );
 
   /**
