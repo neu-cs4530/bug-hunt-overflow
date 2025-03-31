@@ -23,7 +23,10 @@ const useAllGamesPage = () => {
   const fetchGames = async () => {
     try {
       const games = await getGames(undefined, undefined);
-      setAvailableGames(games);
+      const filteredGames = games.filter(
+        game => game.state.status !== 'DAILY' && game.state.status !== 'OVER',
+      );
+      setAvailableGames(filteredGames);
     } catch (getGamesError) {
       setError('Error fetching games');
     }

@@ -4,13 +4,13 @@ import QuestionModel from './models/questions.model';
 import TagModel from './models/tags.model';
 import {
   Answer,
+  BuggyFile,
   Comment,
   DatabaseAnswer,
   DatabaseComment,
   DatabaseQuestion,
   DatabaseTag,
   DatabaseUser,
-  Question,
   Tag,
   User,
   BugHuntGameState,
@@ -60,7 +60,8 @@ import {
 import CommentModel from './models/comments.model';
 import UserModel from './models/users.model';
 import BugHuntModel from './models/bughunt.model';
-
+import BuggyFileModel from './models/buggyFile.model';
+import BUGGY_FILES from './types/buggyFileConstants';
 
 // Pass URL of your mongoDB instance as first argument(e.g., mongodb://127.0.0.1:27017/fake_so)
 const userArgs = process.argv.slice(2);
@@ -225,6 +226,21 @@ async function userCreate(
   return await UserModel.create(userDetail);
 }
 
+async function buggyFileCreate(
+  code: string,
+  description: string,
+  buggyLines: number[],
+): Promise<BuggyFile> {
+  if (!code || !description || !buggyLines || buggyLines.length == 0) {
+    throw new Error('Invalid BuggyFile format');
+  }
+  return await BuggyFileModel.create({
+    code,
+    description,
+    buggyLines,
+  });
+}
+
 /**
  * Populates the database with predefined data.
  * Logs the status of the operation to the console.
@@ -387,7 +403,7 @@ const populate = async () => {
         { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-31T10:00:00.000Z'),
       updatedAt: new Date('2025-03-31T10:30:00.000Z'),
     };
@@ -406,7 +422,7 @@ const populate = async () => {
         { player: 'player1', createdAt: new Date('2025-03-30T10:00:00.000Z'), type: 'STARTED' },
       ],
       scores: [{ player: 'player1', timeMilliseconds: 1100, accuracy: 98 }],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-30T10:00:00.000Z'),
       updatedAt: new Date('2025-03-30T10:20:00.000Z'),
     };
@@ -434,7 +450,7 @@ const populate = async () => {
         { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-29T10:00:00.000Z'),
       updatedAt: new Date('2025-03-29T10:30:00.000Z'),
     };
@@ -462,17 +478,25 @@ const populate = async () => {
         { player: 'player1', timeMilliseconds: 1200, accuracy: 95 },
         { player: 'player2', timeMilliseconds: 1500, accuracy: 90 },
       ],
-      buggyFile: new mongoose.Types.ObjectId(),
+      buggyFile: new mongoose.Types.ObjectId().toString(),
       createdAt: new Date('2025-03-23T10:00:00.000Z'),
       updatedAt: new Date('2025-03-23T10:30:00.000Z'),
     };
 
-  
     await bugHuntGameCreate(bugHuntGame1);
     await bugHuntGameCreate(bugHuntGame2);
     await bugHuntGameCreate(bugHuntGame3);
     await bugHuntGameCreate(bugHuntGame4);
     console.log('BugHunt games populated');
+
+    /**
+     * BUGGY FILES
+     */
+    const buggyFilePromises = BUGGY_FILES.map(file => {
+      const { code, description, buggyLines } = file;
+      return buggyFileCreate(code, description, buggyLines);
+    });
+    await Promise.all(buggyFilePromises);
 
     console.log('Database populated');
   } catch (err) {

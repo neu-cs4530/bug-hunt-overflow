@@ -1,4 +1,18 @@
+import { BuggyFile, SafeBuggyFile } from '@fake-stack-overflow/shared';
+import BuggyFileModel from '../models/buggyFile.model';
 import BugHuntModel from '../models/bughunt.model';
+
+const makeBuggyFileSafe = (buggyFile: BuggyFile): SafeBuggyFile => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { _id, code, description, buggyLines } = buggyFile;
+  return {
+    _id,
+    code,
+    description,
+    numberOfBugs: buggyLines.length,
+  };
+};
+
 /**
  * Fetches the scores and player names for BugHunt games marked as 'DAILY' for a specific date.
  * @param date The date to filter games by (in YYYY-MM-DD format).
@@ -18,6 +32,8 @@ export const getDailyBugHuntScores = async (date: string) => {
       },
       'state.scores',
     ).lean();
+    // eslint-disable-next-line no-console
+    console.log('Found games:', games);
 
     if (!games || games.length === 0) {
       return [];
@@ -35,6 +51,46 @@ export const getDailyBugHuntScores = async (date: string) => {
     return scores;
   } catch (error) {
     throw new Error(`Error retrieving daily BugHunt scores: ${error}`);
+  }
+};
+
+/**
+ * Retrieves a buggy file.
+ * @param id the ObjectId of the buggy file.
+ * @returns the buggy file, without the answers
+ */
+export const getBuggyFile = async (id: string): Promise<SafeBuggyFile | null> => {
+  try {
+    const buggyFile = await BuggyFileModel.findById(id).lean();
+    if (!buggyFile) {
+      return null;
+    }
+    return makeBuggyFileSafe(buggyFile);
+  } catch (error) {
+    throw new Error(`Error retrieving buggy file: ${error}`);
+  }
+};
+
+/**
+ * Compares the correct buggy line numbers with the provided line numbers.
+ * @param id the ObjectId of the buggy file.
+ * @param lines the array of line numbers to compare to the correct answers.
+ * @returns the array of correct line numbers from the provided lines array.
+ */
+export const compareBuggyFileLines = async (
+  id: string,
+  lines: number[],
+): Promise<number[] | null> => {
+  try {
+    const buggyFile = await BuggyFileModel.findById(id).lean();
+    if (!buggyFile) {
+      return null;
+    }
+
+    const correctLines = [...new Set(lines)].filter(num => buggyFile.buggyLines.includes(num));
+    return correctLines;
+  } catch (error) {
+    throw new Error(`Error retrieving buggy file: ${error}`);
   }
 };
 

@@ -1,0 +1,73 @@
+.game-container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+}
+  
+.hud {
+    display: flex;
+    gap: 15px;
+}
+  
+.hud p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+  
+.leave-game {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+  
+.code-container {
+    background: #222;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-family: monospace;
+}
+  
+.code-line {
+    padding: 5px;
+    cursor: pointer;
+}
+  
+.code-line:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+  
+.selected {
+    background: rgba(0, 255, 0, 0.3);
+}
+  
+.submit-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+  
+.submit-btn:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+  

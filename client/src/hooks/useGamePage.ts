@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useUserContext from './useUserContext';
 import { GameErrorPayload, GameInstance, GameState, GameUpdatePayload } from '../types/types';
 import { joinGame, leaveGame } from '../services/gamesService';
@@ -20,7 +20,7 @@ const useGamePage = () => {
   const [joinedGameID, setJoinedGameID] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleLeaveGame = async () => {
+  const handleLeaveGame = useCallback(async () => {
     if (joinedGameID && gameInstance?.state.status !== 'OVER') {
       await leaveGame(joinedGameID, user.username);
       setGameInstance(null);
@@ -29,14 +29,27 @@ const useGamePage = () => {
 
     socket.emit('leaveGame', joinedGameID);
     navigate('/games');
-  };
+  }, [joinedGameID, gameInstance?.state.status, socket, navigate, user.username]);
+
+  const handleBeforeUnload = useCallback(
+    (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      handleLeaveGame();
+    },
+    [handleLeaveGame],
+  );
 
   useEffect(() => {
     const handleJoinGame = async (id: string) => {
-      const joinedGame = await joinGame(id, user.username);
-      setGameInstance(joinedGame);
-      setJoinedGameID(joinedGame.gameID);
-      socket.emit('joinGame', joinedGame.gameID);
+      try {
+        const joinedGame = await joinGame(id, user.username);
+        setGameInstance(joinedGame);
+        setJoinedGameID(joinedGame.gameID);
+        socket.emit('joinGame', joinedGame.gameID);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Could not join game');
+      }
     };
 
     if (gameID) {
@@ -64,6 +77,13 @@ const useGamePage = () => {
       socket.off('gameError', handleGameError);
     };
   }, [gameID, socket, user.username]);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [handleBeforeUnload]);
 
   return {
     gameInstance,

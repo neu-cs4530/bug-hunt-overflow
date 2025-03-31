@@ -34,11 +34,18 @@ export type LogType = 'CREATED_GAME' | 'JOINED' | 'STARTED';
  * buggyLines: The line numbers where bugs are present
  */
 export interface BuggyFile {
-  _id: ObjectId;
+  _id: string;
   code: string;
   description: string;
   buggyLines: number[];
 }
+
+/**
+ * Provides a BuggyFile without the buggyLines (answers).
+ */
+export type SafeBuggyFile = Omit<BuggyFile, 'buggyLines'> & {
+  numberOfBugs: number;
+};
 
 /**
  * Interface representing the state of a game, which includes:
@@ -153,11 +160,22 @@ export interface BugHuntScore {
  */
 export interface BugHuntGameState extends WinnableGameState {
   moves: ReadonlyArray<GameMove<BugHuntMove>>;
-  buggyFile?: ObjectId;
+  buggyFile?: string;
   createdAt: Date;
   updatedAt: Date;
   logs: ReadonlyArray<GameLog>;
   scores: ReadonlyArray<BugHuntScore>;
+}
+
+/**
+ * Interface extends the request body when validating line numbers of a buggy file.
+ * - `body`
+ *  - `lines`: The array of line numbers to validate
+ */
+export interface BuggyFileValidateRequest extends Request {
+  body: {
+    lines: number[];
+  };
 }
 
 /**
