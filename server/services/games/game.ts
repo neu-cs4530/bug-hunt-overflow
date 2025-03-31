@@ -83,7 +83,9 @@ abstract class Game<StateType extends GameState, MoveType> {
    */
   public join(playerID: string): void {
     this._join(playerID);
-    this._players.push(playerID);
+    if (!this._players.includes(playerID)) {
+      this._players.push(playerID);
+    }
   }
 
   /**
@@ -100,7 +102,9 @@ abstract class Game<StateType extends GameState, MoveType> {
    */
   public leave(playerID: string): void {
     this._leave(playerID);
-    this._players = this._players.filter(p => p !== playerID);
+    if (this._state.status !== 'DAILY' && this._state.status !== 'IN_PROGRESS') {
+      this._players = this._players.filter(p => p !== playerID);
+    }
   }
 
   /**

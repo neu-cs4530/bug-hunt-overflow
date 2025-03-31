@@ -20,13 +20,7 @@ body {
   color: #333;
 }
 
-.game-status {
-  color: #666;
-  margin-left: 20px;
-}
-
 /* Button Spacing */
-.game-controls,
 .game-available,
 .game-details {
   margin-bottom: 15px;

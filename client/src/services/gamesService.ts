@@ -93,4 +93,24 @@ const leaveGame = async (gameID: string, playerID: string): Promise<GameInstance
   return res.data;
 };
 
-export { createGame, getGames, joinGame, leaveGame };
+/**
+ * Function to start a game.
+ * @param gameID The ID of the game to leave.
+ * @param playerID The ID of the player leaving the game.
+ * @returns A promise resolving to the updated game instance.
+ * @throws Error if there is an issue while leaving the game.
+ */
+const startGame = async (gameID: string, playerID: string): Promise<GameInstance<GameState>> => {
+  const res = await api.post(`${GAMES_API_URL}/start`, {
+    gameID,
+    playerID,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while starting a game');
+  }
+
+  return res.data;
+};
+
+export { createGame, getGames, joinGame, leaveGame, startGame };

@@ -4,13 +4,13 @@ import QuestionModel from './models/questions.model';
 import TagModel from './models/tags.model';
 import {
   Answer,
+  BuggyFile,
   Comment,
   DatabaseAnswer,
   DatabaseComment,
   DatabaseQuestion,
   DatabaseTag,
   DatabaseUser,
-  Question,
   Tag,
   User,
   BugHuntGameState,
@@ -60,7 +60,8 @@ import {
 import CommentModel from './models/comments.model';
 import UserModel from './models/users.model';
 import BugHuntModel from './models/bughunt.model';
-
+import BuggyFileModel from './models/buggyFile.model';
+import BUGGY_FILES from './types/buggyFileConstants';
 
 // Pass URL of your mongoDB instance as first argument(e.g., mongodb://127.0.0.1:27017/fake_so)
 const userArgs = process.argv.slice(2);
@@ -223,6 +224,21 @@ async function userCreate(
   };
 
   return await UserModel.create(userDetail);
+}
+
+async function buggyFileCreate(
+  code: string,
+  description: string,
+  buggyLines: number[],
+): Promise<BuggyFile> {
+  if (!code || !description || !buggyLines || buggyLines.length == 0) {
+    throw new Error('Invalid BuggyFile format');
+  }
+  return await BuggyFileModel.create({
+    code,
+    description,
+    buggyLines,
+  });
 }
 
 /**
@@ -475,6 +491,18 @@ const populate = async () => {
     console.log('BugHunt games populated');
 
     console.log('Database populated');
+
+    /**
+     * BUGGY FILES
+     */
+    const buggyFilePromises = BUGGY_FILES.map(file => {
+      const { code, description, buggyLines } = file;
+      return buggyFileCreate(code, description, buggyLines);
+    });
+    await Promise.all(buggyFilePromises);
+
+    await console.log('Database populated');
+
   } catch (err) {
     console.log('ERROR: ' + err);
   } finally {
