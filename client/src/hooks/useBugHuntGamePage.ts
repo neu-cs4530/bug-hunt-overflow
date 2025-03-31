@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BUGHUNT_MAX_GUESSES } from '@fake-stack-overflow/shared/constants';
 import useUserContext from './useUserContext';
 import {
   GameInstance,
@@ -8,6 +7,7 @@ import {
   BugHuntGameState,
   SafeBuggyFile,
 } from '../types/types';
+import { BUGHUNT_MAX_GUESSES } from '../types/constants';
 import { CodeLineStyle } from '../components/main/codeBlock';
 import { getBuggyFile, validateBuggyFileLines } from '../services/bugHuntService';
 import { startGame } from '../services/gamesService';
