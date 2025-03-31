@@ -39,3 +39,20 @@ export const getBuggyFile = async (id: string): Promise<SafeBuggyFile> => {
 
   return res.data;
 };
+
+/**
+ * Validates the provided lines with the correct buggy file lines, returning the array of correct guesses.
+ * @param id the id of the buggy file.
+ * @param lines the lines to compare against the buggy file's correct lines.
+ * @retruns the correct lines from the provided guess
+ * @throws if the response status is not 200.
+ */
+export const validateBuggyFileLines = async (id: string, lines: number[]): Promise<number[]> => {
+  const res = await api.post(`${BUG_HUNT_API_URL}/buggyFiles/${id}/validate`, { lines });
+
+  if (res.status !== 200) {
+    throw new Error('Error while validating lines against buggy file answers');
+  }
+
+  return res.data;
+};

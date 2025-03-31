@@ -1,5 +1,10 @@
 import express, { Request, Response } from 'express';
-import { getBuggyFile, getDailyBugHuntScores } from '../services/bughunt.service';
+import {
+  compareBuggyFileLines,
+  getBuggyFile,
+  getDailyBugHuntScores,
+} from '../services/bughunt.service';
+import { BuggyFileValidateRequest } from '../types/types';
 
 /**
  * Controller for handling BugHunt scores-related routes.
@@ -38,6 +43,7 @@ const bugHuntScoresController = () => {
     const { id } = req.params;
     if (!id || typeof id !== 'string') {
       res.status(400).send('Missing buggy file id.');
+      return;
     }
 
     try {
@@ -51,6 +57,37 @@ const bugHuntScoresController = () => {
       res.status(500).send(`Error fetching buggy file.`);
     }
   });
+
+  /**
+   * Endpoint to validate the buggy file against a "guess" of line numbers.
+   * @param req The HTTP request containing the array of line numbers in the body {@link BuggyFileValidateRequest}.
+   * @param res The HTTP response object to send back the array of correct lines or an error message.
+   */
+  router.post(
+    '/buggyFiles/:id/validate',
+    async (req: BuggyFileValidateRequest, res: Response): Promise<void> => {
+      const { id } = req.params;
+      if (!id || typeof id !== 'string') {
+        res.status(400).send('Missing buggy file id.');
+        return;
+      }
+
+      const { lines } = req.body;
+      if (!Array.isArray(lines) || lines.length === 0) {
+        res.status(400).send('Missing `lines` array containing line numbers to validate');
+      }
+      try {
+        const correctLines = await compareBuggyFileLines(id, lines);
+        if (!correctLines) {
+          res.status(404).send('No buggy file with that ID found.');
+          return;
+        }
+        res.status(200).json(correctLines);
+      } catch (error) {
+        res.status(500).send(`Error fetching buggy file.`);
+      }
+    },
+  );
 
   return router;
 };
