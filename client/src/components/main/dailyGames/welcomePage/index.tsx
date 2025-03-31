@@ -2,12 +2,34 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
 import Logo from '../../../../assets/buglogo.png';
+import {
+  BugHuntGameState,
+  GameInstance,
+  GameStatus,
+  GameType,
+  NimGameState,
+} from '../../../../types/types';
 
 const DailyGamesWelcomePage = () => {
   const navigate = useNavigate();
 
   const handlePlayClick = () => {
-    navigate('/../game');
+    const gameInstance: GameInstance<BugHuntGameState> = {
+      gameID: 'LeOe9VBIw4DtKSzRShvfk',
+      gameType: 'BugHunt',
+      state: {
+        // Add mock or real state properties here
+        status: 'IN_PROGRESS',
+      },
+      players: [
+        {
+          id: 'player1',
+          name: 'Player One',
+          score: 0,
+        },
+      ],
+    };
+    navigate('/dailyGames/dailyGame', { state: { gameInstance } });
   };
 
   const date = new Date();

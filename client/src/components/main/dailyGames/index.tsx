@@ -1,11 +1,20 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import {
+  BugHuntGameState,
+  GameInstance,
+  GameStatus,
+  GameType,
+  NimGameState,
+} from '../../../types/types';
 import DailyGamesWelcomePage from './welcomePage';
-import GamePage from './gamePage';
+import DailyGamePage from './dailyGamePage';
 
-const DailyGamesPage = () => (
-  <div>
-    <GamePage />
-  </div>
+const DailyGames = () => (
+  <Routes>
+    <Route path='/' element={<DailyGamesWelcomePage />} />
+    <Route path='/dailyGame' element={<DailyGamePage gameInstance={gameInstance as GameInstance<BugHuntGameState/>} />
+  </Routes>
 );
 
-export default DailyGamesPage;
+export default DailyGames;
