@@ -292,14 +292,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     }
 
     if (this._gameType !== 'BugHuntDaily' && this.state.status === 'IN_PROGRESS') {
-      if (this._players.length === 1) {
-        this.state = {
-          ...this.state,
-          status: 'OVER',
-        };
-      } else {
-        this._checkGameOver();
-      }
+      this._checkGameOver();
     }
   }
 }
