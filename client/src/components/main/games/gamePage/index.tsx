@@ -28,6 +28,7 @@ const GamePage = () => {
         ? {
             Nim: 'Nim Game',
             BugHunt: 'Bug Hunt Game',
+            BugHuntDaily: 'Bug Hunt Daily Game',
           }[gameInstance.gameType]
         : 'Unknown',
     [gameInstance?.gameType],
@@ -46,6 +47,7 @@ const GamePage = () => {
       case 'Nim':
         return <NimGamePage gameInstance={gameInstance as GameInstance<NimGameState>} />;
       case 'BugHunt':
+      case 'BugHuntDaily':
         return <BugHuntGamePage gameInstance={gameInstance as GameInstance<BugHuntGameState>} />;
       default:
         return <div>Unknown game type</div>;

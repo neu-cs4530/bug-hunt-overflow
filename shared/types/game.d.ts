@@ -4,7 +4,7 @@ import { Request } from 'express';
  * Type representing the possible game types as a literal.
  * This is derived from the GAME_TYPES constant.
  */
-export type GameType = 'Nim' | 'BugHunt';
+export type GameType = 'Nim' | 'BugHunt' | 'BugHuntDaily';
 
 /**
  * Type representing the unique identifier for a game instance.

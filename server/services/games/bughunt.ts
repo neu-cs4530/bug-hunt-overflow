@@ -1,4 +1,5 @@
 import {
+  GameType,
   GameMove,
   BugHuntGameState,
   BugHuntMove,
@@ -20,17 +21,17 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   /**
    * Constructor for the BugHunt class, initializes the game state and type.
    */
-  public constructor() {
+  public constructor(gameType: GameType) {
     super(
       {
-        status: 'WAITING_TO_START',
+        status: gameType === 'BugHunt' ? 'WAITING_TO_START' : 'DAILY',
         moves: [],
         createdAt: new Date(),
         updatedAt: new Date(),
         logs: [],
         scores: [],
       },
-      'BugHunt',
+      gameType,
     );
   }
 
@@ -63,7 +64,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     const { playerID } = gameMove;
 
     // Ensure the game is in progress.
-    if (this.state.status !== 'IN_PROGRESS') {
+    if (this._gameType !== 'BugHuntDaily' && this.state.status !== 'IN_PROGRESS') {
       throw new Error('Invalid move: game is not in progress');
     }
 
@@ -86,6 +87,7 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    */
   private _checkGameOver(): void {
     if (
+      this._gameType !== 'BugHuntDaily' &&
       this._players.every(playerID => this._playerHasLost(playerID) || this._playerHasWon(playerID))
     ) {
       this.state = {
@@ -122,9 +124,14 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     const accuracy =
       moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) / moves.length;
     const currentTimeMS = new Date().getMilliseconds();
-    const startTimeMS = this.state.logs
+    let startTimeMS = this.state.logs
       .filter(log => log.type === 'STARTED')[0]
       .createdAt.getMilliseconds();
+    if (this._gameType === 'BugHuntDaily') {
+      startTimeMS = this.state.logs
+        .filter(log => log.type === 'JOINED' && log.player === playerID)[0]
+        .createdAt.getMilliseconds();
+    }
     const timeMilliseconds = currentTimeMS - startTimeMS;
     return {
       player: playerID,
@@ -219,13 +226,6 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
         type: 'JOINED',
       });
     }
-
-    if (this._players.length === BUGHUNT_MAX_PLAYERS - 1) {
-      this.state = {
-        ...this.state,
-        status: 'IN_PROGRESS',
-      };
-    }
   }
 
   /**
@@ -242,11 +242,13 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   }
 
   /**
-   * Starts the game. The game can only be started if it is waiting to start.
-   * @param playerID The ID of the player starting the game.
-   * @throws Will throw an error if the game cannot be started successfully
+   * Checks if it is valid for the player to start the game.
+   * @param playerID the ID of the player starting the game
    */
-  protected async _start(playerID: string): Promise<void> {
+  private _validateStart(playerID: string) {
+    if (this._gameType === 'BugHuntDaily') {
+      return;
+    }
     if (this.state.status !== 'WAITING_TO_START') {
       throw new Error('Cannot start game: game already started');
     }
@@ -258,17 +260,24 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     if (!this.state.logs.some(log => log.player === playerID && log.type === 'CREATED_GAME')) {
       throw new Error('Cannot start game: not game admin');
     }
+  }
+
+  /**
+   * Starts the game. The game can only be started if it is waiting to start, unless it is DAILY.
+   * @param playerID The ID of the player starting the game.
+   * @throws Will throw an error if the game cannot be started successfully
+   */
+  protected async _start(playerID: string): Promise<void> {
+    this._validateStart(playerID);
     await this._selectRandBuggyFile();
-    const gameStartedLog: GameLog = {
+    this._addGameLog({
       player: playerID,
       createdAt: new Date(),
       type: 'STARTED',
-    };
-
+    });
     this.state = {
       ...this.state,
-      status: 'IN_PROGRESS',
-      logs: [...this.state.logs, gameStartedLog],
+      status: this._gameType !== 'BugHuntDaily' ? 'IN_PROGRESS' : 'DAILY',
     };
   }
 
@@ -282,8 +291,8 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error(`Cannot leave game: player ${playerID} is not in the game.`);
     }
 
-    if (this.state.status === 'IN_PROGRESS') {
-      if (this._players.length === 0) {
+    if (this._gameType !== 'BugHuntDaily' && this.state.status === 'IN_PROGRESS') {
+      if (this._players.length === 1) {
         this.state = {
           ...this.state,
           status: 'OVER',

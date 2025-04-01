@@ -44,8 +44,9 @@ class GameManager {
 
         return newGame;
       }
-      case 'BugHunt': {
-        const newGame = new BugHuntGame();
+      case 'BugHunt':
+      case 'BugHuntDaily': {
+        const newGame = new BugHuntGame(gameType);
         await BugHuntModel.create(newGame.toModel());
 
         return newGame;
