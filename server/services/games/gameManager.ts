@@ -1,5 +1,6 @@
 import NimModel from '../../models/nim.model';
 import BugHuntModel from '../../models/bughunt.model';
+import GameModel from '../../models/games.model';
 import {
   BaseMove,
   GameInstance,
@@ -105,7 +106,7 @@ class GameManager {
     playerID: string,
   ): Promise<GameInstance<GameState> | { error: string }> {
     try {
-      const gameToJoin = this.getGame(gameID);
+      const gameToJoin = await this.getGame(gameID);
 
       if (gameToJoin === undefined) {
         throw new Error('Game requested does not exist.');
@@ -131,7 +132,7 @@ class GameManager {
     playerID: string,
   ): Promise<GameInstance<GameState> | { error: string }> {
     try {
-      const gameToStart = this.getGame(gameID);
+      const gameToStart = await this.getGame(gameID);
 
       if (gameToStart === undefined) {
         throw new Error('Game requested does not exist.');
@@ -157,7 +158,7 @@ class GameManager {
     playerID: string,
   ): Promise<GameInstance<GameState> | { error: string }> {
     try {
-      const gameToLeave = this.getGame(gameID);
+      const gameToLeave = await this.getGame(gameID);
 
       if (gameToLeave === undefined) {
         throw new Error('Game requested does not exist.');
@@ -183,8 +184,16 @@ class GameManager {
    * @param gameID The ID of the game.
    * @returns The game instance or undefined if not found.
    */
-  public getGame(gameID: GameInstanceID): Game<GameState, BaseMove> | undefined {
-    return this._games.get(gameID);
+  public async getGame(gameID: GameInstanceID): Promise<Game<GameState, BaseMove> | undefined> {
+    const game = this._games.get(gameID);
+    if (game === undefined) {
+      const dbGame: Game<GameState, BaseMove> | null = await GameModel.findById({ gameID });
+      if (!dbGame) {
+        return undefined;
+      }
+      return dbGame;
+    }
+    return game;
   }
 
   /**

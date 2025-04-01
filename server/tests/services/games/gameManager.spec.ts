@@ -249,16 +249,16 @@ describe('GameManager', () => {
 
       if (typeof gameID === 'string') {
         // act
-        const game = gameManager.getGame(gameID);
+        const game = await gameManager.getGame(gameID);
 
         expect(game).toBeInstanceOf(NimGame);
         expect(mapGetSpy).toHaveBeenCalledWith(gameID);
       }
     });
 
-    it('should return undefined if the game request does not exist', () => {
+    it('should return undefined if the game request does not exist', async () => {
       const gameID = 'fakeGameID';
-      const game = gameManager.getGame(gameID);
+      const game = await gameManager.getGame(gameID);
 
       expect(game).toBeUndefined();
       expect(mapGetSpy).toHaveBeenCalledWith(gameID);
