@@ -123,14 +123,12 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
     const moves = this.state.moves.filter(move => move.playerID === playerID);
     const accuracy =
       moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) / moves.length;
-    const currentTimeMS = new Date().getMilliseconds();
-    let startTimeMS = this.state.logs
-      .filter(log => log.type === 'STARTED')[0]
-      .createdAt.getMilliseconds();
+    const currentTimeMS = new Date().getTime();
+    let startTimeMS = this.state.logs.filter(log => log.type === 'STARTED')[0].createdAt.getTime();
     if (this._gameType === 'BugHuntDaily') {
       startTimeMS = this.state.logs
         .filter(log => log.type === 'JOINED' && log.player === playerID)[0]
-        .createdAt.getMilliseconds();
+        .createdAt.getTime();
     }
     const timeMilliseconds = currentTimeMS - startTimeMS;
     return {
