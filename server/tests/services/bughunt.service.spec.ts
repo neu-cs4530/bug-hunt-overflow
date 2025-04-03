@@ -1,5 +1,6 @@
+import { mock } from 'node:test';
 import BugHuntModel from '../../models/bughunt.model';
-import { getDailyBugHuntScores } from '../../services/bughunt.service';
+import { getDailyBugHuntScores, getConsecutiveDailyGames } from '../../services/bughunt.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
@@ -52,5 +53,91 @@ describe('BugHunt Service', () => {
         'Error retrieving daily BugHunt scores: Error: Database error',
       );
     });
+  });
+});
+
+describe('BugHunt Service - getConsecutiveDailyGames', () => {
+  beforeEach(() => {
+    mockingoose.resetAll();
+    jest.clearAllMocks();
+  });
+
+  it('should return the correct streak for consecutive daily games', async () => {
+    const mockPlayerID = 'player1';
+    const mockDate = '2025-03-30'; // Match the most recent game's date
+    const mockGames = [
+      {
+        state: {
+          status: 'DAILY',
+          createdAt: new Date('2025-03-30T10:00:00.000Z'),
+        },
+      },
+      {
+        state: {
+          status: 'DAILY',
+          createdAt: new Date('2025-03-29T10:00:00.000Z'),
+        },
+      },
+      {
+        state: {
+          status: 'DAILY',
+          createdAt: new Date('2025-03-28T10:00:00.000Z'),
+        },
+      },
+    ];
+
+    mockingoose(BugHuntModel).toReturn(mockGames, 'find');
+
+    const result = await getConsecutiveDailyGames(mockPlayerID, mockDate);
+
+    expect(result).toBe(3); // Expect a streak of 3 days
+  });
+
+  it('should return 0 if no games are found', async () => {
+    const mockPlayerID = 'player1';
+    const mockDate = '2025-03-25';
+
+    mockingoose(BugHuntModel).toReturn([], 'find'); // Simulate no games found
+
+    const result = await getConsecutiveDailyGames(mockPlayerID, mockDate);
+
+    expect(result).toBe(0); // Expect a streak of 0
+  });
+
+  it('should break the streak if there is a gap in consecutive days', async () => {
+    const mockPlayerID = 'player1';
+    const mockDate = '2025-03-30'; // Match the most recent game's date
+
+    const mockGames = [
+      {
+        state: {
+          status: 'DAILY',
+          createdAt: new Date('2025-03-30T10:00:00.000Z'),
+        },
+      },
+      {
+        state: {
+          status: 'DAILY',
+          createdAt: new Date('2025-03-28T10:00:00.000Z'),
+        },
+      },
+    ];
+
+    mockingoose(BugHuntModel).toReturn(mockGames, 'find');
+
+    const result = await getConsecutiveDailyGames(mockPlayerID, mockDate);
+
+    expect(result).toBe(1); // Expect a streak of 1 day
+  });
+
+  it('should throw an error if a database error occurs', async () => {
+    const mockPlayerID = 'player1';
+    const mockDate = '2025-03-25';
+
+    mockingoose(BugHuntModel).toReturn(new Error('Database error'), 'find');
+
+    await expect(getConsecutiveDailyGames(mockPlayerID, mockDate)).rejects.toThrow(
+      'Error retrieving consecutive daily games: Error: Database error',
+    );
   });
 });
