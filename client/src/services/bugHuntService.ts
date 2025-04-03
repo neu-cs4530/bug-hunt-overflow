@@ -40,6 +40,25 @@ export const getBuggyFile = async (id: string): Promise<SafeBuggyFile> => {
   return res.data;
 };
 
+/** Fetches the number of consecutive daily games a player has completed.
+ * @param playerID - The ID of the player for whom to fetch the streak.
+ * @returns A promise resolving to the streak count.
+ * @throws Error if the request fails or the response status is not 200.
+ */
+export const getConsecutiveDailyGames = async (
+  playerID: string,
+  date: string,
+): Promise<{ streak: number }> => {
+  const res = await api.get(`${BUG_HUNT_API_URL}/getConsecutiveDailyGames`, {
+    params: { playerID, date },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error when fetching consecutive daily games streak');
+  }
+  return res.data;
+};
+
 /**
  * Validates the provided lines with the correct buggy file lines, returning the array of correct guesses.
  * @param id the id of the buggy file.
@@ -52,6 +71,26 @@ export const validateBuggyFileLines = async (id: string, lines: number[]): Promi
 
   if (res.status !== 200) {
     throw new Error('Error while validating lines against buggy file answers');
+  }
+
+  return res.data;
+};
+
+/**
+ * Fetches all daily games a player has completed.
+ * @param playerID - The ID of the player for whom to fetch the games.
+ * @returns A promise resolving to an array of objects containing the date, accuracy, and time of each game.
+ * @throws Error if the request fails or the response status is not 200.
+ */
+export const getAllDailyGamesForPlayer = async (
+  playerID: string,
+): Promise<{ date: string; accuracy: number; timeMilliseconds: number }[]> => {
+  const res = await api.get(`${BUG_HUNT_API_URL}/getAllDailyGamesForPlayer`, {
+    params: { playerID },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error when fetching all daily games for player');
   }
 
   return res.data;

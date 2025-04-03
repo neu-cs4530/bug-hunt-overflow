@@ -96,6 +96,93 @@ export const compareBuggyFileLines = async (
 };
 
 /**
+ * Fetches the number of consecutive daily games a player has completed starting from today.
+ * @param playerID The ID of the player.
+ * @returns The number of consecutive daily games completed.
+ */
+export const getConsecutiveDailyGames = async (playerID: string, date: string): Promise<number> => {
+  try {
+    const today = new Date(`${date}T00:00:00.000Z`);
+    const startOfToday = new Date(`${today.toISOString().split('T')[0]}T00:00:00.000Z`);
+    // Query for all daily games completed by the player, sorted by date descending
+    const games = await BugHuntModel.find(
+      {
+        'state.status': 'DAILY',
+        'state.scores.player': playerID,
+      },
+      'state.createdAt',
+    )
+      .sort({ 'state.createdAt': -1 })
+      .lean();
+
+    if (!games || games.length === 0) {
+      return 0;
+    }
+
+    let streak = 0;
+    const currentDate = startOfToday;
+
+    for (const game of games) {
+      const gameDate = new Date(
+        `${game.state.createdAt.toISOString().split('T')[0]}T00:00:00.000Z`,
+      );
+
+      // Check if the game is on the current streak date
+      if (gameDate.getTime() === currentDate.getTime()) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1); // Move to the previous day
+      } else if (gameDate.getTime() < currentDate.getTime() - 86400000) {
+        // Break the streak if there's a gap
+        break;
+      }
+    }
+    return streak;
+  } catch (error) {
+    throw new Error(`Error retrieving consecutive daily games: ${error}`);
+  }
+};
+
+/**
+ * Fetches all daily games a player has completed.
+ * @param playerID The ID of the player.
+ * @returns An array of objects containing the date, accuracy, and time of each game.
+ */
+export const getAllDailyGamesForPlayer = async (
+  playerID: string,
+): Promise<{ date: string; accuracy: number; timeMilliseconds: number }[]> => {
+  try {
+    const games = await BugHuntModel.find(
+      {
+        'state.status': 'DAILY',
+        'state.scores.player': playerID,
+      },
+      'state.createdAt state.scores',
+    )
+      .sort({ 'state.createdAt': -1 })
+      .lean();
+
+    if (!games || games.length === 0) {
+      return [];
+    }
+
+    // Extract the relevant data for each game
+    const playerGames = games.flatMap(game =>
+      game.state.scores
+        .filter(score => score.player === playerID)
+        .map(score => ({
+          date: new Date(game.state.createdAt).toISOString().split('T')[0],
+          accuracy: score.accuracy,
+          timeMilliseconds: score.timeMilliseconds,
+        })),
+    );
+
+    return playerGames;
+  } catch (error) {
+    throw new Error(`Error retrieving daily games for player: ${error}`);
+  }
+};
+
+/**
  * Returns an instance of the current day's daily bughunt game or creates a new one if one doesn't exist.
  */
 export const getDailyGameInstance = async (): Promise<GameInstance<GameState>> => {
