@@ -26,7 +26,7 @@ const gameSchema: Schema = new Schema(
     },
     gameType: {
       type: String,
-      enum: ['Nim', 'BugHunt'],
+      enum: ['Nim', 'BugHunt', 'BugHuntDaily'],
       required: true,
     },
   },

@@ -168,7 +168,7 @@ const gameController = (socket: FakeSOSocket) => {
     const { gameID, move } = gameMove;
 
     try {
-      const game = GameManager.getInstance().getGame(gameID);
+      const game = await GameManager.getInstance().getGame(gameID);
 
       if (game === undefined) {
         throw new Error('Game requested does not exist');

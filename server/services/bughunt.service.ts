@@ -1,6 +1,7 @@
-import { BuggyFile, SafeBuggyFile } from '@fake-stack-overflow/shared';
+import { BuggyFile, SafeBuggyFile, GameInstance, GameState } from '@fake-stack-overflow/shared';
 import BuggyFileModel from '../models/buggyFile.model';
 import BugHuntModel from '../models/bughunt.model';
+import GameManager from './games/gameManager';
 
 const makeBuggyFileSafe = (buggyFile: BuggyFile): SafeBuggyFile => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -178,5 +179,42 @@ export const getAllDailyGamesForPlayer = async (
     return playerGames;
   } catch (error) {
     throw new Error(`Error retrieving daily games for player: ${error}`);
+  }
+};
+
+/**
+ * Returns an instance of the current day's daily bughunt game or creates a new one if one doesn't exist.
+ */
+export const getDailyGameInstance = async (): Promise<GameInstance<GameState>> => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const dailyGames = await BugHuntModel.find({
+      'gameType': 'BugHuntDaily',
+      'state.createdAt': { $gte: startOfDay },
+      'state.buggyFile': { $ne: null },
+    })
+      .select('-_id -__t -__v -state._id')
+      .lean();
+
+    if (dailyGames.length > 1) {
+      throw new Error(`Multiple daily games found for today`);
+    }
+
+    if (!dailyGames || dailyGames.length === 0) {
+      const gameManager = GameManager.getInstance();
+      const newDailyGameID = await gameManager.addGame('BugHuntDaily');
+      if (typeof newDailyGameID !== 'string') {
+        throw new Error(newDailyGameID.error);
+      }
+      const dailyGameInstance = await gameManager.startGame(newDailyGameID, 'DailyBugHuntBackend');
+      if ('error' in dailyGameInstance) {
+        throw new Error(`Daily game instance does not exist. ${dailyGameInstance.error}`);
+      }
+      return dailyGameInstance;
+    }
+    return dailyGames[0];
+  } catch (error) {
+    throw new Error(`Error retrieving daily game ID: ${error}`);
   }
 };

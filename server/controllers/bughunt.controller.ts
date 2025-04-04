@@ -5,6 +5,7 @@ import {
   getDailyBugHuntScores,
   getConsecutiveDailyGames,
   getAllDailyGamesForPlayer,
+  getDailyGameInstance,
 } from '../services/bughunt.service';
 import { BuggyFileValidateRequest } from '../types/types';
 
@@ -135,6 +136,22 @@ const bugHuntScoresController = () => {
       res.status(200).json(games);
     } catch (error) {
       res.status(500).send(`Error fetching daily games for player: ${(error as Error).message}`);
+    }
+  });
+
+  /**
+   * Endpoint to fetch todays BugHunt daily game instance.
+   * @param req The HTTP request object containing the date as a query parameter.
+   * @param res The HTTP response object to send back the scores or an error message.
+   */
+  router.get('/dailyInstance', async (req: Request, res: Response): Promise<void> => {
+    try {
+      const dailyInstance = await getDailyGameInstance();
+      res.status(200).json(dailyInstance);
+    } catch (error) {
+      res
+        .status(500)
+        .send(`Error fetching todays BugHuntDaily instance: ${(error as Error).message}`);
     }
   });
 
