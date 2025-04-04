@@ -6,6 +6,7 @@ import { Schema } from 'mongoose';
  * This schema defines the structure of the game state specific to the BugHunt game. It includes the following fields:
  * - `moves`: An array of moves made by the players. Each move contains:
  *    - `selectedLines`: The lines selected by the user that they think contain bugs
+ *    - `isHint`: An optional datatype used to check if a player used a hint or not
  * - `winners`: An array of usernames of the players who won the game.
  * - `status`: The current game status, which can be one of the following values:
  *    - `'IN_PROGRESS'`: The game is ongoing.
@@ -30,7 +31,10 @@ const bughuntGameStateSchema = new Schema(
       {
         gameID: { type: Schema.Types.ObjectId },
         playerID: { type: String },
-        move: { selectedLines: [{ type: Number, required: true }] },
+        move: {
+          selectedLines: [{ type: Number, required: true }],
+          isHint: [{ type: Boolean, required: false }],
+        },
       },
     ],
     winners: [{ type: String }],

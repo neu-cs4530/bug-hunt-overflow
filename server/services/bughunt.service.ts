@@ -96,6 +96,49 @@ export const compareBuggyFileLines = async (
 };
 
 /**
+ * Checks if the given line is useful for the user to know that it is not one of the bugs
+ * @param line the line of code from the file as a string
+ * @returns true if the line is useful (not a class decleration, whitespace, or brackets)
+ */
+const usefulLine = (line: string): boolean => line.length > 3 && !line.includes('class');
+
+/**
+ * Returns a line number that the user hasn't guessed or used as a previous hint.
+ * @param id the ObjectId of the buggy file.
+ * @param knownLines the array of line numbers to compare to the correct answers.
+ * @returns the line number of an unguessed line that is not a bug
+ */
+export const getHintLine = async (id: string, knownLines: number[]): Promise<number | null> => {
+  try {
+    const buggyFile = await BuggyFileModel.findById(id).lean();
+    if (!buggyFile) {
+      return null;
+    }
+    const usefulLines = buggyFile.code
+      .split('\n')
+      .map((line, i) => {
+        if (usefulLine(line.trim())) {
+          return i + 1;
+        }
+        return -1;
+      })
+      .filter(
+        lineNum =>
+          lineNum !== -1 &&
+          !buggyFile.buggyLines.includes(lineNum) &&
+          !knownLines.includes(lineNum),
+      );
+    if (usefulLines.length === 0) {
+      return -1;
+    }
+    const randI = Math.floor(Math.random() * usefulLines.length);
+    return usefulLines[randI];
+  } catch (error) {
+    throw new Error(`Error retrieving buggy file: ${error}`);
+  }
+};
+
+/**
  * Fetches the number of consecutive daily games a player has completed starting from today.
  * @param playerID The ID of the player.
  * @returns The number of consecutive daily games completed.

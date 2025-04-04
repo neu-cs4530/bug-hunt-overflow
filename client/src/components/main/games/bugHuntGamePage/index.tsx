@@ -22,6 +22,7 @@ const BugHuntGamePage = (props: BugHuntGamePageProps) => {
     handleStartGame,
     handleSelectLine,
     handleSubmit,
+    handleHint,
   } = useBugHuntGamePage(gameInstance);
 
   if (gameInstance.state.status === 'WAITING_TO_START') {
@@ -58,7 +59,14 @@ const BugHuntGamePage = (props: BugHuntGamePageProps) => {
             <span>{movesRemaining} Guesses Remaining</span>
           </p>
         </div>
-
+        <button
+          className='btn-hint'
+          onClick={() => {
+            handleHint();
+          }}>
+          Hint
+          <span className='hint-info'>Hints deduct 10% from your total accuracy</span>
+        </button>
         <button
           className='btn-submit'
           disabled={selectedLines.length === 0}

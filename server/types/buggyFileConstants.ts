@@ -188,7 +188,7 @@ app.get('/deleteItem/:name', async (req, res) => {
 - To update an Item by name: PUT
 - To delete an Item by name: DELETE
 `,
-  buggyLines: [11, 30, 40, 24, 14, 42, 38, 36],
+  buggyLines: [10, 29, 39, 23, 13, 41, 38, 36],
 };
 
 const file4: CreateBuggyFile = {

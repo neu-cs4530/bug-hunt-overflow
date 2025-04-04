@@ -123,6 +123,7 @@ export interface NimGameState extends WinnableGameState {
  */
 export interface BugHuntMove extends BaseMove {
   selectedLines: number[];
+  isHint?: boolean;
 }
 
 /**

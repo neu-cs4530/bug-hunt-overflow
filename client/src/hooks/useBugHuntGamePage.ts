@@ -9,7 +9,7 @@ import {
 } from '../types/types';
 import { BUGHUNT_MAX_GUESSES } from '../types/constants';
 import { CodeLineStyle } from '../components/main/codeBlock';
-import { getBuggyFile, validateBuggyFileLines } from '../services/bugHuntService';
+import { getBuggyFile, validateBuggyFileLines, getHintLine } from '../services/bugHuntService';
 import { startGame } from '../services/gamesService';
 
 export const SELECTED_LINE_BACKGROUND_COLOR = 'lightskyblue';
@@ -101,7 +101,14 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   }, [gameInstance.state.logs, user.username]);
 
   const playerMoves = useMemo(
-    () => gameInstance.state.moves.filter(move => move.playerID === user.username),
+    () =>
+      gameInstance.state.moves.filter(move => move.playerID === user.username && !move.move.isHint),
+    [gameInstance.state.moves, user.username],
+  );
+
+  const playerHints = useMemo(
+    () =>
+      gameInstance.state.moves.filter(move => move.playerID === user.username && move.move.isHint),
     [gameInstance.state.moves, user.username],
   );
 
@@ -245,6 +252,50 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   ]);
 
   /**
+   * Submits the random line given as a hint.
+   */
+  const handleHint = useCallback(async () => {
+    if (gameInstance.state.status === 'OVER') {
+      return;
+    }
+    try {
+      setSelectedLines([]);
+      const buggyFileId = gameInstance.state.buggyFile;
+      if (!buggyFileId) {
+        return;
+      }
+      const hintLine = await getHintLine(buggyFileId, [...correctLines, ...wrongLines]);
+      if (hintLine === -1) {
+        // no more valid lines to give as hints
+        return;
+      }
+      setWrongLines(curr => [...new Set([...curr, hintLine])]);
+
+      const move: GameMove<BugHuntMove> = {
+        playerID: user.username,
+        gameID: gameInstance.gameID,
+        move: { selectedLines: [hintLine], isHint: true },
+      };
+
+      socket.emit('makeMove', {
+        gameID: gameInstance.gameID,
+        move,
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  }, [
+    correctLines,
+    wrongLines,
+    gameInstance.state.status,
+    gameInstance.state.buggyFile,
+    gameInstance.gameID,
+    socket,
+    user.username,
+  ]);
+
+  /**
    * Handler for starting the game.
    */
   const handleStartGame = useCallback(async () => {
@@ -264,6 +315,16 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       validateLineNumbers(move.move.selectedLines);
     });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Load lines already given by hints. Only run on first load
+  useEffect(() => {
+    playerHints.forEach(move => {
+      if (move.move.isHint) {
+        setWrongLines(curr => [...curr, ...move.move.selectedLines]);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -302,6 +363,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     movesRemaining,
     handleStartGame,
     handleSubmit,
+    handleHint,
     handleSelectLine,
   };
 };

@@ -8,7 +8,11 @@ import {
   BugHuntScore,
 } from '../../types/types';
 import BuggyFileModel from '../../models/buggyFile.model';
-import { BUGHUNT_MAX_GUESSES, BUGHUNT_MAX_PLAYERS } from '../../types/constants';
+import {
+  BUGHUNT_MAX_GUESSES,
+  BUGHUNT_MAX_PLAYERS,
+  BUGHUNT_HINT_PENALTY,
+} from '../../types/constants';
 import Game from './game';
 
 /**
@@ -42,7 +46,8 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    */
   private _playerHasLost(playerID: string): boolean {
     return (
-      this.state.moves.filter(move => move.playerID === playerID).length >= BUGHUNT_MAX_GUESSES
+      this.state.moves.filter(move => move.playerID === playerID && !move.move.isHint).length >=
+      BUGHUNT_MAX_GUESSES
     );
   }
 
@@ -104,6 +109,9 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    *          (0 being all wrong, 1 being all correct)
    */
   private _getMoveCorrectness(move: GameMove<BugHuntMove>): number {
+    if (move.move.isHint) {
+      return BUGHUNT_HINT_PENALTY;
+    }
     let sum: number = 0;
     move.move.selectedLines.forEach(lineNum => {
       if (this._buggyLines.includes(lineNum)) {
@@ -121,8 +129,10 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    */
   private _getPlayerScore(playerID: string): BugHuntScore {
     const moves = this.state.moves.filter(move => move.playerID === playerID);
-    const accuracy =
-      moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) / moves.length;
+    const accuracy = Math.max(
+      moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) / moves.length,
+      0,
+    );
     const currentTimeMS = new Date().getTime();
     let startTimeMS = this.state.logs.filter(log => log.type === 'STARTED')[0].createdAt.getTime();
     if (this._gameType === 'BugHuntDaily') {
