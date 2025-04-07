@@ -77,6 +77,23 @@ export const validateBuggyFileLines = async (id: string, lines: number[]): Promi
 };
 
 /**
+ * Returns a line of code the user has not guessed yet that is not a bug.
+ * @param id the id of the buggy file.
+ * @param lines the lines of code the user knows is a bug or not
+ * @retruns a line that does not contain a bug
+ * @throws if the response status is not 200.
+ */
+export const getHintLine = async (id: string, lines: number[]): Promise<number> => {
+  const res = await api.post(`${BUG_HUNT_API_URL}/buggyFiles/${id}/hint`, { lines });
+
+  if (res.status !== 200) {
+    throw new Error('Error while requesting hint line');
+  }
+
+  return res.data;
+};
+
+/**
  * Fetches all daily games a player has completed.
  * @param playerID - The ID of the player for whom to fetch the games.
  * @returns A promise resolving to an array of objects containing the date, accuracy, and time of each game.

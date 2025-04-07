@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import {
   compareBuggyFileLines,
+  getHintLine,
   getBuggyFile,
   getDailyBugHuntScores,
   getConsecutiveDailyGames,
@@ -78,6 +79,7 @@ const bugHuntScoresController = () => {
       const { lines } = req.body;
       if (!Array.isArray(lines) || lines.length === 0) {
         res.status(400).send('Missing `lines` array containing line numbers to validate');
+        return;
       }
       try {
         const correctLines = await compareBuggyFileLines(id, lines);
@@ -86,6 +88,38 @@ const bugHuntScoresController = () => {
           return;
         }
         res.status(200).json(correctLines);
+      } catch (error) {
+        res.status(500).send(`Error fetching buggy file.`);
+      }
+    },
+  );
+
+  /**
+   * Endpoint to reveal a line number that is not a bug based on the current known lines.
+   * @param req The HTTP request containing the array of known line numbers in the body {@link BuggyFileValidateRequest}.
+   * @param res The HTTP response object to send back a good hint or an error message.
+   */
+  router.post(
+    '/buggyFiles/:id/hint',
+    async (req: BuggyFileValidateRequest, res: Response): Promise<void> => {
+      const { id } = req.params;
+      if (!id || typeof id !== 'string') {
+        res.status(400).send('Missing buggy file id.');
+        return;
+      }
+
+      const { lines } = req.body;
+      if (!Array.isArray(lines)) {
+        res.status(400).send('`knownLines` array of known line numbers needed');
+        return;
+      }
+      try {
+        const hintLine = await getHintLine(id, lines);
+        if (!hintLine) {
+          res.status(404).send('No buggy file with that ID found.');
+          return;
+        }
+        res.status(200).json(hintLine);
       } catch (error) {
         res.status(500).send(`Error fetching buggy file.`);
       }
