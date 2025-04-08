@@ -158,6 +158,14 @@ describe('NimGame tests', () => {
     });
   });
 
+  describe('start', () => {
+    it('throws an error if trying to start nim manually', () => {
+      expect(() => nimGame.start('player1')).rejects.toThrow(
+        'Cannot start game: Nim cannot be started manually',
+      );
+    });
+  });
+
   describe('leave', () => {
     it('should remove player 1 from a game waiting to start', () => {
       // assemble

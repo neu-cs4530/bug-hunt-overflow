@@ -103,11 +103,6 @@ const bugHuntScoresController = () => {
     '/buggyFiles/:id/hint',
     async (req: BuggyFileValidateRequest, res: Response): Promise<void> => {
       const { id } = req.params;
-      if (!id || typeof id !== 'string') {
-        res.status(400).send('Missing buggy file id.');
-        return;
-      }
-
       const { lines } = req.body;
       if (!Array.isArray(lines)) {
         res.status(400).send('`knownLines` array of known line numbers needed');

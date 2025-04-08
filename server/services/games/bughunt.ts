@@ -8,11 +8,7 @@ import {
   BugHuntScore,
 } from '../../types/types';
 import BuggyFileModel from '../../models/buggyFile.model';
-import {
-  BUGHUNT_MAX_GUESSES,
-  BUGHUNT_MAX_PLAYERS,
-  BUGHUNT_HINT_PENALTY,
-} from '../../types/constants';
+import { BUGHUNT_MAX_GUESSES, BUGHUNT_HINT_PENALTY } from '../../types/constants';
 import Game from './game';
 
 /**
@@ -73,8 +69,8 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       throw new Error('Invalid move: game is not in progress');
     }
 
-    if (!this.state.buggyFile) {
-      throw new Error('Game error: Buggy file was never chosen');
+    if (!this._players.includes(playerID)) {
+      throw new Error('Invalid move: player is not in the game');
     }
 
     if (this._playerHasLost(playerID)) {
@@ -130,7 +126,8 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   private _getPlayerScore(playerID: string): BugHuntScore {
     const moves = this.state.moves.filter(move => move.playerID === playerID);
     const accuracy = Math.max(
-      moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) / moves.length,
+      moves.reduce((acc, cur) => acc + this._getMoveCorrectness(cur), 0) /
+        moves.filter(mv => !mv.move.isHint).length,
       0,
     );
     const currentTimeMS = new Date().getTime();
@@ -153,7 +150,14 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
    * @param move the BugHuntMove to check for a win or loss.
    */
   private _updateScore(move: GameMove<BugHuntMove>): void {
-    if (this._getMoveCorrectness(move) === 1) {
+    if (
+      this.state.moves.reduce((acc, cur) => {
+        if (cur.move.isHint) {
+          return acc;
+        }
+        return acc + this._getMoveCorrectness(cur);
+      }, 0) >= 0.97
+    ) {
       let updatedWinners: readonly string[] = [move.playerID];
       if (this.state.winners !== undefined) {
         updatedWinners = [...this.state.winners, move.playerID];
@@ -204,12 +208,8 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
       return;
     }
 
-    if (this.state.status !== 'WAITING_TO_START') {
+    if (this._gameType !== 'BugHuntDaily' && this.state.status !== 'WAITING_TO_START') {
       throw new Error('Cannot join game: already started');
-    }
-
-    if (this._players.length >= BUGHUNT_MAX_PLAYERS) {
-      throw new Error('Cannot join game: max number of players already in game');
     }
 
     const baseLog = {
@@ -297,10 +297,6 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   protected _leave(playerID: string): void {
     if (!this._players.includes(playerID)) {
       throw new Error(`Cannot leave game: player ${playerID} is not in the game.`);
-    }
-
-    if (this._gameType !== 'BugHuntDaily' && this.state.status === 'IN_PROGRESS') {
-      this._checkGameOver();
     }
   }
 }

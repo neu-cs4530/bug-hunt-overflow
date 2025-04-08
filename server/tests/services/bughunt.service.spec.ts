@@ -1,6 +1,10 @@
-import { mock } from 'node:test';
 import BugHuntModel from '../../models/bughunt.model';
-import { getDailyBugHuntScores, getConsecutiveDailyGames } from '../../services/bughunt.service';
+import BuggyFileModel from '../../models/buggyFile.model';
+import {
+  getDailyBugHuntScores,
+  getConsecutiveDailyGames,
+  getHintLine,
+} from '../../services/bughunt.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
@@ -56,6 +60,75 @@ describe('BugHunt Service', () => {
   });
 });
 
+describe('getHintLine', () => {
+  it('should return a valid ', async () => {
+    const randomSpy = jest.spyOn(Math, 'random');
+    const mockGameID = '123456789';
+    const mockKnownLines = [6, 7];
+    const mockBuggyFile = {
+      _id: mockGameID,
+      code: `class this line is not useful {
+    this line is not a bug
+    this line is the bug
+    this line is not a bug
+    this line is not a bug
+    this line is not a bug
+    this line is not a bug
+  )
+}`,
+      description: 'Buggy Code',
+      buggyLines: [3],
+    };
+
+    mockingoose(BuggyFileModel).toReturn(mockBuggyFile, 'findOne');
+    randomSpy.mockReturnValueOnce(0);
+    const result = await getHintLine(mockGameID, mockKnownLines);
+
+    expect(result).toEqual(2);
+  });
+
+  it('should return a valid ', async () => {
+    const mockGameID = '123456789';
+    const mockKnownLines = [2, 4, 5, 6, 7];
+    const mockBuggyFile = {
+      _id: mockGameID,
+      code: `class this line is not useful {
+    this line is not a bug
+    this line is the bug
+    this line is not a bug
+    this line is not a bug
+    this line is not a bug
+    this line is not a bug
+  )
+}`,
+      description: 'Buggy Code',
+      buggyLines: [3],
+    };
+
+    mockingoose(BuggyFileModel).toReturn(mockBuggyFile, 'findOne');
+    const result = await getHintLine(mockGameID, mockKnownLines);
+
+    expect(result).toEqual(-1);
+  });
+
+  it('should throw an error if a no buggyfile with id exists', async () => {
+    const mockGameID = '123456789';
+    const mockKnownLines = [2, 4, 5, 6, 7];
+    mockingoose(BuggyFileModel).toReturn(null, 'findOne');
+    await expect(getHintLine(mockGameID, mockKnownLines)).rejects.toThrow(
+      'Error retrieving buggy file: Error: No buggyfile with given id',
+    );
+  });
+
+  it('should throw an error if a database error occurs', async () => {
+    const mockGameID = '123456789';
+    const mockKnownLines = [2, 4, 5, 6, 7];
+    mockingoose(BuggyFileModel).toReturn(new Error('Hint error'), 'findOne');
+    await expect(getHintLine(mockGameID, mockKnownLines)).rejects.toThrow(
+      'Error retrieving buggy file: Error: Hint error',
+    );
+  });
+});
 describe('BugHunt Service - getConsecutiveDailyGames', () => {
   beforeEach(() => {
     mockingoose.resetAll();

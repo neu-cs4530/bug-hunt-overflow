@@ -112,7 +112,7 @@ export const getHintLine = async (id: string, knownLines: number[]): Promise<num
   try {
     const buggyFile = await BuggyFileModel.findById(id).lean();
     if (!buggyFile) {
-      return null;
+      throw new Error(`No buggyfile with given id`);
     }
     const usefulLines = buggyFile.code
       .split('\n')

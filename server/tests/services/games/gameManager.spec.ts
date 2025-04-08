@@ -1,8 +1,21 @@
 import NimModel from '../../../models/nim.model';
+import BugHuntModel from '../../../models/bughunt.model';
+import BuggyFileModel from '../../../models/buggyFile.model';
+import GameModel from '../../../models/games.model';
 import GameManager from '../../../services/games/gameManager';
 import NimGame from '../../../services/games/nim';
+import Game from '../../../services/games/game';
+import BugHuntGame from '../../../services/games/bughunt';
 import { MAX_NIM_OBJECTS } from '../../../types/constants';
-import { GameInstance, GameInstanceID, NimGameState, GameType } from '../../../types/types';
+import {
+  GameInstance,
+  GameInstanceID,
+  NimGameState,
+  GameType,
+  BugHuntGameState,
+  GameState,
+  BaseMove,
+} from '../../../types/types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
@@ -155,6 +168,101 @@ describe('GameManager', () => {
     });
   });
 
+  describe('startGame', () => {
+    let gameManager: GameManager;
+    let gameID: GameInstanceID;
+
+    beforeEach(async () => {
+      mockingoose(BugHuntModel).toReturn(new BugHuntGame('BugHunt').toModel(), 'create');
+
+      gameManager = GameManager.getInstance();
+      const addGameResult = await gameManager.addGame('BugHunt');
+
+      if (typeof addGameResult === 'string') {
+        gameID = addGameResult;
+        await gameManager.joinGame(gameID, 'player1');
+      }
+    });
+
+    it('should join the requested game', async () => {
+      const mockBuggyFileID = '67f42bffada65b7ff17dae09';
+      const gameState: GameInstance<BugHuntGameState> = {
+        state: {
+          moves: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          status: 'IN_PROGRESS',
+          logs: [
+            {
+              createdAt: new Date(),
+              player: 'player1',
+              type: 'CREATED_GAME',
+            },
+            {
+              createdAt: new Date(),
+              player: 'player1',
+              type: 'JOINED',
+            },
+            {
+              createdAt: new Date(),
+              player: 'player1',
+              type: 'STARTED',
+            },
+          ],
+          scores: [],
+          buggyFile: mockBuggyFileID,
+        },
+        gameID,
+        players: ['player1'],
+        gameType: 'BugHunt',
+      };
+
+      const saveGameStateSpy = jest
+        .spyOn(BugHuntGame.prototype, 'saveGameState')
+        .mockResolvedValueOnce();
+      const bugHuntGameStartSpy = jest.spyOn(BugHuntGame.prototype, 'start');
+      jest.spyOn(Math, 'random').mockReturnValue(0);
+      mockingoose(BuggyFileModel).toReturn(
+        [
+          {
+            _id: mockBuggyFileID,
+            code: `class Transaction {
+          constructor(
+            public type: "Deposit" | "Withdrawal",
+            public amount: number,
+            public date: Date = new Date()
+          ) {}
+        }
+      `,
+            description: `The purpose of this program.`,
+            buggyLines: [2, 3, 4],
+          },
+        ],
+        'find',
+      );
+
+      const startedGame = (await gameManager.startGame(
+        gameID,
+        'player1',
+      )) as GameInstance<BugHuntGameState>;
+
+      expect(saveGameStateSpy).toHaveBeenCalled();
+      expect(bugHuntGameStartSpy).toHaveBeenCalledWith('player1');
+      expect(startedGame.state.logs.length).toEqual(gameState.state.logs.length);
+      expect(startedGame.state.logs.filter(log => log.type === 'CREATED_GAME').length).toEqual(1);
+      expect(startedGame.state.logs.filter(log => log.type === 'JOINED').length).toEqual(1);
+      expect(startedGame.state.logs.filter(log => log.type === 'STARTED').length).toEqual(1);
+      expect(startedGame.state.logs.filter(log => log.player === 'player1').length).toEqual(3);
+      expect(startedGame.state.status).toEqual(gameState.state.status);
+    });
+
+    it('should throw an error if the game does not exist', async () => {
+      const response = await gameManager.startGame('fakeGameID', 'player1');
+
+      expect(response).toEqual({ error: 'Game requested does not exist.' });
+    });
+  });
+
   describe('leaveGame', () => {
     let gameManager: GameManager;
     let gameID: GameInstanceID;
@@ -256,8 +364,19 @@ describe('GameManager', () => {
       }
     });
 
+    it('should return game from db if the game request does not exist', async () => {
+      mapGetSpy.mockReturnValueOnce(undefined);
+      const gameID = 'unknownGameID';
+      const mockGame = new NimGame() as Game<GameState, BaseMove>;
+      mockingoose(GameModel).toReturn(mockGame, 'findOne');
+      const game = await gameManager.getGame(gameID);
+      expect(game).not.toBeUndefined();
+      expect(mapGetSpy).toHaveBeenCalledWith(gameID);
+    });
+
     it('should return undefined if the game request does not exist', async () => {
       const gameID = 'fakeGameID';
+      mockingoose(GameModel).toReturn(undefined, 'findOne');
       const game = await gameManager.getGame(gameID);
 
       expect(game).toBeUndefined();
