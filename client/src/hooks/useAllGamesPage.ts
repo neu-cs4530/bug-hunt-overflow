@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createGame, getGames } from '../services/gamesService';
 import { GameInstance, GameState, GameType } from '../types/types';
+import useQuery from './useQuery';
+
+type AllGamesPageView = 'current' | 'previous';
 
 /**
  * Custom hook to manage the state and logic for the "All Games" page, including fetching games,
@@ -16,17 +19,23 @@ import { GameInstance, GameState, GameType } from '../types/types';
  */
 const useAllGamesPage = () => {
   const navigate = useNavigate();
-  const [availableGames, setAvailableGames] = useState<GameInstance<GameState>[]>([]);
+  const query = useQuery();
+  const [currentGames, setCurrentGames] = useState<GameInstance<GameState>[]>([]);
+  const [previousGames, setPreviousGames] = useState<GameInstance<GameState>[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentView, setCurrentView] = useState<AllGamesPageView>('current');
 
   const fetchGames = async () => {
     try {
       const games = await getGames(undefined, undefined);
-      const filteredGames = games.filter(
-        game => game.state.status !== 'DAILY' && game.state.status !== 'OVER',
-      );
-      setAvailableGames(filteredGames);
+
+      const nonDailyGames = games.filter(game => game.state.status !== 'DAILY');
+      const current = nonDailyGames.filter(game => game.state.status !== 'OVER');
+      const previous = nonDailyGames.filter(game => game.state.status === 'OVER');
+
+      setCurrentGames(current);
+      setPreviousGames(previous);
     } catch (getGamesError) {
       setError('Error fetching games');
     }
@@ -58,13 +67,30 @@ const useAllGamesPage = () => {
     handleToggleModal();
   };
 
+  const handleViewChange = (view: AllGamesPageView) => {
+    navigate(`/games?view=${view}`, { replace: true });
+  };
+
+  useEffect(() => {
+    const viewParam = query.get('view');
+    if (viewParam) {
+      if (viewParam !== 'current' && viewParam !== 'previous') {
+        return;
+      }
+      setCurrentView(viewParam);
+    }
+  }, [query]);
+
   return {
-    availableGames,
+    currentGames,
+    previousGames,
+    currentView,
     handleJoin,
     fetchGames,
     isModalOpen,
     handleToggleModal,
     handleSelectGameType,
+    handleViewChange,
     error,
   };
 };

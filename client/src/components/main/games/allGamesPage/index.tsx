@@ -1,4 +1,5 @@
 import './index.css';
+import { useMemo } from 'react';
 import useAllGamesPage from '../../../../hooks/useAllGamesPage';
 import GameCard from './gameCard';
 
@@ -11,43 +12,79 @@ import GameCard from './gameCard';
  */
 const AllGamesPage = () => {
   const {
-    availableGames,
+    currentGames,
+    previousGames,
+    currentView,
     handleJoin,
     fetchGames,
     isModalOpen,
     handleToggleModal,
     handleSelectGameType,
+    handleViewChange,
     error,
   } = useAllGamesPage();
 
+  const title = useMemo(
+    () =>
+      ({
+        current: 'Current Games',
+        previous: 'Previous Games',
+      })[currentView],
+    [currentView],
+  );
+
+  const games = useMemo(
+    () =>
+      ({
+        current: currentGames,
+        previous: previousGames,
+      })[currentView],
+    [currentGames, previousGames, currentView],
+  );
+
   return (
     <div className='game-page'>
-      <div className='game-controls'>
-        <button className='btn-create-game' onClick={handleToggleModal}>
-          Create Game
+      <div className='all-games-controls'>
+        <h2>{title}</h2>
+        {currentView === 'current' && (
+          <button className='btn-create-game' onClick={handleToggleModal}>
+            Create Game
+          </button>
+        )}
+        <button className='btn-refresh-list' onClick={fetchGames}>
+          Refresh List
         </button>
       </div>
 
-      {isModalOpen && (
-        <div className='game-modal'>
-          <div className='modal-content'>
-            <h2>Select Game Type</h2>
-            <button onClick={() => handleSelectGameType('Nim')}>Nim</button>
-            <button onClick={() => handleSelectGameType('BugHunt')}>Bug Hunt</button>
-            <button onClick={handleToggleModal}>Cancel</button>
-          </div>
-        </div>
-      )}
+      <div className='all-games-nav'>
+        <button
+          className={`all-games-nav-item ${currentView === 'current' ? 'active' : ''}`}
+          onClick={() => handleViewChange('current')}>
+          Current Games
+        </button>
+        <button
+          className={`all-games-nav-item ${currentView === 'previous' ? 'active' : ''}`}
+          onClick={() => handleViewChange('previous')}>
+          Previous Games
+        </button>
+      </div>
 
       <div className='game-available'>
+        {isModalOpen && (
+          <div className='game-modal'>
+            <div className='modal-content'>
+              <h2>Select Game Type</h2>
+              <button onClick={() => handleSelectGameType('Nim')}>Nim</button>
+              <button onClick={() => handleSelectGameType('BugHunt')}>Bug Hunt</button>
+              <button onClick={handleToggleModal}>Cancel</button>
+            </div>
+          </div>
+        )}
         <div className='game-list'>
           {error && <div className='game-error'>{error}</div>}
-          <h2>Available Games</h2>
-          <button className='btn-refresh-list' onClick={fetchGames}>
-            Refresh List
-          </button>
+
           <div className='game-items'>
-            {availableGames.map(game => (
+            {games.map(game => (
               <GameCard key={game.gameID} game={game} handleJoin={handleJoin} />
             ))}
           </div>

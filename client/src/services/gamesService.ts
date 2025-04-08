@@ -113,4 +113,29 @@ const startGame = async (gameID: string, playerID: string): Promise<GameInstance
   return res.data;
 };
 
-export { createGame, getGames, joinGame, leaveGame, startGame };
+/**
+ * Function to fetch a list of games based on optional filters for game type and status.
+ * @param gameType (Optional) The type of games to filter by.
+ * @param status (Optional) The status of games to filter by.
+ * @returns A promise resolving to a list of game instances.
+ * @throws Error if there is an issue while fetching the games.
+ */
+const getGameById = async (gameId: string): Promise<GameInstance<GameState>> => {
+  const params = new URLSearchParams();
+
+  if (!gameId) {
+    throw new Error('missing game id');
+  }
+
+  const res = await api.get(`${GAMES_API_URL}/${gameId}`, {
+    params,
+  });
+
+  if (res.status !== 200) {
+    throw new Error(`Error while getting game with ID: ${gameId}`);
+  }
+
+  return res.data;
+};
+
+export { createGame, getGames, joinGame, leaveGame, startGame, getGameById };

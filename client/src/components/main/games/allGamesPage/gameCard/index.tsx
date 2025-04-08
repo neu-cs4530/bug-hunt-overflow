@@ -1,5 +1,6 @@
 import './index.css';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GameInstance, GameState } from '../../../../../types/types';
 import useUserContext from '../../../../../hooks/useUserContext';
 
@@ -17,8 +18,20 @@ const GameCard = ({
   handleJoin: (gameID: string) => void;
 }) => {
   const { user } = useUserContext();
+  const navigate = useNavigate();
 
   const renderJoinButton = useCallback(() => {
+    if (game.state.status === 'OVER') {
+      return (
+        <button
+          className='btn-join-game'
+          onClick={() => {
+            navigate(`/games/${game.gameID}/summary`);
+          }}>
+          See Results
+        </button>
+      );
+    }
     if (game.players.includes(user.username)) {
       return (
         <button className='btn-join-game' onClick={() => handleJoin(game.gameID)}>

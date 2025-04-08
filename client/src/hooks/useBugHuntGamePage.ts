@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useUserContext from './useUserContext';
 import {
   GameInstance,
@@ -38,6 +39,7 @@ const makeCodeLineStyle = (lines: number[], style: CodeLineStyle) =>
 
 const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const { user, socket } = useUserContext();
+  const navigate = useNavigate();
 
   const [buggyFile, setBuggyFile] = useState<SafeBuggyFile | null>(null);
   const [selectedLines, setSelectedLines] = useState<number[]>([]);
@@ -120,6 +122,11 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     [playerMoves.length],
   );
 
+  const isPlayerDone = useMemo<boolean>(
+    () => gameInstance.state.status === 'OVER' || movesRemaining === 0,
+    [gameInstance.state.status, movesRemaining],
+  );
+
   const loadBuggyFile = useCallback(
     async (id: string) => {
       try {
@@ -185,12 +192,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
    */
   const handleSelectLine = useCallback(
     (lineNumber: number) => {
-      if (
-        correctLines.includes(lineNumber) ||
-        wrongLines.includes(lineNumber) ||
-        gameInstance.state.status === 'OVER' ||
-        movesRemaining === 0
-      ) {
+      if (correctLines.includes(lineNumber) || wrongLines.includes(lineNumber) || isPlayerDone) {
         return;
       }
 
@@ -206,14 +208,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
         return [...curr, lineNumber];
       });
     },
-    [
-      buggyFile?.numberOfBugs,
-      correctLines,
-      gameInstance.state.status,
-      movesRemaining,
-      selectedLines.length,
-      wrongLines,
-    ],
+    [buggyFile?.numberOfBugs, correctLines, isPlayerDone, selectedLines.length, wrongLines],
   );
 
   /**
@@ -223,7 +218,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     if (selectedLines.length === 0) {
       return;
     }
-    if (gameInstance.state.status === 'OVER') {
+    if (isPlayerDone) {
       return;
     }
 
@@ -244,7 +239,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   }, [
     correctLines,
     gameInstance.gameID,
-    gameInstance.state.status,
+    isPlayerDone,
     selectedLines,
     socket,
     user.username,
@@ -255,9 +250,10 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
    * Submits the random line given as a hint.
    */
   const handleHint = useCallback(async () => {
-    if (gameInstance.state.status === 'OVER') {
+    if (isPlayerDone) {
       return;
     }
+
     try {
       setSelectedLines([]);
       const buggyFileId = gameInstance.state.buggyFile;
@@ -286,13 +282,13 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       console.error(error);
     }
   }, [
-    correctLines,
-    wrongLines,
-    gameInstance.state.status,
+    isPlayerDone,
     gameInstance.state.buggyFile,
     gameInstance.gameID,
-    socket,
+    correctLines,
+    wrongLines,
     user.username,
+    socket,
   ]);
 
   /**
@@ -352,6 +348,13 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
       clearInterval(stopwatchInterval);
     };
   }, [gameStartDate, playerJoinDate, updateStopwatch]);
+
+  // Navigate to summary when player is done with game
+  useEffect(() => {
+    if (isPlayerDone) {
+      navigate(`/games/${gameInstance.gameID}/summary`);
+    }
+  }, [gameInstance.gameID, isPlayerDone, navigate]);
 
   return {
     selectedLines,

@@ -28,7 +28,7 @@ body {
 }
 
 .btn-hint {
-  background: #fec03b;
+  background: #f0a502;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -63,7 +63,7 @@ body {
 }
 
 .btn-hint .hint-info::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 50%;
@@ -81,8 +81,6 @@ body {
 .btn-hint:hover {
   background: #bd8d2a;
 }
-
-
 
 button:disabled {
   background: #ccc;

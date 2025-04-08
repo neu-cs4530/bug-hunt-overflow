@@ -5,8 +5,9 @@ import {
   GameMovePayload,
   GameRequest,
   GetGamesRequest,
+  GetGameByIdRequest,
 } from '../types/types';
-import findGames from '../services/game.service';
+import { findGameById, findGames } from '../services/game.service';
 import GameManager from '../services/games/gameManager';
 import { GAME_TYPES } from '../types/constants';
 
@@ -160,6 +161,26 @@ const gameController = (socket: FakeSOSocket) => {
   };
 
   /**
+   * Fetches a game based on the ID provided through path parameters.
+   * @param req The request object containing the path param providing game ID.
+   * @param res The response object to send the result.
+   */
+  const getGameById = async (req: GetGameByIdRequest, res: Response) => {
+    try {
+      const { gameId } = req.params;
+
+      const game = await findGameById(gameId);
+      if (!game) {
+        res.status(404).send('No game with that ID');
+      }
+
+      res.status(200).json(game);
+    } catch (error) {
+      res.status(500).send(`Error when getting a game by ID: ${(error as Error).message}`);
+    }
+  };
+
+  /**
    * Handles a game move by applying the move to the game state, emitting updates to all players, and saving the state.
    * @param gameMove The payload containing the game ID and move details.
    * @throws Error if applying the move or saving the game state fails.
@@ -208,6 +229,7 @@ const gameController = (socket: FakeSOSocket) => {
   router.post('/start', startGame);
   router.post('/leave', leaveGame);
   router.get('/games', getGames);
+  router.get('/:gameId', getGameById);
 
   return router;
 };
