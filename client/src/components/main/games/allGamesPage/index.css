@@ -71,9 +71,9 @@ button:disabled {
 }
 
 .game-items {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 
 /* Error Message */

@@ -2,14 +2,9 @@ import './index.css';
 import { useMemo } from 'react';
 import NimGamePage from '../nimGamePage';
 import useGamePage from '../../../../hooks/useGamePage';
-import {
-  BugHuntGameState,
-  GameInstance,
-  GameStatus,
-  GameType,
-  NimGameState,
-} from '../../../../types/types';
+import { BugHuntGameState, GameInstance, GameType, NimGameState } from '../../../../types/types';
 import BugHuntGamePage from '../bugHuntGamePage';
+import GameStatusBadge from '../gameStatusBadge';
 
 /**
  * Component to display the game page for a specific game type, including controls and game state.
@@ -54,23 +49,6 @@ const GamePage = () => {
     }
   };
 
-  const renderGameStatus = (gameStatus: GameStatus) => {
-    if (!gameStatus) return <></>;
-
-    switch (gameStatus) {
-      case 'IN_PROGRESS':
-        return <p className='game-status in-progress'>In Progress</p>;
-      case 'WAITING_TO_START':
-        return <p className='game-status waiting'>Waiting to Start</p>;
-      case 'OVER':
-        return <p className='game-status over'>Game Over</p>;
-      case 'DAILY':
-        return <p className='game-status daily'>Daily Game</p>;
-      default:
-        return <></>;
-    }
-  };
-
   if (!gameInstance) {
     return <div>Missing game instance</div>;
   }
@@ -79,7 +57,7 @@ const GamePage = () => {
     <div className='game-page'>
       <header className='game-header'>
         <h1>{title}</h1>
-        {renderGameStatus(gameInstance.state.status)}
+        <GameStatusBadge status={gameInstance.state.status} />
         <div className='game-controls'>
           <button className='btn-leave-game' onClick={handleLeaveGame}>
             Leave Game

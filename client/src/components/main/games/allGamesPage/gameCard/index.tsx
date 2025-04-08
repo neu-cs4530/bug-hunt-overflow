@@ -1,8 +1,10 @@
 import './index.css';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameInstance, GameState } from '../../../../../types/types';
 import useUserContext from '../../../../../hooks/useUserContext';
+import GameStatusBadge from '../../gameStatusBadge';
+import { UsersIcon } from '../../../../icons';
 
 /**
  * Component to display a game card with details about a specific game instance.
@@ -20,7 +22,17 @@ const GameCard = ({
   const { user } = useUserContext();
   const navigate = useNavigate();
 
-  const renderJoinButton = useCallback(() => {
+  const title = useMemo(
+    () =>
+      ({
+        Nim: 'Nim Game',
+        BugHunt: 'Bug Hunt Game',
+        BugHuntDaily: 'Bug Hunt Game',
+      })[game.gameType],
+    [game.gameType],
+  );
+
+  const renderActionButton = useCallback(() => {
     if (game.state.status === 'OVER') {
       return (
         <button
@@ -32,6 +44,7 @@ const GameCard = ({
         </button>
       );
     }
+
     if (game.players.includes(user.username)) {
       return (
         <button className='btn-join-game' onClick={() => handleJoin(game.gameID)}>
@@ -49,19 +62,43 @@ const GameCard = ({
         Join Game
       </button>
     );
-  }, [game.gameID, game.players, game.state.status, handleJoin, user.username]);
+  }, [game.gameID, game.players, game.state.status, handleJoin, navigate, user.username]);
 
   return (
     <div className='game-item'>
-      <p>
-        <strong>Game ID:</strong> {game.gameID} | <strong>Status:</strong> {game.state.status}
-      </p>
-      <ul className='game-players'>
-        {game.players.map((player: string) => (
-          <li key={`${game.gameID}-${player}`}>{player}</li>
-        ))}
-      </ul>
-      {renderJoinButton()}
+      <div className='game-item-header'>
+        <div>
+          <h3>{title}</h3>
+        </div>
+        <GameStatusBadge status={game.state.status} />
+      </div>
+
+      <div className='game-players'>
+        <div className='game-players-header'>
+          <UsersIcon />
+          <h4>Players: </h4>
+          <span>
+            {game.players.length > 0 ? (
+              game.players.map((player, i) => (
+                <>
+                  <button
+                    key={`${game.gameID}-${player}`}
+                    className='game-player-item'
+                    onClick={() => {
+                      navigate(`/user/${user.username}`);
+                    }}>
+                    {player}
+                  </button>
+                  {i + 1 !== game.players.length ? ',' : <></>}
+                </>
+              ))
+            ) : (
+              <span className='no-players'>None</span>
+            )}
+          </span>
+        </div>
+      </div>
+      {renderActionButton()}
     </div>
   );
 };

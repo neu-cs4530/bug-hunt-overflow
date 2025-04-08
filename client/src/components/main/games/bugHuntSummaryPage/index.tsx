@@ -1,17 +1,15 @@
 import './index.css';
 import dayjs from 'dayjs';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
 import duration from 'dayjs/plugin/duration';
 import { useMemo } from 'react';
 import useBugHuntSummaryPage from '../../../../hooks/useBugHuntSummaryPage';
 import { BugHuntGameState, GameInstance } from '../../../../types/types';
 
-dayjs.extend(duration);
-dayjs.extend(localizedFormat);
-
 interface BugHuntSummaryPageProps {
   gameInstance: GameInstance<BugHuntGameState>;
 }
+
+dayjs.extend(duration);
 
 const formatPlayerScoreDuration = (timeMilliseconds: number) => {
   const dur = dayjs.duration(timeMilliseconds);
