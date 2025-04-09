@@ -98,7 +98,7 @@ const LeaderBoardTable = (props: LeaderBoardTableProps) => {
               </button>
             </th>
             <th>Accuracy</th>
-            <th>Streak</th>
+            {selectedDate ? <th>Streak</th> : <></>}
           </tr>
         </thead>
         <tbody>
