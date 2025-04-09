@@ -12,7 +12,7 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.25rem;
 }
 
 /* Icon/logo */
@@ -25,12 +25,11 @@
 /* Group for title + subtitle */
 .title-row {
   display: flex;
-  align-items: baseline; /* key: aligns text baselines */
-  gap: 12px;
-  margin-top: 10px;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.title {
+.header-title {
   font-size: 28px;
   font-weight: 700;
   color: #1c1e21;
@@ -38,13 +37,12 @@
   line-height: 1.2;
 }
 
-.subtitle {
+.header-subtitle {
   font-size: 18px;
   font-weight: 400;
   color: #6a737c;
   white-space: nowrap;
 }
-
 
 /* Center section (Search bar) */
 .header-center {

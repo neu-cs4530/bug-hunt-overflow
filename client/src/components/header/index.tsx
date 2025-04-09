@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
@@ -15,8 +14,8 @@ const Header = () => {
       <div className='header-left'>
         <img src={logo} alt='Stack Overflow Logo' className='header-logo' />
         <div className='title-row'>
-          <h1 className='title'>Bug Overflow</h1>
-          <span className='subtitle'>Ask. Debug. Solve.</span>
+          <h1 className='header-title'>Bug Overflow</h1>
+          <span className='header-subtitle'>Ask. Debug. Solve.</span>
         </div>
       </div>
 
