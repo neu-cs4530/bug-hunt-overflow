@@ -211,5 +211,21 @@ describe('BugHunt Service', () => {
       expect(resFile?.code).toBe(mockBuggyFile.code);
       expect(resFile?.numberOfBugs).toBe(mockBuggyFile.buggyLines.length);
     });
+
+    it('should throw an error if a database error occurs', async () => {
+      mockingoose(BuggyFileModel).toReturn(mockBuggyFile, 'findOne');
+
+      const resFile = await getBuggyFile(mockBuggyFile._id);
+
+      mockingoose(BugHuntModel).toReturn(new Error('Database error'), 'find');
+
+      await expect(() => getBuggyFile(mockBuggyFile._id)).rejects.toThrow(
+        'Error retrieving buggy file: Error: Database error',
+      );
+
+      expect(resFile?.description).toBe(mockBuggyFile.description);
+      expect(resFile?.code).toBe(mockBuggyFile.code);
+      expect(resFile?.numberOfBugs).toBe(mockBuggyFile.buggyLines.length);
+    });
   });
 });

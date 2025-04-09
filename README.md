@@ -1,11 +1,58 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/fE-a_qEp)
 The individual and team project for this class are designed to mirror the experiences of a software engineer joining a new development team: you will be “onboarded” to our codebase, make several individual contributions, and then form a team to propose, develop and implement new features. The codebase that we’ll be developing on is a Fake Stack Overflow project (let’s call it HuskyFlow). You will get an opportunity to work with the starter code which provides basic skeleton for the app and then additional features will be proposed and implemented by you! All implementation will take place in the TypeScript programming language, using React for the user interface.
 
-## Getting Started
+## Using the Repository
 
-Run `npm install` in the root directory to install all dependencies for the `client`, `server`, and `shared` folders.
+1.  Ensure the following software is installed:
+    - Node.js
+    - NPM
+    - MongoDB
+2.  Clone the git repository
+3.  Install the dependencies by running:
 
-{ : .note } Refer to [IP1](https://neu-se.github.io/CS4530-Spring-2025/assignments/ip1) and [IP2](https://neu-se.github.io/CS4530-Spring-2025/assignments/ip2) for further instructions related to setting up MongoDB, setting environment variables, and running the client and server.
+    ```
+    cd ./client/
+    npm install
+    cd ../server
+    npm install
+    cd ../testing
+    npm install
+    ```
+
+4.  Create the Environment Files:
+
+    - In `./client` create a file called `.env` and add the following line
+
+      ```
+      REACT_APP_SERVER_URL=http://localhost:8000
+      ```
+
+    - In `./server` create a file called `.env` and add the following lines
+
+      ```
+      MONGODB_URI=mongodb://127.0.0.1:27017
+      CLIENT_URL=http://localhost:3000
+      PORT=8000
+      ```
+
+5.  Populate MongoDB by running:
+    ```
+    cd ./server/
+    npm run populate-db
+    ```
+6.  Start the server by running:
+
+    ```
+    cd ./server/
+    npm run start
+    ```
+
+7.  Start the client by running:
+    ```
+    cd ./client/
+    npm run start
+    ```
+8.  Starting bug hunting by opening http://localhost:3000
 
 ## Codebase Folder Structure
 
