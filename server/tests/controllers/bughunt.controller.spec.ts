@@ -5,6 +5,8 @@ import * as bugHuntService from '../../services/bughunt.service';
 const getDailyBugHuntScoresSpy = jest.spyOn(bugHuntService, 'getDailyBugHuntScores');
 const getConsecutiveDailyGamesSpy = jest.spyOn(bugHuntService, 'getConsecutiveDailyGames');
 const getHintLineSpy = jest.spyOn(bugHuntService, 'getHintLine');
+const getBuggyFileSpy = jest.spyOn(bugHuntService, 'getBuggyFile');
+const compareBuggyFileLinesSpy = jest.spyOn(bugHuntService, 'compareBuggyFileLines');
 
 describe('BugHunt Controller', () => {
   describe('GET /bughunt/getDailyScores', () => {
@@ -143,6 +145,108 @@ describe('BugHunt Controller', () => {
       expect(response.status).toBe(500);
       expect(response.text).toContain('Error fetching buggy file.');
       expect(getHintLineSpy).toHaveBeenCalledWith(mockID, knownLines);
+    });
+  });
+
+  describe('GET /bughunt/buggyFiles/:id', () => {
+    it('should return 200 with a buggy file', async () => {
+      const mockBuggyFileGameID = '12345';
+      const mockBuggyFile = {
+        _id: mockBuggyFileGameID,
+        code: `class this line is not useful {
+      this line is not a bug
+      this line is the bug
+      this line is not a bug
+      this line is not a bug
+      this line is not a bug
+      this line is not a bug
+    )
+  }`,
+        description: 'Buggy Code',
+        numberOfBugs: 1,
+      };
+
+      getBuggyFileSpy.mockResolvedValueOnce(mockBuggyFile);
+
+      const response = await supertest(app).get(`/bughunt/buggyFiles/${mockBuggyFileGameID}`);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockBuggyFile);
+    });
+
+    it('should return 404 if there is no buggy file found', async () => {
+      const mockBuggyFileGameID = '12345';
+      getBuggyFileSpy.mockResolvedValueOnce(null);
+
+      const response = await supertest(app).get(`/bughunt/buggyFiles/${mockBuggyFileGameID}`);
+      expect(response.status).toBe(404);
+      expect(response.text).toBe('No buggy file with that ID found.');
+    });
+
+    it('should return 500 if there is a service error', async () => {
+      const mockBuggyFileGameID = '12345';
+
+      getBuggyFileSpy.mockRejectedValueOnce(new Error('service error'));
+
+      const response = await supertest(app).get(`/bughunt/buggyFiles/${mockBuggyFileGameID}`);
+
+      expect(response.status).toBe(500);
+      expect(response.text).toBe('Error fetching buggy file.');
+    });
+  });
+
+  describe('POST /bughunt/buggyFiles/:id/validate', () => {
+    it('should return 200 with the correct lines', async () => {
+      const mockBuggyFileGameID = '12345';
+
+      compareBuggyFileLinesSpy.mockResolvedValueOnce([3]);
+
+      const response = await supertest(app)
+        .post(`/bughunt/buggyFiles/${mockBuggyFileGameID}/validate`)
+        .send({
+          lines: [3],
+        });
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([3]);
+    });
+
+    it('should return 400 if the request body lines array is empty', async () => {
+      const mockBuggyFileGameID = '12345';
+
+      const response = await supertest(app)
+        .post(`/bughunt/buggyFiles/${mockBuggyFileGameID}/validate`)
+        .send({
+          lines: [],
+        });
+      expect(response.status).toBe(400);
+      expect(response.text).toBe('Missing `lines` array containing line numbers to validate');
+    });
+
+    it('should return 404 if there is no buggy file found', async () => {
+      const mockBuggyFileGameID = '12345';
+
+      compareBuggyFileLinesSpy.mockResolvedValueOnce(null);
+
+      const response = await supertest(app)
+        .post(`/bughunt/buggyFiles/${mockBuggyFileGameID}/validate`)
+        .send({
+          lines: [3],
+        });
+
+      expect(response.status).toBe(404);
+      expect(response.text).toBe('No buggy file with that ID found.');
+    });
+
+    it('should return 500 if there is no buggy file found', async () => {
+      const mockBuggyFileGameID = '12345';
+
+      const response = await supertest(app)
+        .post(`/bughunt/buggyFiles/${mockBuggyFileGameID}/validate`)
+        .send({
+          lines: [3],
+        });
+
+      expect(response.status).toBe(500);
+      expect(response.text).toBe('Error fetching buggy file.');
     });
   });
 });

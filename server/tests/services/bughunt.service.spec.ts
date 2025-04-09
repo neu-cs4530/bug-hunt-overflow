@@ -5,6 +5,7 @@ import {
   getConsecutiveDailyGames,
   getHintLine,
   getBuggyFile,
+  compareBuggyFileLines,
 } from '../../services/bughunt.service';
 import { BuggyFile } from '../../types/types';
 
@@ -216,6 +217,28 @@ describe('BugHunt Service', () => {
       mockingoose(BuggyFileModel).toReturn(new Error('Database error'), 'findOne');
 
       await expect(() => getBuggyFile(mockBuggyFile._id)).rejects.toThrow(
+        'Error retrieving buggy file: Error: Database error',
+      );
+    });
+  });
+
+  describe('compareBuggyFileLines', () => {
+    it('should return the correct lines based on whats passed in', async () => {
+      mockingoose(BuggyFileModel).toReturn(mockBuggyFile, 'findOne');
+
+      const correctLines = await compareBuggyFileLines(mockBuggyFile._id, [3]);
+      if (!correctLines) {
+        throw new Error('must return an array of correct lines');
+      }
+
+      expect(correctLines).toHaveLength(1);
+      expect(correctLines[0]).toBe(3);
+    });
+
+    it('should throw an error if a database error occurs', async () => {
+      mockingoose(BuggyFileModel).toReturn(new Error('Database error'), 'findOne');
+
+      await expect(() => compareBuggyFileLines(mockBuggyFile._id, [3])).rejects.toThrow(
         'Error retrieving buggy file: Error: Database error',
       );
     });
