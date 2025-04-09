@@ -1,4 +1,4 @@
-import { GameMove, NimGameState, NimMove } from '../../types/types';
+import { GameInstance, GameMove, NimGameState, NimMove } from '../../types/types';
 import { MAX_NIM_OBJECTS } from '../../types/constants';
 import Game from './game';
 
@@ -11,14 +11,16 @@ class NimGame extends Game<NimGameState, NimMove> {
   /**
    * Constructor for the NimGame class, initializes the game state and type.
    */
-  public constructor() {
+  public constructor(gameInstance?: GameInstance<NimGameState>) {
     super(
-      {
-        status: 'WAITING_TO_START',
-        moves: [],
-        remainingObjects: MAX_NIM_OBJECTS,
+      gameInstance ?? {
+        state: {
+          status: 'WAITING_TO_START',
+          moves: [],
+          remainingObjects: MAX_NIM_OBJECTS,
+        },
+        gameType: 'Nim',
       },
-      'Nim',
     );
   }
 
@@ -102,12 +104,12 @@ class NimGame extends Game<NimGameState, NimMove> {
    * @throws Will throw an error if the player cannot join.
    */
   protected _join(playerID: string): void {
-    if (this.state.status !== 'WAITING_TO_START') {
-      throw new Error('Cannot join game: already started');
+    if (this._players.includes(playerID)) {
+      return;
     }
 
-    if (this._players.includes(playerID)) {
-      throw new Error('Cannot join game: player already in game');
+    if (this.state.status !== 'WAITING_TO_START') {
+      throw new Error('Cannot join game: already started');
     }
 
     if (this.state.player1 === undefined) {

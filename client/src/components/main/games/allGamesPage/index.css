@@ -62,7 +62,7 @@ body {
 }
 
 button:disabled {
-  background: #ccc;
+  background: #ccc !important;
   cursor: not-allowed;
 }
 

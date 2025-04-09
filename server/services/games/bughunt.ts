@@ -6,6 +6,7 @@ import {
   GameLog,
   BuggyFile,
   BugHuntScore,
+  GameInstance,
 } from '../../types/types';
 import BuggyFileModel from '../../models/buggyFile.model';
 import { BUGHUNT_MAX_GUESSES, BUGHUNT_HINT_PENALTY } from '../../types/constants';
@@ -21,17 +22,19 @@ class BugHuntGame extends Game<BugHuntGameState, BugHuntMove> {
   /**
    * Constructor for the BugHunt class, initializes the game state and type.
    */
-  public constructor(gameType: GameType) {
+  public constructor(gameType: GameType, gameInstance?: GameInstance<BugHuntGameState>) {
     super(
-      {
-        status: gameType === 'BugHunt' ? 'WAITING_TO_START' : 'DAILY',
-        moves: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        logs: [],
-        scores: [],
+      gameInstance ?? {
+        state: {
+          status: gameType === 'BugHunt' ? 'WAITING_TO_START' : 'DAILY',
+          moves: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          logs: [],
+          scores: [],
+        },
+        gameType,
       },
-      gameType,
     );
   }
 
