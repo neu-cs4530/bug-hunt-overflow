@@ -20,11 +20,17 @@ const SideBarNav = () => {
   const location = useLocation();
 
   const toggleOptionsMessaging = () => {
-    setShowOptionsMessaging(!showOptionsMessaging);
+    setShowOptionsMessaging(prev => {
+      if (!prev) setShowOptionsGames(false); // close Games if opening Messaging
+      return !prev;
+    });
   };
 
   const toggleOptionsGames = () => {
-    setShowOptionsGames(!showOptionsGames);
+    setShowOptionsGames(prev => {
+      if (!prev) setShowOptionsMessaging(false); // close Messaging if opening Games
+      return !prev;
+    });
   };
 
   const isActiveOption = (path: string) =>

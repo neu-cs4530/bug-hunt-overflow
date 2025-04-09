@@ -38,12 +38,14 @@
 .title-stack h1 {
   font-size: 2rem;
   margin: 0;
+  margin-bottom: 0.25rem;
 }
 
 .subtitle {
+  margin-top: 0.25rem;
+  margin-bottom: 0;
   font-size: 1rem;
   color: #666;
-  margin-top: 4px;
 }
 
 /* Right side (date + credits) */
@@ -55,9 +57,158 @@
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 4px;
+  line-height: 1.2;
+  transform: translateY(1px); /* fine-tune vertical alignment */
 }
 
 .credits {
   font-size: 0.9rem;
   color: #666;
 }
+
+.bug-hunt-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border: solid 1px lightgray;
+  border-left: none;
+  border-right: none;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.bug-hunt-header .selected-lines {
+  flex-grow: 1;
+}
+
+.bug-hunt-hud {
+  flex-grow: 1;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.bug-hunt-hud-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.bug-hunt-hud-item .base-icon {
+  fill: gray !important;
+}
+
+.bug-hunt-code {
+}
+
+.bug-hunt-rules {
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.rules-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.rules-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;    
+  word-break: break-word;       
+  overflow-wrap: anywhere;      
+}
+
+
+.btn-start-game {
+  margin: 1rem auto;
+  display: block;
+}
+
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+.game-page {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.game-header h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.game-controls {
+  flex-grow: 1;
+  display: flex;
+  justify-content: end;
+  margin-bottom: 0.25rem;
+}
+
+/* Button Spacing */
+.game-details {
+  margin-bottom: 15px;
+}
+
+.btn-leave-game {
+  background: #df1227;
+}
+
+.btn-leave-game:hover {
+  background: #bb0a21;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.game-error {
+  color: red;
+  font-weight: bold;
+  margin-top: 15px;
+  text-align: center;
+  padding: 1rem;
+}
+
+.title-block {
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    align-items: flex-start; /* optional: left align text */
+    gap: 0.25rem;
+}
+
+.title-block-other {
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    align-items: flex-end; /* optional: left align text */
+    text-align: right;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+  

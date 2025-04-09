@@ -4,6 +4,7 @@ import './WelcomeBanner.css';
 import Logo from '../../../../assets/buglogo.png';
 import { GameInstance, GameState } from '../../../../types/types';
 import { getDailyGameInstance } from '../../../../services/bugHuntService';
+import bugHuntRules from '../../../../types/bugHuntRules';
 
 const WelcomeBanner = () => {
   const [gameInstance, setGameInstance] = useState<GameInstance<GameState> | null>(null);
@@ -45,19 +46,31 @@ const WelcomeBanner = () => {
   });
 
   return (
-    <div className='welcome-banner'>
-      <div className='welcome-left'>
-        <button className='bug-play-button' onClick={handlePlayClick}>
-          <img src={Logo} alt='Play Bug Hunt' />
-        </button>
-
-        <div className='welcome-text'>
-          <h1>The Bug Hunt</h1>
+    <div className='game-page'>
+      <header className='game-header'>
+        <div className='title-block'>
+          <h1>Daily Bug Hunt Challenge</h1>
           <p className='subtitle'>Ready to start solving?</p>
-          <div className='welcome-right'>
-            <p className='date'>Wednesday, April 9, 2025</p>
+        </div>
+        <div className='game-controls'>
+          <div className='title-block-other'>
+            <p className='date'>{formattedDate}</p>
             <p className='credits'>By Joel, Thomas, Jackson, and Maggie</p>
           </div>
+        </div>
+      </header>
+
+      <div>
+        <button
+          className='btn-submit btn-start-game'
+          onClick={() => {
+            handlePlayClick();
+          }}>
+          Start Game
+        </button>
+        <div className='bug-hunt-rules'>
+          <h3 className='rules-title'>📜 Game Rules</h3>
+          <pre className='rules-text'>{bugHuntRules}</pre>
         </div>
       </div>
     </div>
