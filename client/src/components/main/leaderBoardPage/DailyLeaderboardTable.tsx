@@ -27,7 +27,7 @@ const DailyLeaderBoardTable = () => {
       <p className='leaderboard-subheading'>
         Play daily games and see how you rank against others!
       </p>
-      <div className='leaderboard-container'>
+      <div>
         <div className='leaderboard-controls'>
           <input
             type='date'
