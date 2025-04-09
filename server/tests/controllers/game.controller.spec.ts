@@ -6,16 +6,17 @@ import { AddressInfo } from 'net';
 import { app } from '../../app';
 import GameManager from '../../services/games/gameManager';
 import { FakeSOSocket, GameInstance, NimGameState, BugHuntGameState } from '../../types/types';
-import * as util from '../../services/game.service';
 import gameController from '../../controllers/game.controller';
 import NimGame from '../../services/games/nim';
 import { MAX_NIM_OBJECTS } from '../../types/constants';
+import * as gameService from '../../services/game.service';
 
 const mockGameManager = GameManager.getInstance();
 const addGameSpy = jest.spyOn(mockGameManager, 'addGame');
 const joinGameSpy = jest.spyOn(mockGameManager, 'joinGame');
 const startGameSpy = jest.spyOn(mockGameManager, 'startGame');
 const leaveGameSpy = jest.spyOn(mockGameManager, 'leaveGame');
+const findGamesSpy = jest.spyOn(gameService, 'findGames');
 
 describe('POST /create', () => {
   describe('200 OK Requests', () => {
@@ -326,7 +327,6 @@ describe('POST /leave', () => {
 
 describe('GET /games', () => {
   // findGames is the default export in the file
-  const findGamesSpy = jest.spyOn(util, 'default');
   const gameState: GameInstance<NimGameState> = {
     state: { moves: [], status: 'WAITING_TO_START', remainingObjects: MAX_NIM_OBJECTS },
     gameID: 'testGameID',

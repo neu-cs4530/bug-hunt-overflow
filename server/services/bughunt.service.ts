@@ -59,7 +59,7 @@ export const getDailyBugHuntScores = async (date: string) => {
  */
 export const getBuggyFile = async (id: string): Promise<SafeBuggyFile | null> => {
   try {
-    const buggyFile = await BuggyFileModel.findById(id).lean();
+    const buggyFile = await BuggyFileModel.findOne({ _id: id }).lean();
     if (!buggyFile) {
       return null;
     }
@@ -80,7 +80,7 @@ export const compareBuggyFileLines = async (
   lines: number[],
 ): Promise<number[] | null> => {
   try {
-    const buggyFile = await BuggyFileModel.findById(id).lean();
+    const buggyFile = await BuggyFileModel.findOne({ _id: id }).lean();
     if (!buggyFile) {
       return null;
     }
