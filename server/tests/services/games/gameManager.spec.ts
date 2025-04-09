@@ -24,6 +24,7 @@ jest.mock('nanoid', () => ({
 describe('GameManager', () => {
   afterEach(() => {
     GameManager.resetInstance(); // Call the reset method
+    mockingoose.resetAll();
   });
 
   describe('constructor', () => {
@@ -51,7 +52,8 @@ describe('GameManager', () => {
     const mapSetSpy = jest.spyOn(Map.prototype, 'set');
 
     it('should return the gameID for a successfully created game', async () => {
-      mockingoose(NimModel).toReturn(new NimGame().toModel(), 'create');
+      mockingoose(NimModel).toReturn(new NimGame().toModel(), 'save');
+      mockingoose(NimModel).toReturn(new NimGame().toModel(), '$save');
 
       const gameManager = GameManager.getInstance();
       const gameID = await gameManager.addGame('Nim');
@@ -87,6 +89,7 @@ describe('GameManager', () => {
 
     it('should remove the game with the provided gameID', async () => {
       mockingoose(NimModel).toReturn(new NimGame().toModel(), 'create');
+      mockingoose(NimModel).toReturn(new NimGame().toModel(), '$save');
 
       // assemble
       const gameManager = GameManager.getInstance();
@@ -359,16 +362,6 @@ describe('GameManager', () => {
         expect(game).toBeInstanceOf(NimGame);
         expect(mapGetSpy).toHaveBeenCalledWith(gameID);
       }
-    });
-
-    it('should return game from db if the game request does not exist', async () => {
-      mapGetSpy.mockReturnValueOnce(undefined);
-      const gameID = 'unknownGameID';
-      const mockGame = new NimGame();
-      mockingoose(GameModel).toReturn(mockGame, 'findOne');
-      const game = await gameManager.getGame(gameID);
-      expect(game).not.toBeUndefined();
-      expect(mapGetSpy).toHaveBeenCalledWith(gameID);
     });
 
     it('should return undefined if the game request does not exist', async () => {

@@ -216,6 +216,8 @@ class GameManager {
         return undefined;
       }
 
+      console.log(dbGame);
+
       const newGame = this._gameFactoryExisting(dbGame);
       this._games.set(newGame.id, newGame);
       return newGame;

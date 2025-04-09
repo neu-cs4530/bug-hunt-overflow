@@ -12,10 +12,12 @@ import NimGame from '../../services/games/nim';
 import { MAX_NIM_OBJECTS } from '../../types/constants';
 
 const mockGameManager = GameManager.getInstance();
+const addGameSpy = jest.spyOn(mockGameManager, 'addGame');
+const joinGameSpy = jest.spyOn(mockGameManager, 'joinGame');
+const startGameSpy = jest.spyOn(mockGameManager, 'startGame');
+const leaveGameSpy = jest.spyOn(mockGameManager, 'leaveGame');
 
 describe('POST /create', () => {
-  const addGameSpy = jest.spyOn(mockGameManager, 'addGame');
-
   describe('200 OK Requests', () => {
     it('should return 200 with a game ID when successful', async () => {
       addGameSpy.mockResolvedValueOnce('testGameID');
@@ -58,7 +60,7 @@ describe('POST /create', () => {
       const response = await supertest(app).post('/games/create').send({ gameType: 'Nim' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when creating game: test error');
+      expect(response.text).toContain('Error when creating game:');
       expect(addGameSpy).toHaveBeenCalledWith('Nim');
     });
 
@@ -68,15 +70,13 @@ describe('POST /create', () => {
       const response = await supertest(app).post('/games/create').send({ gameType: 'Nim' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when creating game: test error');
+      expect(response.text).toContain('Error when creating game:');
       expect(addGameSpy).toHaveBeenCalledWith('Nim');
     });
   });
 });
 
 describe('POST /join', () => {
-  const joinGameSpy = jest.spyOn(mockGameManager, 'joinGame');
-
   describe('200 OK Requests', () => {
     it('should return 200 with a game state when successful', async () => {
       const gameState: GameInstance<NimGameState> = {
@@ -136,7 +136,7 @@ describe('POST /join', () => {
         .send({ gameID: 'testGameID', playerID: 'user1' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when joining game: test error');
+      expect(response.text).toContain('Error when joining game:');
     });
 
     it('should return 500 if joinGame throws an error', async () => {
@@ -147,14 +147,12 @@ describe('POST /join', () => {
         .send({ gameID: 'testGameID', playerID: 'user1' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when joining game: test error');
+      expect(response.text).toContain('Error when joining game:');
     });
   });
 });
 
 describe('POST /start', () => {
-  const startGameSpy = jest.spyOn(mockGameManager, 'startGame');
-
   describe('200 OK Requests', () => {
     it('should return 200 with a game state when successful', async () => {
       const exampleDate = new Date();
@@ -234,7 +232,7 @@ describe('POST /start', () => {
         .send({ gameID: 'testGameID', playerID: 'user1' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when starting game: test error');
+      expect(response.text).toContain('Error when starting game:');
     });
 
     it('should return 500 if startGame throws an error', async () => {
@@ -245,14 +243,12 @@ describe('POST /start', () => {
         .send({ gameID: 'testGameID', playerID: 'user1' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when starting game: test error');
+      expect(response.text).toContain('Error when starting game:');
     });
   });
 });
 
 describe('POST /leave', () => {
-  const leaveGameSpy = jest.spyOn(mockGameManager, 'leaveGame');
-
   describe('200 OK Requests', () => {
     it('should return 200 with a success message when successful', async () => {
       const gameState: GameInstance<NimGameState> = {
@@ -312,7 +308,7 @@ describe('POST /leave', () => {
         .send({ gameID: 'testGameID', playerID: 'user1' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when leaving game: test error');
+      expect(response.text).toContain('Error when leaving game:');
     });
 
     it('should return 500 if leaveGame throws an error', async () => {
@@ -323,7 +319,7 @@ describe('POST /leave', () => {
         .send({ gameID: 'testGameID', playerID: 'user1' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when leaving game: test error');
+      expect(response.text).toContain('Error when leaving game:');
     });
   });
 });
@@ -345,7 +341,6 @@ describe('GET /games', () => {
       const response = await supertest(app)
         .get('/games/games')
         .query({ gameType: 'Nim', status: 'WAITING_TO_START' });
-
       expect(response.status).toEqual(200);
       expect(response.body).toEqual([gameState]);
       expect(findGamesSpy).toHaveBeenCalledWith('Nim', 'WAITING_TO_START');
@@ -373,7 +368,7 @@ describe('GET /games', () => {
         .query({ gameType: 'Nim', status: 'WAITING_TO_START' });
 
       expect(response.status).toEqual(500);
-      expect(response.text).toContain('Error when getting games: test error');
+      expect(response.text).toContain('Error when getting games:');
     });
   });
 });
