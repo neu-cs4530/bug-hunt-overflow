@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { BugHuntScore } from '@fake-stack-overflow/shared';
 import { getDailyBugHuntScores } from '../services/bugHuntService';
+import { BugHuntScore } from '../types/types';
 
 const useLeaderBoard = (date: string) => {
   const [data, setData] = useState<BugHuntScore[]>([]);

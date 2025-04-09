@@ -1,7 +1,7 @@
-import { SafeDatabaseUser } from '@fake-stack-overflow/shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserByUsername } from '../services/userService';
+import { SafeDatabaseUser } from '../types/types';
 
 const USER_CACHE_KEY = 'loggedInUser';
 

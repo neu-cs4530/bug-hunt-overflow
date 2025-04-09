@@ -1,5 +1,4 @@
 import './index.css';
-import { BugHuntGameState, GameInstance } from '@fake-stack-overflow/shared';
 import useBugHuntGamePage, {
   BUG_HUNT_CORRECT_LINE_BACKGROUND_COLOR,
   BUG_HUNT_HINT_LINE_BACKGROUND_COLOR,
@@ -8,6 +7,7 @@ import useBugHuntGamePage, {
 } from '../../../../hooks/useBugHuntGamePage';
 import { CodeBlock } from '../../codeBlock';
 import { BugIcon, ClockIcon, QuestionMarkCircleIcon } from '../../../icons';
+import { BugHuntGameState, GameInstance } from '../../../../types/types';
 
 interface BugHuntGamePageProps {
   gameInstance: GameInstance<BugHuntGameState>;

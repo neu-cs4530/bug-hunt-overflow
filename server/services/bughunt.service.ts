@@ -1,6 +1,6 @@
-import { BuggyFile, SafeBuggyFile, GameInstance, GameState } from '@fake-stack-overflow/shared';
 import BuggyFileModel from '../models/buggyFile.model';
 import BugHuntModel from '../models/bughunt.model';
+import { BuggyFile, GameInstance, GameState, SafeBuggyFile } from '../types/types';
 import GameManager from './games/gameManager';
 
 const makeBuggyFileSafe = (buggyFile: BuggyFile): SafeBuggyFile => {

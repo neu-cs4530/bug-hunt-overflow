@@ -1,4 +1,4 @@
-import { GameInstance, GameState, SafeBuggyFile } from '@fake-stack-overflow/shared';
+import { GameInstance, GameState, SafeBuggyFile } from '../types/types';
 import api from './config';
 
 const BUG_HUNT_API_URL = `${process.env.REACT_APP_SERVER_URL}/bughunt`;
