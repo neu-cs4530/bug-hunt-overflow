@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './WelcomeBanner.css';
+import './index.css';
 import Logo from '../../../../assets/buglogo.png';
 import { GameInstance, GameState } from '../../../../types/types';
 import { getDailyGameInstance } from '../../../../services/bugHuntService';
