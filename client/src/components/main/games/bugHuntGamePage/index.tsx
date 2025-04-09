@@ -8,6 +8,7 @@ import useBugHuntGamePage, {
 import { CodeBlock } from '../../codeBlock';
 import { BugIcon, ClockIcon, QuestionMarkCircleIcon } from '../../../icons';
 import { BugHuntGameState, GameInstance } from '../../../../types/types';
+import bugHuntRules from '../../../../types/bugHuntRules';
 
 interface BugHuntGamePageProps {
   gameInstance: GameInstance<BugHuntGameState>;
