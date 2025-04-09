@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './index.css';
+import './WelcomeBanner.css';
 import Logo from '../../../../assets/buglogo.png';
 import { GameInstance, GameState } from '../../../../types/types';
 import { getDailyGameInstance } from '../../../../services/bugHuntService';
+import bugHuntRules from '../../../../types/bugHuntRules';
 
-const DailyGamesWelcomePage = () => {
+const WelcomeBanner = () => {
   const [gameInstance, setGameInstance] = useState<GameInstance<GameState> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,21 +46,35 @@ const DailyGamesWelcomePage = () => {
   });
 
   return (
-    <div className='welcome-container'>
-      <div className='modal'>
-        <div className='logo'>
-          <img src={Logo} alt='Game Logo' className='logo-image' />
+    <div className='game-page'>
+      <header className='game-header'>
+        <div className='title-block'>
+          <h1>Daily Bug Hunt Challenge</h1>
+          <p className='subtitle'>Ready to start solving?</p>
         </div>
-        <h1 className='title'>The Bug Hunt</h1>
-        <p className='subtitle'>Ready to start solving?</p>
-        <button className='play-button' onClick={handlePlayClick}>
-          Play
+        <div className='game-controls'>
+          <div className='title-block-other'>
+            <p className='date'>{formattedDate}</p>
+            <p className='credits'>By Joel, Thomas, Jackson, and Maggie</p>
+          </div>
+        </div>
+      </header>
+
+      <div>
+        <button
+          className='btn-submit btn-start-game'
+          onClick={() => {
+            handlePlayClick();
+          }}>
+          Start Game
         </button>
-        <p className='date'>{formattedDate}</p>
-        <p className='author'>By Joel, Thomas, Jackson, and Maggie</p>
+        <div className='bug-hunt-rules'>
+          <h3 className='rules-title'>📜 Game Rules</h3>
+          <pre className='rules-text'>{bugHuntRules}</pre>
+        </div>
       </div>
     </div>
   );
 };
 
-export default DailyGamesWelcomePage;
+export default WelcomeBanner;
