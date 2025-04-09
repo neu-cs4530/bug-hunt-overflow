@@ -1,5 +1,7 @@
 import { SafeDatabaseUser } from '@fake-stack-overflow/shared';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getUserByUsername } from '../services/userService';
 
 const USER_CACHE_KEY = 'loggedInUser';
 
@@ -10,6 +12,7 @@ const USER_CACHE_KEY = 'loggedInUser';
  */
 const useUserCache = () => {
   const [user, setUser] = useState<SafeDatabaseUser | null>(null);
+  const navigate = useNavigate();
 
   /**
    * Clears the user from cache.
@@ -18,6 +21,21 @@ const useUserCache = () => {
     localStorage.removeItem(USER_CACHE_KEY);
   };
 
+  const validateUser = useCallback(
+    async (username: string) => {
+      try {
+        await getUserByUsername(username);
+        return true;
+      } catch (error) {
+        setUser(null);
+        navigate('/');
+        clearUserCache();
+        return false;
+      }
+    },
+    [navigate],
+  );
+
   useEffect(() => {
     try {
       const stringUser = localStorage.getItem(USER_CACHE_KEY);
@@ -25,11 +43,16 @@ const useUserCache = () => {
         return;
       }
       const loggedInUser = JSON.parse(stringUser) as SafeDatabaseUser;
-      setUser(loggedInUser);
+
+      validateUser(loggedInUser.username).then(isValid => {
+        if (isValid) {
+          setUser(loggedInUser);
+        }
+      });
     } catch (err) {
       clearUserCache();
     }
-  }, []);
+  }, [navigate, validateUser]);
 
   useEffect(() => {
     if (user) {

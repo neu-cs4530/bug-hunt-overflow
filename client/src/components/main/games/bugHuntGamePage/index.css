@@ -37,3 +37,44 @@
   margin: 1rem auto;
   display: block;
 }
+
+.bug-hunt-legend {
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  background: #f8f8f8;
+  border: 1px solid #e7e7eb;
+  margin-bottom: 1.5rem;
+}
+
+.bug-hunt-legend h3 {
+  margin: 0 0 1.5rem;
+}
+
+.bug-hunt-legend-content {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.bug-hunt-legend-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.bug-hunt-legend-color {
+  width: 2.5rem;
+  height: 1.5rem;
+}
+
+@media only screen and (max-width: 1200px) {
+  .bug-hunt-legend-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .bug-hunt-legend-content {
+    grid-template-columns: 1fr;
+  }
+}
