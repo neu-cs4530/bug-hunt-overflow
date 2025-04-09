@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <div className='header'>
       <div className='header-left'>
-        {/* <img src={logo} alt='Stack Overflow Logo' className='header-logo' /> */}
+        <img src={logo} alt='Stack Overflow Logo' className='header-logo' />
         <div className='title-row'>
           <h1 className='title'>Bug Overflow</h1>
           <span className='subtitle'>Ask. Debug. Solve.</span>
@@ -36,9 +36,7 @@ const Header = () => {
         <button onClick={handleSignOut} className='logout-button'>
           Log out
         </button>
-        <button
-          className='view-profile-button'
-          onClick={() => navigate(`/user/${currentUser.username}`)}>
+        <button className='view-button' onClick={() => navigate(`/user/${currentUser.username}`)}>
           View Profile
         </button>
       </div>
