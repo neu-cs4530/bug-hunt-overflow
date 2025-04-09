@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/buglogo.png';
 
 const Header = () => {
   const { val, handleInputChange, handleKeyDown, handleSignOut } = useHeader();
@@ -13,8 +13,7 @@ const Header = () => {
   return (
     <div className='header'>
       <div className='header-left'>
-        <img src={logo} alt='Stack Overflow Logo' className='header-logo' />
-        <h1 className='title'>Fake Stack Overflow</h1>
+        <h1 className='title'>Bug Overflow</h1>
       </div>
 
       <div className='header-center'>
