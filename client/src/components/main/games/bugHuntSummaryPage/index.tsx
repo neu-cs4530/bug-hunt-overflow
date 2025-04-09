@@ -4,12 +4,23 @@ import duration from 'dayjs/plugin/duration';
 import { useMemo } from 'react';
 import useBugHuntSummaryPage from '../../../../hooks/useBugHuntSummaryPage';
 import { BugHuntGameState, GameInstance } from '../../../../types/types';
+import { BugIcon } from '../../../icons';
+
+dayjs.extend(duration);
+
+interface GameResultBannerProps {
+  bugsFound: number;
+  totalBugs: number;
+}
 
 interface BugHuntSummaryPageProps {
   gameInstance: GameInstance<BugHuntGameState>;
 }
 
-dayjs.extend(duration);
+interface GameSummaryScoreCardProps {
+  label: string;
+  score: string | number | undefined;
+}
 
 const formatPlayerScoreDuration = (timeMilliseconds: number) => {
   const dur = dayjs.duration(timeMilliseconds);
@@ -36,12 +47,38 @@ const formatPlayerScoreAccuracy = (accuracy: number) => {
     accuracy *= 100;
   }
 
-  return accuracy.toFixed(1);
+  return `${accuracy.toFixed(1)}%`;
+};
+
+const GameResultBanner = (props: GameResultBannerProps) => {
+  const { bugsFound, totalBugs } = props;
+  const isSuccess = bugsFound === totalBugs;
+
+  const message = isSuccess
+    ? `Inspector Insect strikes again! ${bugsFound}/${totalBugs} bugs found.`
+    : `${bugsFound}/${totalBugs} bugs found—watch out, some still crawled away!`;
+
+  return (
+    <div className={`game-result-banner ${isSuccess ? 'success' : ''}`}>
+      <BugIcon />
+      <span>{message}</span>
+    </div>
+  );
+};
+
+const GameSummaryScoreCard = (props: GameSummaryScoreCardProps) => {
+  const { label, score } = props;
+  return (
+    <div className='game-summary-score-card'>
+      <p className='game-summary-score-label'>{label}</p>
+      <p className='game-summary-score'>{score}</p>
+    </div>
+  );
 };
 
 const BugHuntSummaryPage = (props: BugHuntSummaryPageProps) => {
   const { gameInstance } = props;
-  const { playerScore, playerMoves } = useBugHuntSummaryPage(gameInstance);
+  const { playerScore, playerMoves, bugsFound, totalBugs } = useBugHuntSummaryPage(gameInstance);
 
   const hintsUsed = useMemo(() => {
     if (playerMoves.length === 0) {
@@ -61,26 +98,17 @@ const BugHuntSummaryPage = (props: BugHuntSummaryPageProps) => {
       {playerScore && (
         <>
           <h3>My Performance</h3>
+          <GameResultBanner bugsFound={totalBugs} totalBugs={totalBugs} />
           <div className='game-summary-scores-container'>
-            <div className='game-summary-score-card'>
-              <p className='game-summary-score-label'>Completed in</p>
-              <p className='game-summary-score'>
-                {formatPlayerScoreDuration(playerScore.timeMilliseconds)}
-              </p>
-            </div>
-            <div className='game-summary-score-card'>
-              <p className='game-summary-score-label'>Bugs Found</p>
-            </div>
-            <div className='game-summary-score-card'>
-              <p className='game-summary-score-label'>Hints Used</p>
-              <p className='game-summary-score'>{hintsUsed}</p>
-            </div>
-            <div className='game-summary-score-card'>
-              <p className='game-summary-score-label'>Accuracy</p>
-              <p className='game-summary-score'>
-                {formatPlayerScoreAccuracy(playerScore.accuracy)}%
-              </p>
-            </div>
+            <GameSummaryScoreCard
+              label='Completed in'
+              score={formatPlayerScoreDuration(playerScore.timeMilliseconds)}
+            />
+            <GameSummaryScoreCard label='Hints Used' score={hintsUsed} />
+            <GameSummaryScoreCard
+              label='Accuracy'
+              score={formatPlayerScoreAccuracy(playerScore.accuracy)}
+            />
           </div>
         </>
       )}

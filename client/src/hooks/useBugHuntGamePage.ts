@@ -1,17 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useUserContext from './useUserContext';
-import {
-  GameInstance,
-  GameMove,
-  BugHuntMove,
-  BugHuntGameState,
-  SafeBuggyFile,
-} from '../types/types';
+import { GameInstance, GameMove, BugHuntMove, BugHuntGameState } from '../types/types';
 import { BUGHUNT_MAX_GUESSES } from '../types/constants';
 import { CodeLineStyle } from '../components/main/codeBlock';
-import { getBuggyFile, validateBuggyFileLines, getHintLine } from '../services/bugHuntService';
+import { validateBuggyFileLines, getHintLine } from '../services/bugHuntService';
 import { startGame } from '../services/gamesService';
+import useBuggyFile from './useBuggyFile';
 
 export const SELECTED_LINE_BACKGROUND_COLOR = 'lightskyblue';
 export const CORRECT_LINE_BACKGROUND_COLOR = 'lightgreen';
@@ -41,7 +36,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const { user, socket } = useUserContext();
   const navigate = useNavigate();
 
-  const [buggyFile, setBuggyFile] = useState<SafeBuggyFile | null>(null);
+  const { buggyFile } = useBuggyFile(gameInstance.state.buggyFile);
   const [selectedLines, setSelectedLines] = useState<number[]>([]);
   const [correctLines, setCorrectLines] = useState<number[]>([]);
   const [wrongLines, setWrongLines] = useState<number[]>([]);
@@ -125,19 +120,6 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const isPlayerDone = useMemo<boolean>(
     () => gameInstance.state.status === 'OVER' || movesRemaining === 0,
     [gameInstance.state.status, movesRemaining],
-  );
-
-  const loadBuggyFile = useCallback(
-    async (id: string) => {
-      try {
-        const file = await getBuggyFile(id);
-        setBuggyFile(file);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(`Error retrieving buggy file: ${error}`);
-      }
-    },
-    [setBuggyFile],
   );
 
   const padTime = (n: number) => String(n).padStart(2, '0');
@@ -323,14 +305,6 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Load buggy file from ID in game state
-  useEffect(() => {
-    const buggyFileId = gameInstance.state.buggyFile;
-    if (buggyFileId) {
-      loadBuggyFile(buggyFileId);
-    }
-  }, [gameInstance.state.buggyFile, loadBuggyFile]);
 
   // Run stopwatch
   useEffect(() => {
