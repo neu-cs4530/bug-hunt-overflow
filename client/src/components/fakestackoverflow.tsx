@@ -19,7 +19,6 @@ import GamePage from './main/games/gamePage';
 import LeaderBoardPage from './main/leaderBoardPage';
 import useUserCache from '../hooks/useUserCache';
 import DailyGames from './main/dailyGames';
-import DailyGamesPage from './main/dailyGames/dailyGamePage';
 
 const ProtectedRoute = ({
   user,
