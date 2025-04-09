@@ -3,6 +3,7 @@ import { BugHuntGameState, GameInstance } from '@fake-stack-overflow/shared';
 import useBugHuntGamePage from '../../../../hooks/useBugHuntGamePage';
 import { CodeBlock } from '../../codeBlock';
 import { BugIcon, ClockIcon, QuestionMarkCircleIcon } from '../../../icons';
+import bugHuntRules from '../../../../types/bugHuntRules';
 
 interface BugHuntGamePageProps {
   gameInstance: GameInstance<BugHuntGameState>;
