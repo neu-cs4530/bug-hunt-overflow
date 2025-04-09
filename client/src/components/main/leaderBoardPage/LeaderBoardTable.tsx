@@ -63,19 +63,16 @@ const LeaderBoardTable = (props: LeaderBoardTableProps) => {
   const { scores, isLoading, error, selectedDate } = props;
 
   const [sortAscending, setSortAscending] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredScores = scores
-    .filter(score => score.player.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => {
-      if (a.accuracy !== b.accuracy) {
-        return sortAscending ? a.accuracy - b.accuracy : b.accuracy - a.accuracy;
-      }
+  const filteredScores = scores.sort((a, b) => {
+    if (a.accuracy !== b.accuracy) {
+      return sortAscending ? a.accuracy - b.accuracy : b.accuracy - a.accuracy;
+    }
 
-      return sortAscending
-        ? b.timeMilliseconds - a.timeMilliseconds
-        : a.timeMilliseconds - b.timeMilliseconds;
-    });
+    return sortAscending
+      ? b.timeMilliseconds - a.timeMilliseconds
+      : a.timeMilliseconds - b.timeMilliseconds;
+  });
 
   if (isLoading) {
     return <div className='loading'>Loading leaderboard...</div>;

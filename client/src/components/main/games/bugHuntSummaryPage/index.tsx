@@ -66,8 +66,6 @@ const BugHuntSummaryPage = (props: BugHuntSummaryPageProps) => {
     return playerMoves.filter(move => move.move.isHint).length;
   }, [playerMoves]);
 
-  console.log(gameInstance.state);
-
   return (
     <div className='game-summary'>
       <div className='game-summary-header'>
