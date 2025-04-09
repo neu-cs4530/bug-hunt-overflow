@@ -1,9 +1,9 @@
 // src/constants/bugHuntRules.ts
 
 const BUGHUNTRULES = `
-🐞 Bug Hunt Daily Game – Rules & How to Play
+🐞 Bug Hunt Game – Rules & How to Play
 
-Welcome to Bug Hunt Daily! Your mission is to find and identify bugs in code files as quickly and accurately as possible.
+Welcome to Bug Hunt! Your mission is to find and identify bugs in code files as quickly and accurately as possible.
 
 🔍 Objective
 Identify all the bugs in a given code snippet. Each file will tell you the maximum number of bugs hidden. Select the buggy lines and submit your guesses.
@@ -28,7 +28,7 @@ Identify all the bugs in a given code snippet. Each file will tell you the maxim
 
 5. Race Against the Clock
    - Your time is recorded.
-   - Compete to be the fastest and most accurate bug hunter of the day!
+   - Compete to be the fastest and most accurate bug hunter!
 
 🏁 Goal
 Submit all correct buggy lines in the shortest time possible using 3 guesses or fewer.

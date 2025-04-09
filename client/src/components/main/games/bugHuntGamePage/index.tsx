@@ -27,18 +27,25 @@ const BugHuntGamePage = (props: BugHuntGamePageProps) => {
   } = useBugHuntGamePage(gameInstance);
 
   if (gameInstance.state.status === 'WAITING_TO_START') {
-    if (isCreator) {
-      return (
-        <button
-          className='btn-submit btn-start-game'
-          onClick={() => {
-            handleStartGame();
-          }}>
-          Start Game
-        </button>
-      );
-    }
-    return <div>Waiting for game to start</div>;
+    return (
+      <div>
+        {isCreator ? (
+          <button
+            className='btn-submit btn-start-game'
+            onClick={() => {
+              handleStartGame();
+            }}>
+            Start Game
+          </button>
+        ) : (
+          <div>Waiting for game to start</div>
+        )}
+        <div className='bug-hunt-rules'>
+          <h3 className='rules-title'>📜 Game Rules</h3>
+          <pre className='rules-text'>{bugHuntRules}</pre>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -33,6 +33,33 @@
 .bug-hunt-code {
 }
 
+.bug-hunt-rules {
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.rules-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.rules-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;    
+  word-break: break-word;       
+  overflow-wrap: anywhere;      
+}
+
+
 .btn-start-game {
   margin: 1rem auto;
   display: block;

@@ -8,10 +8,11 @@ import {
   NimGameState,
 } from '../../../types/types';
 import DailyGamesWelcomePage from './welcomePage';
+import WelcomeBanner from './welcomePage/WelcomeBanner';
 
 const DailyGames = () => (
   <Routes>
-    <Route path='/' element={<DailyGamesWelcomePage />} />
+    <Route path='/' element={<WelcomeBanner />} />
   </Routes>
 );
 

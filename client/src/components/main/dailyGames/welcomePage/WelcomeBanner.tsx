@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './index.css';
+import './WelcomeBanner.css';
 import Logo from '../../../../assets/buglogo.png';
 import { GameInstance, GameState } from '../../../../types/types';
 import { getDailyGameInstance } from '../../../../services/bugHuntService';
 
-const DailyGamesWelcomePage = () => {
+const WelcomeBanner = () => {
   const [gameInstance, setGameInstance] = useState<GameInstance<GameState> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,21 +45,23 @@ const DailyGamesWelcomePage = () => {
   });
 
   return (
-    <div className='welcome-container'>
-      <div className='modal'>
-        <div className='logo'>
-          <img src={Logo} alt='Game Logo' className='logo-image' />
-        </div>
-        <h1 className='title'>The Bug Hunt</h1>
-        <p className='subtitle'>Ready to start solving?</p>
-        <button className='play-button' onClick={handlePlayClick}>
-          Play
+    <div className='welcome-banner'>
+      <div className='welcome-left'>
+        <button className='bug-play-button' onClick={handlePlayClick}>
+          <img src={Logo} alt='Play Bug Hunt' />
         </button>
-        <p className='date'>{formattedDate}</p>
-        <p className='author'>By Joel, Thomas, Jackson, and Maggie</p>
+
+        <div className='welcome-text'>
+          <h1>The Bug Hunt</h1>
+          <p className='subtitle'>Ready to start solving?</p>
+          <div className='welcome-right'>
+            <p className='date'>Wednesday, April 9, 2025</p>
+            <p className='credits'>By Joel, Thomas, Jackson, and Maggie</p>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default DailyGamesWelcomePage;
+export default WelcomeBanner;
