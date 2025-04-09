@@ -65,8 +65,6 @@ const LeaderBoardRow = ({
 const LeaderBoardTable = (props: LeaderBoardTableProps) => {
   const { scores, isLoading, error, selectedDate } = props;
 
-  const [sortRanking, setSortRanking] = useState(true);
-
   const [sortAscending, setSortAscending] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -77,17 +75,6 @@ const LeaderBoardTable = (props: LeaderBoardTableProps) => {
         ? a.timeMilliseconds - b.timeMilliseconds
         : b.timeMilliseconds - a.timeMilliseconds,
     );
-
-  const handleSortRanking = () => {
-    setSortRanking(prevSortRanking => !prevSortRanking);
-  };
-
-  const sortedScores = scores.sort((a, b) => {
-    if (sortRanking) {
-      return a.timeMilliseconds - b.timeMilliseconds; // Ascending order
-    }
-    return b.timeMilliseconds - a.timeMilliseconds; // Descending order
-  });
 
   if (isLoading) {
     return <div className='loading'>Loading leaderboard...</div>;
