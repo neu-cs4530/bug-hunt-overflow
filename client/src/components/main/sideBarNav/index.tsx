@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import './index.css';
 import { NavLink, useLocation } from 'react-router-dom';
+import {
+  ChatBubbleLeftIcon,
+  ChevronDownIcon,
+  PuzzlePieceIcon,
+  QuestionMarkCircleIcon,
+  TagIcon,
+  TrophyIcon,
+  UsersIcon,
+} from '../../icons';
 
 /**
  * Sidebar Navigation component for navigating between different sections.
@@ -26,17 +35,23 @@ const SideBarNav = () => {
       <NavLink
         to='/'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+        <QuestionMarkCircleIcon className='menu-button-icon' />
         Questions
       </NavLink>
 
       <NavLink
         to='/tags'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+        <TagIcon className='menu-button-icon' />
         Tags
       </NavLink>
 
-      <button className='menu_button' onClick={toggleOptionsMessaging}>
-        Messaging
+      <button
+        className={`menu_button dropdown-menu-button ${showOptionsMessaging ? 'dropown-active' : ''}`}
+        onClick={toggleOptionsMessaging}>
+        <ChatBubbleLeftIcon className='menu-button-icon' />
+        <span>Messaging</span>
+        <ChevronDownIcon className='dropdown-menu-icon' />
       </button>
 
       {showOptionsMessaging && (
@@ -54,8 +69,12 @@ const SideBarNav = () => {
         </div>
       )}
 
-      <button className='menu_button' onClick={toggleOptionsGames}>
-        Games
+      <button
+        className={`menu_button dropdown-menu-button ${showOptionsGames ? 'dropown-active' : ''}`}
+        onClick={toggleOptionsGames}>
+        <PuzzlePieceIcon className='menu-button-icon' />
+        <span>Games</span>
+        <ChevronDownIcon className='dropdown-menu-icon' />
       </button>
 
       {showOptionsGames && (
@@ -76,6 +95,7 @@ const SideBarNav = () => {
       <NavLink
         to='/users'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+        <UsersIcon className='menu-button-icon' />
         Users
       </NavLink>
 
@@ -83,6 +103,7 @@ const SideBarNav = () => {
         to='/leaderboard'
         id='menu_leaderboard'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+        <TrophyIcon className='menu-button-icon' />
         Leaderboard
       </NavLink>
     </div>
