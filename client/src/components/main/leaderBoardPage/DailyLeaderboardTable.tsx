@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './LeaderBoardTable.css';
 import LeaderBoardTable from './LeaderBoardTable';
 import useLeaderBoard from '../../../hooks/useLeaderBoard';
 
@@ -22,20 +23,26 @@ const DailyLeaderBoardTable = () => {
 
   return (
     <div className='leaderboard-container'>
-      <div className='controls'>
-        <input
-          type='date'
-          value={selectedDate}
-          onChange={handleDateChange}
-          className='date-picker'
-        />
-        <input
-          type='text'
-          placeholder='Search player...'
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className='search-input'
-        />
+      <h2 className='leaderboard-heading'>📊 Leaderboard</h2>
+      <p className='leaderboard-subheading'>
+        Play daily games and see how you rank against others!
+      </p>
+      <div>
+        <div className='leaderboard-controls'>
+          <input
+            type='date'
+            value={selectedDate}
+            onChange={handleDateChange}
+            className='date-picker'
+          />
+          <input
+            type='text'
+            placeholder='Search player...'
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className='search-input'
+          />
+        </div>
         <LeaderBoardTable
           scores={filteredData}
           isLoading={loading}

@@ -11,6 +11,7 @@ import useBuggyFile from './useBuggyFile';
 export const SELECTED_LINE_BACKGROUND_COLOR = 'lightskyblue';
 export const CORRECT_LINE_BACKGROUND_COLOR = 'lightgreen';
 export const WRONG_LINE_BACKGROUND_COLOR = 'lightcoral';
+export const HINT_LINE_BACKGROUND_COLOR = '';
 
 const makeCodeLineStyle = (lines: number[], style: CodeLineStyle) =>
   lines.reduce(
@@ -39,6 +40,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const { buggyFile } = useBuggyFile(gameInstance.state.buggyFile);
   const [selectedLines, setSelectedLines] = useState<number[]>([]);
   const [correctLines, setCorrectLines] = useState<number[]>([]);
+  const [hintLines, setHintLines] = useState<number[]>([]);
   const [wrongLines, setWrongLines] = useState<number[]>([]);
   const [stopwatch, setStopwatch] = useState('00:00:00'); // Format: HH:MM:SS
 
@@ -58,8 +60,12 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
         backgroundColor: WRONG_LINE_BACKGROUND_COLOR,
         cursor: 'default',
       }),
+      ...makeCodeLineStyle(hintLines, {
+        backgroundColor: HINT_LINE_BACKGROUND_COLOR,
+        cursor: 'default',
+      }),
     }),
-    [correctLines, selectedLines, wrongLines],
+    [correctLines, hintLines, selectedLines, wrongLines],
   );
 
   /**
