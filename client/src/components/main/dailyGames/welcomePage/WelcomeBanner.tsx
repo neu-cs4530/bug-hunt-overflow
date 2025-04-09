@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './WelcomeBanner.css';
 import Logo from '../../../../assets/buglogo.png';
@@ -33,7 +33,7 @@ const WelcomeBanner = () => {
   if (!gameInstance) return <p>No game instance found.</p>;
 
   const handlePlayClick = () => {
-    navigate(`/dailyGames/${gameInstance.gameID}`); // Replace with actual game ID
+    navigate(`/games/${gameInstance.gameID}`); // Replace with actual game ID
   };
 
   const date = new Date();

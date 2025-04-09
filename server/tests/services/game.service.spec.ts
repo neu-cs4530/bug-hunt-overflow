@@ -1,5 +1,5 @@
 import GameModel from '../../models/games.model';
-import findGames from '../../services/game.service';
+import { findGames } from '../../services/game.service';
 import { MAX_NIM_OBJECTS } from '../../types/constants';
 import { GameInstance, NimGameState } from '../../types/types';
 

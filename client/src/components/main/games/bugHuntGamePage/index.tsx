@@ -1,13 +1,50 @@
 import './index.css';
-import { BugHuntGameState, GameInstance } from '@fake-stack-overflow/shared';
-import useBugHuntGamePage from '../../../../hooks/useBugHuntGamePage';
+import useBugHuntGamePage, {
+  BUG_HUNT_CORRECT_LINE_BACKGROUND_COLOR,
+  BUG_HUNT_HINT_LINE_BACKGROUND_COLOR,
+  BUG_HUNT_SELECTED_LINE_BACKGROUND_COLOR,
+  BUG_HUNT_WRONG_LINE_BACKGROUND_COLOR,
+} from '../../../../hooks/useBugHuntGamePage';
 import { CodeBlock } from '../../codeBlock';
 import { BugIcon, ClockIcon, QuestionMarkCircleIcon } from '../../../icons';
-import bugHuntRules from '../../../../types/bugHuntRules';
+import { BugHuntGameState, GameInstance } from '../../../../types/types';
 
 interface BugHuntGamePageProps {
   gameInstance: GameInstance<BugHuntGameState>;
 }
+
+const BugHuntLegend = () => {
+  const legendItems = [
+    {
+      color: BUG_HUNT_SELECTED_LINE_BACKGROUND_COLOR,
+      label: 'Selected to Submit',
+    },
+    {
+      color: BUG_HUNT_CORRECT_LINE_BACKGROUND_COLOR,
+      label: 'Correct Guess',
+    },
+    {
+      color: BUG_HUNT_WRONG_LINE_BACKGROUND_COLOR,
+      label: 'Wrong Guess',
+    },
+    {
+      color: BUG_HUNT_HINT_LINE_BACKGROUND_COLOR,
+      label: 'Removed by Hint',
+    },
+  ];
+  return (
+    <div className='bug-hunt-legend'>
+      <div className='bug-hunt-legend-content'>
+        {legendItems.map(({ color, label }) => (
+          <div key={`${color}-${label}`} className='bug-hunt-legend-item'>
+            <div style={{ backgroundColor: color }} className='bug-hunt-legend-color'></div>
+            <span>{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const BugHuntGamePage = (props: BugHuntGamePageProps) => {
   const { gameInstance } = props;
@@ -84,6 +121,8 @@ const BugHuntGamePage = (props: BugHuntGamePageProps) => {
           Submit Answer
         </button>
       </div>
+
+      <BugHuntLegend />
 
       <div className='bug-hunt-code'>
         {buggyFile ? (

@@ -7,7 +7,6 @@ import {
   GameType,
   NimGameState,
 } from '../../../types/types';
-import DailyGamesWelcomePage from './welcomePage';
 import WelcomeBanner from './welcomePage/WelcomeBanner';
 
 const DailyGames = () => (

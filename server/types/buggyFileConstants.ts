@@ -1,4 +1,4 @@
-import { BuggyFile } from '@fake-stack-overflow/shared/types/game';
+import { BuggyFile } from './types';
 
 type CreateBuggyFile = Omit<BuggyFile, '_id'>;
 

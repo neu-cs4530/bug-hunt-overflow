@@ -16,6 +16,7 @@ import {
   BugHuntGameState,
   BugHuntScore,
   LogType,
+  GameType,
 } from './types/types';
 import {
   Q1_DESC,
@@ -119,18 +120,20 @@ async function commentCreate(
 /**
  * Creates a new BugHunt game document in the database.
  */
-/**
- * Creates a new BugHunt game document in the database.
- */
-async function bugHuntGameCreate(gameState: BugHuntGameState): Promise<void> {
+async function bugHuntGameCreate(gameType: GameType, gameState: BugHuntGameState): Promise<void> {
   if (!gameState || !gameState.status || !gameState.moves || !gameState.scores) {
     throw new Error('Invalid BugHunt Game State');
   }
 
+  const movePlayers = gameState.moves.map(move => move.playerID);
+  const scorePlayers = gameState.scores.map(score => score.player);
+  const players = [...new Set([...movePlayers, ...scorePlayers])];
+
   await BugHuntModel.create({
     gameID: new mongoose.Types.ObjectId().toString(), // Generate a unique gameID
     state: gameState,
-    gameType: 'BugHunt', // Ensure the required gameType field is included
+    gameType, // Ensure the required gameType field is included,
+    players,
   });
 }
 
@@ -382,6 +385,14 @@ const populate = async () => {
       [c12],
     );
 
+    /**
+     * BUGGY FILES
+     */
+    const buggyFilePromises = BUGGY_FILES.map(({ code, description, buggyLines }) =>
+      buggyFileCreate(code, description, buggyLines),
+    );
+    const buggyFiles = await Promise.all(buggyFilePromises);
+
     const mockDailyGame = (
       createdDate: Date = new Date(),
       scores: BugHuntScore[],
@@ -397,19 +408,23 @@ const populate = async () => {
 
       const logs = scores.map((score, index) => ({
         player: score.player,
-        createdAt: new Date(createdAt.getTime() + index * 1000 * 60 * 5), // every 5 min
+        createdAt: new Date(createdAt.getTime() + index * 1000 * 1), // every 1 second
         type: 'JOINED' as LogType,
       }));
 
-      const winners = scores.length > 0 ? [scores[0].player] : [];
+      const startedLog = {
+        player: 'DailyBugHuntBackend',
+        createdAt: new Date(createdAt.getTime() + 1000 * 60 * 5), // wait 5 minutes to start
+        type: 'STARTED' as LogType,
+      };
 
       return {
         moves,
-        winners,
+        winners: [],
         status: 'DAILY',
-        logs,
+        logs: [...logs, startedLog],
         scores,
-        buggyFile: new mongoose.Types.ObjectId().toString(),
+        buggyFile: buggyFiles[Math.floor(Math.random() * buggyFiles.length)]._id,
         createdAt,
         updatedAt,
       };
@@ -471,19 +486,11 @@ const populate = async () => {
       ]),
     ];
 
-    const dailyBugHuntGamePromises = dailyBugHuntGames.map(game => bugHuntGameCreate(game));
+    const dailyBugHuntGamePromises = dailyBugHuntGames.map(game =>
+      bugHuntGameCreate('BugHuntDaily', game),
+    );
     await Promise.all(dailyBugHuntGamePromises);
     console.log('BugHunt games populated');
-
-    /**
-     * BUGGY FILES
-     */
-    const buggyFilePromises = BUGGY_FILES.map(({ code, description, buggyLines }) =>
-      buggyFileCreate(code, description, buggyLines),
-    );
-    await Promise.all(buggyFilePromises);
-
-    console.log('Database populated');
   } catch (err) {
     console.log('ERROR: ' + err);
   } finally {

@@ -72,7 +72,6 @@ export const findGameById = async (
 
     return formatGameInstance(game);
   } catch (error) {
-    console.error(error);
     throw new Error('Database error while finding game ID');
   }
 };

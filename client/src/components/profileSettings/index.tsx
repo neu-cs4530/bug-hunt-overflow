@@ -31,11 +31,7 @@ const ProfileSettings: React.FC = () => {
     handleDeleteUser,
   } = useProfileSettings();
 
-  const {
-    games,
-    loading: gamesLoading,
-    error: gamesError,
-  } = useAllDailyGamesForPlayer(userData?.username || '');
+  const { games } = useAllDailyGamesForPlayer(userData?.username || '');
 
   if (loading) {
     return (

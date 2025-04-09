@@ -13,7 +13,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     warnOnUnsupportedTypeScriptVersion: false,
   },
-  ignorePatterns: ['coverage/', 'node_modules/', '/*.*'],
+  ignorePatterns: ['coverage/', 'node_modules/', '/*.*', 'dist/'],
   rules: {
     'prettier/prettier': 'error',
     'no-underscore-dangle': 0,

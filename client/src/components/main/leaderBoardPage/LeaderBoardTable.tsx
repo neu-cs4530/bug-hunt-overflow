@@ -28,11 +28,9 @@ const formatPlayerScoreAccuracy = (accuracy: number) => {
 
 const LeaderBoardRow = ({
   item,
-  rank,
   selectedDate,
 }: {
   item: LeaderBoardItem;
-  rank: number;
   selectedDate?: string;
 }) => {
   const { streak } = useConsecutiveDailyGames(item.player, selectedDate);
@@ -44,7 +42,6 @@ const LeaderBoardRow = ({
 
   return (
     <tr>
-      <td>{rank}</td>
       <td className='player-cell'>
         <span>{item.player}</span>
         <button onClick={handleViewProfile} className='view-profile-button'>
@@ -65,16 +62,17 @@ const LeaderBoardRow = ({
 const LeaderBoardTable = (props: LeaderBoardTableProps) => {
   const { scores, isLoading, error, selectedDate } = props;
 
-  const [sortAscending, setSortAscending] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [sortAscending, setSortAscending] = useState(false);
 
-  const filteredScores = scores
-    .filter(score => score.player.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) =>
-      sortAscending
-        ? a.timeMilliseconds - b.timeMilliseconds
-        : b.timeMilliseconds - a.timeMilliseconds,
-    );
+  const filteredScores = scores.sort((a, b) => {
+    if (a.accuracy !== b.accuracy) {
+      return sortAscending ? a.accuracy - b.accuracy : b.accuracy - a.accuracy;
+    }
+
+    return sortAscending
+      ? b.timeMilliseconds - a.timeMilliseconds
+      : a.timeMilliseconds - b.timeMilliseconds;
+  });
 
   if (isLoading) {
     return <div className='loading'>Loading leaderboard...</div>;
@@ -89,7 +87,6 @@ const LeaderBoardTable = (props: LeaderBoardTableProps) => {
       <table className='leaderboard-table'>
         <thead>
           <tr>
-            <th>Rank</th>
             <th>Player</th>
             <th>
               Time
@@ -97,19 +94,19 @@ const LeaderBoardTable = (props: LeaderBoardTableProps) => {
                 {sortAscending ? '↑' : '↓'}
               </button>
             </th>
-            <th>Accuracy</th>
+            <th>
+              Accuracy
+              <button onClick={() => setSortAscending(prev => !prev)} className='sort-button'>
+                {sortAscending ? '↑' : '↓'}
+              </button>
+            </th>
             {selectedDate ? <th>Streak</th> : <></>}
           </tr>
         </thead>
         <tbody>
           {filteredScores.length ? (
             filteredScores.map((item, i) => (
-              <LeaderBoardRow
-                key={item.player}
-                item={item}
-                rank={i + 1}
-                selectedDate={selectedDate}
-              />
+              <LeaderBoardRow key={item.player} item={item} selectedDate={selectedDate} />
             ))
           ) : (
             <tr>

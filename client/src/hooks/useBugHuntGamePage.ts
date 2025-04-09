@@ -8,9 +8,10 @@ import { validateBuggyFileLines, getHintLine } from '../services/bugHuntService'
 import { startGame } from '../services/gamesService';
 import useBuggyFile from './useBuggyFile';
 
-export const SELECTED_LINE_BACKGROUND_COLOR = 'lightskyblue';
-export const CORRECT_LINE_BACKGROUND_COLOR = 'lightgreen';
-export const WRONG_LINE_BACKGROUND_COLOR = 'lightcoral';
+export const BUG_HUNT_SELECTED_LINE_BACKGROUND_COLOR = 'lightskyblue';
+export const BUG_HUNT_CORRECT_LINE_BACKGROUND_COLOR = 'lightgreen';
+export const BUG_HUNT_WRONG_LINE_BACKGROUND_COLOR = 'lightcoral';
+export const BUG_HUNT_HINT_LINE_BACKGROUND_COLOR = '#fac768';
 
 const makeCodeLineStyle = (lines: number[], style: CodeLineStyle) =>
   lines.reduce(
@@ -39,6 +40,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const { buggyFile } = useBuggyFile(gameInstance.state.buggyFile);
   const [selectedLines, setSelectedLines] = useState<number[]>([]);
   const [correctLines, setCorrectLines] = useState<number[]>([]);
+  const [hintLines, setHintLines] = useState<number[]>([]);
   const [wrongLines, setWrongLines] = useState<number[]>([]);
   const [stopwatch, setStopwatch] = useState('00:00:00'); // Format: HH:MM:SS
 
@@ -48,18 +50,22 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   const lineStyles = useMemo<{ [key: number]: CodeLineStyle }>(
     () => ({
       ...makeCodeLineStyle(selectedLines, {
-        backgroundColor: SELECTED_LINE_BACKGROUND_COLOR,
+        backgroundColor: BUG_HUNT_SELECTED_LINE_BACKGROUND_COLOR,
       }),
       ...makeCodeLineStyle(correctLines, {
-        backgroundColor: CORRECT_LINE_BACKGROUND_COLOR,
+        backgroundColor: BUG_HUNT_CORRECT_LINE_BACKGROUND_COLOR,
         cursor: 'default',
       }),
       ...makeCodeLineStyle(wrongLines, {
-        backgroundColor: WRONG_LINE_BACKGROUND_COLOR,
+        backgroundColor: BUG_HUNT_WRONG_LINE_BACKGROUND_COLOR,
+        cursor: 'default',
+      }),
+      ...makeCodeLineStyle(hintLines, {
+        backgroundColor: BUG_HUNT_HINT_LINE_BACKGROUND_COLOR,
         cursor: 'default',
       }),
     }),
-    [correctLines, selectedLines, wrongLines],
+    [correctLines, hintLines, selectedLines, wrongLines],
   );
 
   /**
@@ -147,7 +153,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   }, []);
 
   const validateLineNumbers = useCallback(
-    async (lines: number[]) => {
+    async (lines: number[], isHint?: boolean) => {
       const buggyFileId = gameInstance.state.buggyFile;
       if (!buggyFileId) {
         return;
@@ -159,7 +165,11 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
         const wrong = lines.filter(n => !correct.includes(n));
 
         setCorrectLines(curr => [...new Set([...curr, ...correct])]);
-        setWrongLines(curr => [...new Set([...curr, ...wrong])]);
+        if (isHint) {
+          setHintLines(curr => [...new Set([...curr, ...wrong])]);
+        } else {
+          setWrongLines(curr => [...new Set([...curr, ...wrong])]);
+        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -174,7 +184,12 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
    */
   const handleSelectLine = useCallback(
     (lineNumber: number) => {
-      if (correctLines.includes(lineNumber) || wrongLines.includes(lineNumber) || isPlayerDone) {
+      if (
+        correctLines.includes(lineNumber) ||
+        wrongLines.includes(lineNumber) ||
+        hintLines.includes(lineNumber) ||
+        isPlayerDone
+      ) {
         return;
       }
 
@@ -190,7 +205,14 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
         return [...curr, lineNumber];
       });
     },
-    [buggyFile?.numberOfBugs, correctLines, isPlayerDone, selectedLines.length, wrongLines],
+    [
+      buggyFile?.numberOfBugs,
+      correctLines,
+      hintLines,
+      isPlayerDone,
+      selectedLines.length,
+      wrongLines,
+    ],
   );
 
   /**
@@ -247,7 +269,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
         // no more valid lines to give as hints
         return;
       }
-      setWrongLines(curr => [...new Set([...curr, hintLine])]);
+      setHintLines(curr => [...new Set([...curr, hintLine])]);
 
       const move: GameMove<BugHuntMove> = {
         playerID: user.username,
@@ -290,7 +312,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   // Load validated line numbers in. Only run on first load
   useEffect(() => {
     playerMoves.forEach(move => {
-      validateLineNumbers(move.move.selectedLines);
+      validateLineNumbers(move.move.selectedLines, move.move.isHint);
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -300,7 +322,7 @@ const useBugHuntGamePage = (gameInstance: GameInstance<BugHuntGameState>) => {
   useEffect(() => {
     playerHints.forEach(move => {
       if (move.move.isHint) {
-        setWrongLines(curr => [...curr, ...move.move.selectedLines]);
+        setHintLines(curr => [...curr, ...move.move.selectedLines]);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
