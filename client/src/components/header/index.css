@@ -17,15 +17,15 @@
 
 /* Icon/logo */
 .header-logo {
-  width: 40px;
-  height: 40px;
+  width: 2.25rem;
+  height: 2.25rem;
   object-fit: contain;
 }
 
 /* Group for title + subtitle */
 .title-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.5rem;
 }
 
