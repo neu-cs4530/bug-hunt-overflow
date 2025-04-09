@@ -1,12 +1,11 @@
 import './index.css';
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import { useMemo } from 'react';
 import useBugHuntSummaryPage from '../../../../hooks/useBugHuntSummaryPage';
 import { BugHuntGameState, GameInstance } from '../../../../types/types';
 import { BugIcon } from '../../../icons';
-
-dayjs.extend(duration);
+import LeaderBoardTable from '../../leaderBoardPage/LeaderBoardTable';
+import { formatDuration } from '../../../../lib/date';
 
 interface GameResultBannerProps {
   bugsFound: number;
@@ -21,26 +20,6 @@ interface GameSummaryScoreCardProps {
   label: string;
   score: string | number | undefined;
 }
-
-const formatPlayerScoreDuration = (timeMilliseconds: number) => {
-  const dur = dayjs.duration(timeMilliseconds);
-  const hours = dur.hours();
-  const minutes = dur.minutes();
-  const seconds = dur.seconds();
-
-  let durationStr = '';
-
-  if (hours) {
-    durationStr += `${hours}h `;
-  }
-
-  if (minutes) {
-    durationStr += `${minutes}m `;
-  }
-
-  durationStr += `${seconds}s`;
-  return durationStr;
-};
 
 const formatPlayerScoreAccuracy = (accuracy: number) => {
   if (accuracy < 1) {
@@ -102,7 +81,7 @@ const BugHuntSummaryPage = (props: BugHuntSummaryPageProps) => {
           <div className='game-summary-scores-container'>
             <GameSummaryScoreCard
               label='Completed in'
-              score={formatPlayerScoreDuration(playerScore.timeMilliseconds)}
+              score={formatDuration(playerScore.timeMilliseconds)}
             />
             <GameSummaryScoreCard label='Hints Used' score={hintsUsed} />
             <GameSummaryScoreCard
@@ -113,6 +92,7 @@ const BugHuntSummaryPage = (props: BugHuntSummaryPageProps) => {
         </>
       )}
       <h3>Leaderboard</h3>
+      <LeaderBoardTable scores={[...gameInstance.state.scores]} />
     </div>
   );
 };

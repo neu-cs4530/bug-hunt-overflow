@@ -69,26 +69,35 @@ const AllGamesPage = () => {
         </button>
       </div>
 
-      <div className='game-available'>
-        {isModalOpen && (
-          <div className='game-modal'>
-            <div className='modal-content'>
-              <h2>Select Game Type</h2>
-              <button onClick={() => handleSelectGameType('Nim')}>Nim</button>
-              <button onClick={() => handleSelectGameType('BugHunt')}>Bug Hunt</button>
-              <button onClick={handleToggleModal}>Cancel</button>
-            </div>
+      {isModalOpen && (
+        <div className='game-modal'>
+          <div className='modal-content'>
+            <h2>Create New Game</h2>
+            <button className='btn-submit' onClick={() => handleSelectGameType('Nim')}>
+              Nim
+            </button>
+            <button className='btn-submit' onClick={() => handleSelectGameType('BugHunt')}>
+              Bug Hunt
+            </button>
+            <button className='btn-cancel' onClick={handleToggleModal}>
+              Cancel
+            </button>
           </div>
-        )}
-        <div className='game-list'>
-          {error && <div className='game-error'>{error}</div>}
+        </div>
+      )}
 
+      <div className='game-list'>
+        {error && <div className='game-error'>{error}</div>}
+
+        {games.length > 0 ? (
           <div className='game-items'>
             {games.map(game => (
               <GameCard key={game.gameID} game={game} handleJoin={handleJoin} />
             ))}
           </div>
-        </div>
+        ) : (
+          <p className='no-games'>No {title}</p>
+        )}
       </div>
     </div>
   );

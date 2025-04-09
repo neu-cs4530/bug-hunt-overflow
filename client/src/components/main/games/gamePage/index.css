@@ -38,11 +38,11 @@ body {
 }
 
 .btn-leave-game {
-  background: #cf1124;
+  background: #df1227;
 }
 
 .btn-leave-game:hover {
-  background: #ab091e;
+  background: #bb0a21;
 }
 
 button:disabled {

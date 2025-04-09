@@ -6,9 +6,14 @@ body {
   padding: 0;
 }
 
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 /* Button Specific Classes */
-.btn-submit {
-  background: #007bff;
+.btn-submit,
+.btn-cancel {
   color: white;
   padding: 10px 20px;
   border: none;
@@ -18,13 +23,20 @@ body {
   transition: background-color 0.2s ease;
 }
 
+.btn-submit {
+  background: #007bff;
+}
+
 .btn-submit:hover {
   background: #0056b3;
 }
 
-.btn-submit:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.btn-cancel {
+  background: #df1227;
+}
+
+.btn-cancel:hover {
+  background: #bb0a21;
 }
 
 .btn-hint {

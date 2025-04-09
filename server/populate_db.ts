@@ -14,6 +14,8 @@ import {
   Tag,
   User,
   BugHuntGameState,
+  BugHuntScore,
+  LogType,
 } from './types/types';
 import {
   Q1_DESC,
@@ -380,122 +382,105 @@ const populate = async () => {
       [c12],
     );
 
-    const bugHuntGame1: BugHuntGameState = {
-      moves: [
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'sana',
-          move: { selectedLines: [1, 2, 3] },
-        },
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'saltyPeter',
-          move: { selectedLines: [4, 5, 6] },
-        },
-      ],
-      winners: ['sana'],
-      status: 'DAILY',
-      logs: [
-        { player: 'sana', createdAt: new Date('2025-03-31T10:00:00.000Z'), type: 'STARTED' },
-        { player: 'saltyPeter', createdAt: new Date('2025-03-31T10:05:00.000Z'), type: 'JOINED' },
-      ],
-      scores: [
-        { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
-        { player: 'saltyPeter', timeMilliseconds: 1500, accuracy: 90 },
-      ],
-      buggyFile: new mongoose.Types.ObjectId().toString(),
-      createdAt: new Date('2025-03-31T10:00:00.000Z'),
-      updatedAt: new Date('2025-03-31T10:30:00.000Z'),
+    const mockDailyGame = (
+      createdDate: Date = new Date(),
+      scores: BugHuntScore[],
+    ): BugHuntGameState => {
+      const createdAt = new Date(createdDate);
+      const updatedAt = new Date(createdDate);
+
+      const moves = scores.map((score, index) => ({
+        gameID: new mongoose.Types.ObjectId().toString(),
+        playerID: score.player,
+        move: { selectedLines: [1 + index * 3, 2 + index * 3, 3 + index * 3] },
+      }));
+
+      const logs = scores.map((score, index) => ({
+        player: score.player,
+        createdAt: new Date(createdAt.getTime() + index * 1000 * 60 * 5), // every 5 min
+        type: 'JOINED' as LogType,
+      }));
+
+      const winners = scores.length > 0 ? [scores[0].player] : [];
+
+      return {
+        moves,
+        winners,
+        status: 'DAILY',
+        logs,
+        scores,
+        buggyFile: new mongoose.Types.ObjectId().toString(),
+        createdAt,
+        updatedAt,
+      };
     };
 
-    const bugHuntGame2: BugHuntGameState = {
-      moves: [
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'sana',
-          move: { selectedLines: [7, 8, 9] },
-        },
-      ],
-      winners: ['sana'],
-      status: 'DAILY',
-      logs: [
-        { player: 'sana', createdAt: new Date('2025-03-30T10:00:00.000Z'), type: 'STARTED' },
-      ],
-      scores: [{ player: 'sana', timeMilliseconds: 1100, accuracy: 98 }],
-      buggyFile: new mongoose.Types.ObjectId().toString(),
-      createdAt: new Date('2025-03-30T10:00:00.000Z'),
-      updatedAt: new Date('2025-03-30T10:20:00.000Z'),
-    };
+    const daysAgo = (n: number) => new Date(Date.now() - n * 24 * 60 * 60 * 1000);
 
-    const bugHuntGame3: BugHuntGameState = {
-      moves: [
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'sana',
-          move: { selectedLines: [1, 2, 3] },
-        },
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'saltyPeter',
-          move: { selectedLines: [4, 5, 6] },
-        },
-      ],
-      winners: ['sana'],
-      status: 'DAILY',
-      logs: [
-        { player: 'sana', createdAt: new Date('2025-03-29T10:00:00.000Z'), type: 'STARTED' },
-        { player: 'saltyPeter', createdAt: new Date('2025-03-29T10:05:00.000Z'), type: 'JOINED' },
-      ],
-      scores: [
-        { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
-        { player: 'saltyPeter', timeMilliseconds: 1500, accuracy: 90 },
-      ],
-      buggyFile: new mongoose.Types.ObjectId().toString(),
-      createdAt: new Date('2025-03-29T10:00:00.000Z'),
-      updatedAt: new Date('2025-03-29T10:30:00.000Z'),
-    };
+    const dailyBugHuntGames: BugHuntGameState[] = [
+      mockDailyGame(daysAgo(0), [
+        { player: 'sana', timeMilliseconds: 130000, accuracy: 97 },
+        { player: 'hamkalo', timeMilliseconds: 140000, accuracy: 92 },
+        { player: 'saltyPeter', timeMilliseconds: 150000, accuracy: 88 },
+        { player: 'monkeyABC', timeMilliseconds: 160000, accuracy: 85 },
+        { player: 'abhi3241', timeMilliseconds: 155000, accuracy: 90 },
+        { player: 'Joji John', timeMilliseconds: 170000, accuracy: 89 },
+        { player: 'azad', timeMilliseconds: 180000, accuracy: 76 },
+      ]),
+      mockDailyGame(daysAgo(1), [
+        { player: 'sana', timeMilliseconds: 240000, accuracy: 95 },
+        { player: 'saltyPeter', timeMilliseconds: 220000, accuracy: 84 },
+        { player: 'abaya', timeMilliseconds: 210000, accuracy: 78 },
+        { player: 'ihba001', timeMilliseconds: 250000, accuracy: 91 },
+        { player: 'mackson3332', timeMilliseconds: 260000, accuracy: 85 },
+      ]),
+      mockDailyGame(daysAgo(2), [
+        { player: 'sana', timeMilliseconds: 180000, accuracy: 92 },
+        { player: 'hamkalo', timeMilliseconds: 170000, accuracy: 83 },
+        { player: 'abhi3241', timeMilliseconds: 190000, accuracy: 75 },
+        { player: 'Joji John', timeMilliseconds: 200000, accuracy: 87 },
+        { player: 'azad', timeMilliseconds: 210000, accuracy: 88 },
+      ]),
+      mockDailyGame(daysAgo(3), [
+        { player: 'hamkalo', timeMilliseconds: 160000, accuracy: 79 },
+        { player: 'sana', timeMilliseconds: 150000, accuracy: 93 },
+        { player: 'saltyPeter', timeMilliseconds: 140000, accuracy: 80 },
+        { player: 'monkeyABC', timeMilliseconds: 155000, accuracy: 84 },
+        { player: 'abaya', timeMilliseconds: 165000, accuracy: 82 },
+      ]),
+      mockDailyGame(daysAgo(4), [
+        { player: 'ihba001', timeMilliseconds: 170000, accuracy: 77 },
+        { player: 'abaya', timeMilliseconds: 190000, accuracy: 79 },
+        { player: 'mackson3332', timeMilliseconds: 200000, accuracy: 81 },
+        { player: 'saltyPeter', timeMilliseconds: 210000, accuracy: 85 },
+        { player: 'sana', timeMilliseconds: 185000, accuracy: 94 },
+      ]),
+      mockDailyGame(daysAgo(5), [
+        { player: 'azad', timeMilliseconds: 270000, accuracy: 70 },
+        { player: 'mackson3332', timeMilliseconds: 240000, accuracy: 83 },
+        { player: 'Joji John', timeMilliseconds: 250000, accuracy: 86 },
+        { player: 'hamkalo', timeMilliseconds: 230000, accuracy: 80 },
+        { player: 'ihba001', timeMilliseconds: 200000, accuracy: 72 },
+      ]),
+      mockDailyGame(daysAgo(6), [
+        { player: 'monkeyABC', timeMilliseconds: 180000, accuracy: 79 },
+        { player: 'sana', timeMilliseconds: 225000, accuracy: 91 },
+        { player: 'hamkalo', timeMilliseconds: 195000, accuracy: 88 },
+        { player: 'abhi3241', timeMilliseconds: 215000, accuracy: 74 },
+        { player: 'ihba001', timeMilliseconds: 220000, accuracy: 69 },
+      ]),
+    ];
 
-    const bugHuntGame4: BugHuntGameState = {
-      moves: [
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'sana',
-          move: { selectedLines: [1, 2, 3] },
-        },
-        {
-          gameID: new mongoose.Types.ObjectId().toString(),
-          playerID: 'saltyPeter',
-          move: { selectedLines: [4, 5, 6] },
-        },
-      ],
-      winners: ['sana'],
-      status: 'DAILY',
-      logs: [
-        { player: 'sana', createdAt: new Date('2025-03-23T10:00:00.000Z'), type: 'STARTED' },
-        { player: 'saltyPeter', createdAt: new Date('2025-03-23T10:05:00.000Z'), type: 'JOINED' },
-      ],
-      scores: [
-        { player: 'sana', timeMilliseconds: 1200, accuracy: 95 },
-        { player: 'saltyPeter', timeMilliseconds: 1500, accuracy: 90 },
-      ],
-      buggyFile: new mongoose.Types.ObjectId().toString(),
-      createdAt: new Date('2025-03-23T10:00:00.000Z'),
-      updatedAt: new Date('2025-03-23T10:30:00.000Z'),
-    };
-
-    await bugHuntGameCreate(bugHuntGame1);
-    await bugHuntGameCreate(bugHuntGame2);
-    await bugHuntGameCreate(bugHuntGame3);
-    await bugHuntGameCreate(bugHuntGame4);
+    const dailyBugHuntGamePromises = dailyBugHuntGames.map(game => bugHuntGameCreate(game));
+    await Promise.all(dailyBugHuntGamePromises);
     console.log('BugHunt games populated');
 
     /**
      * BUGGY FILES
      */
-    const buggyFilePromises = BUGGY_FILES.map(file => {
-      const { code, description, buggyLines } = file;
-      return buggyFileCreate(code, description, buggyLines);
-    });
+    const buggyFilePromises = BUGGY_FILES.map(({ code, description, buggyLines }) =>
+      buggyFileCreate(code, description, buggyLines),
+    );
     await Promise.all(buggyFilePromises);
 
     console.log('Database populated');

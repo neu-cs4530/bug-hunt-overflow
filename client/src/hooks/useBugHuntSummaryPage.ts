@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { BugHuntGameState, GameInstance } from '../types/types';
 import useUserContext from './useUserContext';
@@ -8,6 +8,7 @@ const useBugHuntSummaryPage = (gameInstance: GameInstance<BugHuntGameState>) => 
   const { user } = useUserContext();
 
   const { buggyFile } = useBuggyFile(gameInstance.state.buggyFile);
+  const [correctLines, setCorrectLines] = useState<number[]>([]);
 
   const playerScore = useMemo(
     () => gameInstance.state.scores.find(score => score.player === user.username),
@@ -23,7 +24,7 @@ const useBugHuntSummaryPage = (gameInstance: GameInstance<BugHuntGameState>) => 
     playerScore,
     playerMoves,
     totalBugs: buggyFile?.numberOfBugs ?? 0,
-    bugsFound: 0,
+    bugsFound: correctLines.length,
   };
 };
 

@@ -192,7 +192,6 @@ class GameManager {
         return undefined;
       }
 
-      console.log(dbGame);
       return dbGame;
     }
     return game;
