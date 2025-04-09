@@ -1,9 +1,8 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/buglogo.png';
 
 const Header = () => {
   const { val, handleInputChange, handleKeyDown, handleSignOut } = useHeader();
@@ -14,7 +13,10 @@ const Header = () => {
     <div className='header'>
       <div className='header-left'>
         <img src={logo} alt='Stack Overflow Logo' className='header-logo' />
-        <h1 className='title'>Fake Stack Overflow</h1>
+        <div className='title-row'>
+          <h1 className='header-title'>Bug Overflow</h1>
+          <span className='header-subtitle'>Ask. Debug. Solve.</span>
+        </div>
       </div>
 
       <div className='header-center'>
@@ -33,9 +35,7 @@ const Header = () => {
         <button onClick={handleSignOut} className='logout-button'>
           Log out
         </button>
-        <button
-          className='view-profile-button'
-          onClick={() => navigate(`/user/${currentUser.username}`)}>
+        <button className='view-button' onClick={() => navigate(`/user/${currentUser.username}`)}>
           View Profile
         </button>
       </div>

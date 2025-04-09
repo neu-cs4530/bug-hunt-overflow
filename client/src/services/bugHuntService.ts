@@ -1,4 +1,4 @@
-import { SafeBuggyFile } from '@fake-stack-overflow/shared';
+import { GameInstance, GameState, SafeBuggyFile } from '@fake-stack-overflow/shared';
 import api from './config';
 
 const BUG_HUNT_API_URL = `${process.env.REACT_APP_SERVER_URL}/bughunt`;
@@ -21,6 +21,19 @@ export const getDailyBugHuntScores = async (
     throw new Error('Error when fetching daily BugHunt scores');
   }
 
+  return res.data;
+};
+
+/**
+ * Fetches the daily game instance for a specific player and date.
+ * @param playerID - The ID of the player for whom to fetch the game instance.
+ * @returns   A promise resolving to an object containing the game instance ID and game type.
+ */
+export const getDailyGameInstance = async (): Promise<GameInstance<GameState>> => {
+  const res = await api.get(`${BUG_HUNT_API_URL}/dailyInstance`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching daily game instance');
+  }
   return res.data;
 };
 

@@ -28,9 +28,11 @@ const formatPlayerScoreAccuracy = (accuracy: number) => {
 
 const LeaderBoardRow = ({
   item,
+  rank,
   selectedDate,
 }: {
   item: LeaderBoardItem;
+  rank: number;
   selectedDate?: string;
 }) => {
   const { streak } = useConsecutiveDailyGames(item.player, selectedDate);
@@ -42,14 +44,19 @@ const LeaderBoardRow = ({
 
   return (
     <tr>
-      <td>
-        {item.player}
+      <td>{rank}</td>
+      <td className='player-cell'>
+        <span>{item.player}</span>
         <button onClick={handleViewProfile} className='view-profile-button'>
           View Profile
         </button>
       </td>
       <td>{formatDuration(item.timeMilliseconds)}</td>
-      <td>{formatPlayerScoreAccuracy(item.accuracy)}</td>
+      <td>
+        <span title='Correct guesses / Total guesses'>
+          {formatPlayerScoreAccuracy(item.accuracy)}
+        </span>
+      </td>
       {selectedDate ? <td>{streak && streak >= 3 ? `${streak} 🔥` : streak || '-'}</td> : <></>}
     </tr>
   );
@@ -58,18 +65,16 @@ const LeaderBoardRow = ({
 const LeaderBoardTable = (props: LeaderBoardTableProps) => {
   const { scores, isLoading, error, selectedDate } = props;
 
-  const [sortRanking, setSortRanking] = useState(true);
+  const [sortAscending, setSortAscending] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSortRanking = () => {
-    setSortRanking(prevSortRanking => !prevSortRanking);
-  };
-
-  const sortedScores = scores.sort((a, b) => {
-    if (sortRanking) {
-      return a.timeMilliseconds - b.timeMilliseconds; // Ascending order
-    }
-    return b.timeMilliseconds - a.timeMilliseconds; // Descending order
-  });
+  const filteredScores = scores
+    .filter(score => score.player.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) =>
+      sortAscending
+        ? a.timeMilliseconds - b.timeMilliseconds
+        : b.timeMilliseconds - a.timeMilliseconds,
+    );
 
   if (isLoading) {
     return <div className='loading'>Loading leaderboard...</div>;
@@ -80,34 +85,42 @@ const LeaderBoardTable = (props: LeaderBoardTableProps) => {
   }
 
   return (
-    <table className='leaderboard-table'>
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>
-            Time
-            <button onClick={handleSortRanking} className='sort-button'>
-              {sortRanking ? '↑' : '↓'}
-            </button>
-          </th>
-          <th>Accuracy (%)</th>
-          {selectedDate ? <th>Streak</th> : <></>}
-        </tr>
-      </thead>
-      <tbody>
-        {sortedScores.length > 0 ? (
-          scores.map((item, index) => (
-            <LeaderBoardRow key={index} item={item} selectedDate={selectedDate} />
-          ))
-        ) : (
+    <div className='leaderboard-table-container'>
+      <table className='leaderboard-table'>
+        <thead>
           <tr>
-            <td colSpan={4} className='no-data'>
-              No data available
-            </td>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>
+              Time
+              <button onClick={() => setSortAscending(prev => !prev)} className='sort-button'>
+                {sortAscending ? '↑' : '↓'}
+              </button>
+            </th>
+            <th>Accuracy</th>
+            {selectedDate ? <th>Streak</th> : <></>}
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {filteredScores.length ? (
+            filteredScores.map((item, i) => (
+              <LeaderBoardRow
+                key={item.player}
+                item={item}
+                rank={i + 1}
+                selectedDate={selectedDate}
+              />
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5} className='no-data'>
+                No players match your search.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

@@ -4,28 +4,45 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 10px 20px;
+  padding: 0 20px;
   background: #f8f9fa;
+  height: 60px;
   border-bottom: 1px solid #d6d9dc;
 }
 
-/* Left section (title) */
 .header-left {
   display: flex;
   align-items: center;
+  gap: 0.25rem;
 }
 
-/* Stack Overflow logo */
+/* Icon/logo */
 .header-logo {
-  width: 30px;
-  height: auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
 }
 
-.title {
-  font-size: 22px;
-  font-weight: bold;
-  color: #232629;
+/* Group for title + subtitle */
+.title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c1e21;
   margin: 0;
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: #6a737c;
+  white-space: nowrap;
 }
 
 /* Center section (Search bar) */
@@ -60,14 +77,16 @@
 
 /* Buttons */
 .logout-button,
-.view-profile-button {
-  padding: 8px 14px;
+.view-button {
+  padding: 8px 16px;
   font-size: 14px;
   font-weight: bold;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  min-width: 120px;
+  height: 40px;
   transition: all 0.3s ease;
 }
 
@@ -79,7 +98,7 @@
   background-color: #bb0a21;
 }
 
-.view-profile-button {
+.view-button {
   background-color: #0a95ff;
 }
 
