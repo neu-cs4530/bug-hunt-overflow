@@ -13,7 +13,11 @@ const Header = () => {
   return (
     <div className='header'>
       <div className='header-left'>
-        <h1 className='title'>Bug Overflow</h1>
+        {/* <img src={logo} alt='Stack Overflow Logo' className='header-logo' /> */}
+        <div className='title-row'>
+          <h1 className='title'>Bug Overflow</h1>
+          <span className='subtitle'>Ask. Debug. Solve.</span>
+        </div>
       </div>
 
       <div className='header-center'>

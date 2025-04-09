@@ -9,24 +9,42 @@
   border-bottom: 1px solid #d6d9dc;
 }
 
-/* Left section (title) */
 .header-left {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
-/* Stack Overflow logo */
+/* Icon/logo */
 .header-logo {
-  width: 30px;
-  height: auto;
+  width: 40px;
+  height: 30px;
+  object-fit: contain;
+}
+
+/* Group for title + subtitle */
+.title-row {
+  display: flex;
+  align-items: baseline; /* key: aligns text baselines */
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .title {
-  font-size: 22px;
-  font-weight: bold;
-  color: #232629;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c1e21;
   margin: 0;
+  line-height: 1.2;
 }
+
+.subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: #6a737c;
+  white-space: nowrap;
+}
+
 
 /* Center section (Search bar) */
 .header-center {
@@ -61,13 +79,15 @@
 /* Buttons */
 .logout-button,
 .view-profile-button {
-  padding: 8px 14px;
+  padding: 8px 16px;
   font-size: 14px;
   font-weight: bold;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  min-width: 120px;
+  height: 40px;
   transition: all 0.3s ease;
 }
 
