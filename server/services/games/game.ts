@@ -23,10 +23,15 @@ abstract class Game<StateType extends GameState, MoveType> {
    * @param initialState The initial state of the game.
    * @param gameType The type of the game.
    */
-  public constructor(initialState: StateType, gameType: GameType) {
-    this.id = nanoid() as GameInstanceID;
-    this._state = initialState;
+  public constructor(
+    gameInstance: Pick<GameInstance<StateType>, 'state' | 'gameType'> & // require these
+      Partial<GameInstance<StateType>>, // partial on rest
+  ) {
+    const { gameID, state, gameType, players } = gameInstance;
+    this.id = gameID ?? (nanoid() as GameInstanceID);
+    this._state = state;
     this._gameType = gameType;
+    this._players = players ?? [];
   }
 
   /**

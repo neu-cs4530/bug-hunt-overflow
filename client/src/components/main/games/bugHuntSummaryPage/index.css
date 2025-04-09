@@ -52,7 +52,7 @@
 
 .game-result-banner {
   display: flex;
-  padding: 1.25rem;
+  padding: 0.75rem;
   color: rgb(207, 17, 36);
   border: 1px solid rgb(207, 17, 36);
   background-color: rgba(207, 17, 36, 0.15);
@@ -61,10 +61,16 @@
   gap: 0.75rem;
   align-items: center;
   font-weight: 500;
+  font-size: 1.1rem;
 }
 
 .game-result-banner.success {
   color: rgb(25, 148, 115);
   border: 1px solid rgb(25, 148, 115);
   background-color: rgba(25, 148, 115, 0.15);
+}
+
+.game-result-icon {
+  width: 2rem;
+  height: 2rem;
 }

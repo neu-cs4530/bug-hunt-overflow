@@ -39,7 +39,7 @@ const GameResultBanner = (props: GameResultBannerProps) => {
 
   return (
     <div className={`game-result-banner ${isSuccess ? 'success' : ''}`}>
-      <BugIcon />
+      <BugIcon className='game-result-icon ' />
       <span>{message}</span>
     </div>
   );
@@ -77,7 +77,7 @@ const BugHuntSummaryPage = (props: BugHuntSummaryPageProps) => {
       {playerScore && (
         <>
           <h3>My Performance</h3>
-          <GameResultBanner bugsFound={totalBugs} totalBugs={totalBugs} />
+          <GameResultBanner bugsFound={bugsFound} totalBugs={totalBugs} />
           <div className='game-summary-scores-container'>
             <GameSummaryScoreCard
               label='Completed in'

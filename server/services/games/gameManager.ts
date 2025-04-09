@@ -3,11 +3,13 @@ import BugHuntModel from '../../models/bughunt.model';
 import GameModel from '../../models/games.model';
 import {
   BaseMove,
+  BugHuntGameState,
   GameInstance,
   GameInstanceID,
   GameMove,
   GameState,
   GameType,
+  NimGameState,
 } from '../../types/types';
 import Game from './game';
 import NimGame from './nim';
@@ -51,6 +53,28 @@ class GameManager {
         await BugHuntModel.create(newGame.toModel());
 
         return newGame;
+      }
+      default: {
+        throw new Error('Invalid game type');
+      }
+    }
+  }
+
+  /**
+   * Factory method to create a new game object from the provided instance.
+   * @param gameInstance The instance of the game to create.
+   * @returns A promise resolving to the created game instance.
+   * @throws an error for an unsupported game type
+   */
+  private _gameFactoryExisting(gameInstance: GameInstance<GameState>): Game<GameState, BaseMove> {
+    const { gameType } = gameInstance;
+    switch (gameInstance.gameType) {
+      case 'Nim': {
+        return new NimGame(gameInstance as GameInstance<NimGameState>);
+      }
+      case 'BugHunt':
+      case 'BugHuntDaily': {
+        return new BugHuntGame(gameType, gameInstance as GameInstance<BugHuntGameState>);
       }
       default: {
         throw new Error('Invalid game type');
@@ -187,12 +211,14 @@ class GameManager {
   public async getGame(gameID: GameInstanceID): Promise<Game<GameState, BaseMove> | undefined> {
     const game = this._games.get(gameID);
     if (game === undefined) {
-      const dbGame: Game<GameState, BaseMove> | null = await GameModel.findOne({ gameID });
+      const dbGame: GameInstance<GameState> | null = await GameModel.findOne({ gameID }).lean();
       if (!dbGame) {
         return undefined;
       }
 
-      return dbGame;
+      const newGame = this._gameFactoryExisting(dbGame);
+      this._games.set(newGame.id, newGame);
+      return newGame;
     }
     return game;
   }

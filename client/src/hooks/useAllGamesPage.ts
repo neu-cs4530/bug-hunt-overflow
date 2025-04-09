@@ -32,7 +32,9 @@ const useAllGamesPage = () => {
 
       const nonDailyGames = games.filter(game => game.state.status !== 'DAILY');
       const current = nonDailyGames.filter(game => game.state.status !== 'OVER');
-      const previous = nonDailyGames.filter(game => game.state.status === 'OVER');
+      const previous = nonDailyGames.filter(
+        game => game.state.status === 'OVER' && game.gameType === 'BugHunt',
+      );
 
       setCurrentGames(current);
       setPreviousGames(previous);
