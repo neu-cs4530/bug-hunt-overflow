@@ -4,7 +4,6 @@ import BuggyFileModel from '../../../models/buggyFile.model';
 import GameModel from '../../../models/games.model';
 import GameManager from '../../../services/games/gameManager';
 import NimGame from '../../../services/games/nim';
-import Game from '../../../services/games/game';
 import BugHuntGame from '../../../services/games/bughunt';
 import { MAX_NIM_OBJECTS } from '../../../types/constants';
 import {
@@ -13,8 +12,6 @@ import {
   NimGameState,
   GameType,
   BugHuntGameState,
-  GameState,
-  BaseMove,
 } from '../../../types/types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -367,7 +364,7 @@ describe('GameManager', () => {
     it('should return game from db if the game request does not exist', async () => {
       mapGetSpy.mockReturnValueOnce(undefined);
       const gameID = 'unknownGameID';
-      const mockGame = new NimGame() as Game<GameState, BaseMove>;
+      const mockGame = new NimGame();
       mockingoose(GameModel).toReturn(mockGame, 'findOne');
       const game = await gameManager.getGame(gameID);
       expect(game).not.toBeUndefined();

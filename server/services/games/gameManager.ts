@@ -77,7 +77,7 @@ class GameManager {
         return new BugHuntGame(gameType, gameInstance as GameInstance<BugHuntGameState>);
       }
       default: {
-        throw new Error('Invalid game type');
+        throw new Error(`Invalid game type: ${gameType}`);
       }
     }
   }
