@@ -19,6 +19,7 @@ import GamePage from './main/games/gamePage';
 import LeaderBoardPage from './main/leaderBoardPage';
 import useUserCache from '../hooks/useUserCache';
 import DailyGames from './main/dailyGames';
+import GameSummaryPage from './main/games/gameSummaryPage';
 
 const ProtectedRoute = ({
   user,
@@ -70,6 +71,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
               <Route path='/user/:username' element={<ProfileSettings />} />
               <Route path='/games' element={<AllGamesPage />} />
               <Route path='/games/:gameID' element={<GamePage />} />
+              <Route path='/games/:gameID/summary' element={<GameSummaryPage />} />
               <Route path='/leaderboard' element={<LeaderBoardPage />} />
               <Route path='/dailyGames' element={<DailyGames />} />
               <Route path='/dailyGames/:gameID' element={<GamePage />} />

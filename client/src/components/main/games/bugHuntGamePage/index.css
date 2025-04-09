@@ -6,6 +6,7 @@
   border-left: none;
   border-right: none;
   margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
 .bug-hunt-header .selected-lines {
@@ -30,4 +31,9 @@
 }
 
 .bug-hunt-code {
+}
+
+.btn-start-game {
+  margin: 1rem auto;
+  display: block;
 }

@@ -203,6 +203,17 @@ export interface GetGamesRequest extends Request {
 }
 
 /**
+ * Interface extending the request path params when retrieving a single game by ID,
+ * which contains:
+ * - `gameId`: The ID of the game to retrieve
+ */
+export interface GetGameByIdRequest extends Request {
+  params: {
+    gameId: string;
+  };
+}
+
+/**
  * Interface extending the request body when performing a game-related action,
  * which contains:
  * - `gameID`: The ID of the game being interacted with.

@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
+import { BugHuntScore } from '@fake-stack-overflow/shared';
 import { getDailyBugHuntScores } from '../services/bugHuntService';
 
-interface LeaderBoardData {
-  player: string;
-  timeMilliseconds: number;
-  accuracy: number;
-}
-
 const useLeaderBoard = (date: string) => {
-  const [data, setData] = useState<LeaderBoardData[]>([]);
+  const [data, setData] = useState<BugHuntScore[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

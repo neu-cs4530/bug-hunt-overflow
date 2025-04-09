@@ -187,10 +187,11 @@ class GameManager {
   public async getGame(gameID: GameInstanceID): Promise<Game<GameState, BaseMove> | undefined> {
     const game = this._games.get(gameID);
     if (game === undefined) {
-      const dbGame: Game<GameState, BaseMove> | null = await GameModel.findById({ gameID });
+      const dbGame: Game<GameState, BaseMove> | null = await GameModel.findOne({ gameID });
       if (!dbGame) {
         return undefined;
       }
+
       return dbGame;
     }
     return game;

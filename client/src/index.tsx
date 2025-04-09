@@ -3,8 +3,16 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import { io } from 'socket.io-client';
 import { useEffect, useState } from 'react';
-import FakeStackOverflow from './components/fakestackoverflow';
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { FakeSOSocket } from './types/types';
+import FakeStackOverflow from './components/fakestackoverflow';
+
+dayjs.extend(duration);
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
 
 const container = document.getElementById('root');
 

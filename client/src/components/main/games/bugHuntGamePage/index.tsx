@@ -29,7 +29,7 @@ const BugHuntGamePage = (props: BugHuntGamePageProps) => {
     if (isCreator) {
       return (
         <button
-          className='btn-submit'
+          className='btn-submit btn-start-game'
           onClick={() => {
             handleStartGame();
           }}>

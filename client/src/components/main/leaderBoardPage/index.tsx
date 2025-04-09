@@ -1,5 +1,4 @@
-import React from 'react';
-import LeaderBoardTable from './LeaderBoardTable';
+import DailyLeaderBoardTable from './DailyLeaderboardTable';
 
 /**
  * LeaderBoardPage component serves as the main entry point for the leaderboard page.
@@ -8,7 +7,7 @@ import LeaderBoardTable from './LeaderBoardTable';
 const LeaderBoardPage = () => (
   <div>
     <h1>Leaderboard</h1>
-    <LeaderBoardTable />
+    <DailyLeaderBoardTable />
   </div>
 );
 
