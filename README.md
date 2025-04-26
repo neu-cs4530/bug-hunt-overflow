@@ -1,55 +1,105 @@
-## Using the Repository
+# Bug Hunt Game
 
-1.  Ensure the following software is installed:
-    - Node.js
-    - NPM
-    - MongoDB
-2.  Clone the git repository
-3.  Install the dependencies by running:
+A fun and educational game where players compete to find and fix bugs in code snippets. Test your debugging skills, climb the leaderboard, and become the ultimate bug hunter!
 
-    ```
-    cd ./client/
-    npm install
-    cd ../server
-    npm install
-    cd ../testing
-    npm install
-    ```
+## 🎮 Game Features
 
-4.  Create the Environment Files:
+### Bug Hunting
+- Find and fix bugs in real code snippets
+- Multiple difficulty levels to challenge players of all skill levels
+- Time-based scoring system to encourage quick thinking
+- Detailed feedback on your solutions
 
-    - In `./client` create a file called `.env` and add the following line
+### Leaderboard
+- Global and category-specific leaderboards
+- Track your progress and compare with other players
+- Weekly and all-time high scores
+- Achievement system to reward your bug hunting skills
 
-      ```
-      REACT_APP_SERVER_URL=http://localhost:8000
-      ```
+## 🚀 Getting Started
 
-    - In `./server` create a file called `.env` and add the following lines
+### Prerequisites
+- Node.js
+- NPM
+- MongoDB
 
-      ```
-      MONGODB_URI=mongodb://127.0.0.1:27017
-      CLIENT_URL=http://localhost:3000
-      PORT=8000
-      ```
+### Installation
 
-5.  Populate MongoDB by running:
-    ```
-    cd ./server/
-    npm run populate-db
-    ```
-6.  Start the server by running:
+1. Clone the repository:
+   ```bash
+   git clone [repository-url]
+   ```
 
-    ```
-    cd ./server/
-    npm run start
-    ```
+2. Install dependencies:
+   ```bash
+   # Install client dependencies
+   cd ./client/
+   npm install
 
-7.  Start the client by running:
-    ```
-    cd ./client/
-    npm run start
-    ```
-8.  Starting bug hunting by opening http://localhost:3000
+   # Install server dependencies
+   cd ../server
+   npm install
+   ```
+
+3. Set up environment files:
+   - Create `.env` in `./client`:
+     ```
+     REACT_APP_SERVER_URL=http://localhost:8000
+     ```
+   - Create `.env` in `./server`:
+     ```
+     MONGODB_URI=mongodb://127.0.0.1:27017
+     CLIENT_URL=http://localhost:3000
+     PORT=8000
+     ```
+
+4. Initialize the database:
+   ```bash
+   cd ./server/
+   npm run populate-db
+   ```
+
+5. Start the application:
+   ```bash
+   # Start the server
+   cd ./server/
+   npm run start
+
+   # Start the client (in a new terminal)
+   cd ./client/
+   npm run start
+   ```
+
+6. Open http://localhost:3000 in your browser and start bug hunting!
+
+## 🏆 How to Play
+
+1. **Create an Account**: Sign up to track your progress and compete on the leaderboard
+2. **Choose a Challenge**: Select from various difficulty levels and programming languages
+3. **Find the Bug**: Analyze the code and identify the issue
+4. **Submit Your Solution**: Fix the bug and submit your solution
+5. **Earn Points**: Score based on speed and correctness
+6. **Climb the Leaderboard**: Compete with other players and track your progress
+
+## 📊 Leaderboard System
+
+The game features a comprehensive leaderboard system that tracks:
+- Overall ranking
+- Category-specific rankings (by language, difficulty)
+- Weekly high scores
+- Personal bests
+- Achievement progress
+
+## 🛠️ Technical Details
+
+### Project Structure
+- `client/`: Frontend React application
+- `server/`: Backend Node.js application
+- `shared/`: Shared TypeScript type definitions
+
+### API Documentation
+For detailed API documentation, please refer to the [API Routes](#api-routes) section below.
+
 
 ## Codebase Folder Structure
 
