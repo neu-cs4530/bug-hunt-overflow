@@ -5,8 +5,9 @@ import {
   GameMovePayload,
   GameRequest,
   GetGamesRequest,
+  GetGameByIdRequest,
 } from '../types/types';
-import findGames from '../services/game.service';
+import { findGameById, findGames } from '../services/game.service';
 import GameManager from '../services/games/gameManager';
 import { GAME_TYPES } from '../types/constants';
 
@@ -89,6 +90,33 @@ const gameController = (socket: FakeSOSocket) => {
   };
 
   /**
+   * Starts a game with the specified game ID, and emits the updated game state.
+   * @param req The request object containing the game ID and player ID.
+   * @param res The response object to send the result.
+   */
+  const startGame = async (req: GameRequest, res: Response) => {
+    try {
+      if (!isGameRequestValid(req)) {
+        res.status(400).send('Invalid request');
+        return;
+      }
+
+      const { gameID, playerID } = req.body;
+
+      const game = await GameManager.getInstance().startGame(gameID, playerID);
+
+      if ('error' in game) {
+        throw new Error(game.error);
+      }
+
+      socket.to(gameID).emit('gameUpdate', { gameInstance: game });
+      res.status(200).json(game);
+    } catch (error) {
+      res.status(500).send(`Error when starting game: ${(error as Error).message}`);
+    }
+  };
+
+  /**
    * Leaves the game with the specified game ID and player ID, and emits the updated game state.
    * @param req The request object containing the game ID and player ID.
    * @param res The response object to send the result.
@@ -133,6 +161,26 @@ const gameController = (socket: FakeSOSocket) => {
   };
 
   /**
+   * Fetches a game based on the ID provided through path parameters.
+   * @param req The request object containing the path param providing game ID.
+   * @param res The response object to send the result.
+   */
+  const getGameById = async (req: GetGameByIdRequest, res: Response) => {
+    try {
+      const { gameId } = req.params;
+
+      const game = await findGameById(gameId);
+      if (!game) {
+        res.status(404).send('No game with that ID');
+      }
+
+      res.status(200).json(game);
+    } catch (error) {
+      res.status(500).send(`Error when getting a game by ID: ${(error as Error).message}`);
+    }
+  };
+
+  /**
    * Handles a game move by applying the move to the game state, emitting updates to all players, and saving the state.
    * @param gameMove The payload containing the game ID and move details.
    * @throws Error if applying the move or saving the game state fails.
@@ -141,7 +189,7 @@ const gameController = (socket: FakeSOSocket) => {
     const { gameID, move } = gameMove;
 
     try {
-      const game = GameManager.getInstance().getGame(gameID);
+      const game = await GameManager.getInstance().getGame(gameID);
 
       if (game === undefined) {
         throw new Error('Game requested does not exist');
@@ -178,8 +226,10 @@ const gameController = (socket: FakeSOSocket) => {
   // Register routes
   router.post('/create', createGame);
   router.post('/join', joinGame);
+  router.post('/start', startGame);
   router.post('/leave', leaveGame);
   router.get('/games', getGames);
+  router.get('/:gameId', getGameById);
 
   return router;
 };

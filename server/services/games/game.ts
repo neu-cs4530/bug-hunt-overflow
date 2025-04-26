@@ -23,10 +23,15 @@ abstract class Game<StateType extends GameState, MoveType> {
    * @param initialState The initial state of the game.
    * @param gameType The type of the game.
    */
-  public constructor(initialState: StateType, gameType: GameType) {
-    this.id = nanoid() as GameInstanceID;
-    this._state = initialState;
+  public constructor(
+    gameInstance: Pick<GameInstance<StateType>, 'state' | 'gameType'> & // require these
+      Partial<GameInstance<StateType>>, // partial on rest
+  ) {
+    const { gameID, state, gameType, players } = gameInstance;
+    this.id = gameID ?? (nanoid() as GameInstanceID);
+    this._state = state;
     this._gameType = gameType;
+    this._players = players ?? [];
   }
 
   /**
@@ -66,6 +71,12 @@ abstract class Game<StateType extends GameState, MoveType> {
   protected abstract _join(playerID: string): void;
 
   /**
+   * Abstract method for handling a player starting the game.
+   * @param playerID The player ID who started the game.
+   */
+  protected abstract _start(playerID: string): Promise<void>;
+
+  /**
    * Abstract method for handling a player leaving the game.
    * @param playerID The player ID to leave.
    */
@@ -77,7 +88,17 @@ abstract class Game<StateType extends GameState, MoveType> {
    */
   public join(playerID: string): void {
     this._join(playerID);
-    this._players.push(playerID);
+    if (!this._players.includes(playerID)) {
+      this._players.push(playerID);
+    }
+  }
+
+  /**
+   * Starts a game.
+   * @param playerID The player ID who started the game.
+   */
+  public async start(playerID: string): Promise<void> {
+    await this._start(playerID);
   }
 
   /**
@@ -86,7 +107,9 @@ abstract class Game<StateType extends GameState, MoveType> {
    */
   public leave(playerID: string): void {
     this._leave(playerID);
-    this._players = this._players.filter(p => p !== playerID);
+    if (this._state.status !== 'DAILY' && this._state.status !== 'IN_PROGRESS') {
+      this._players = this._players.filter(p => p !== playerID);
+    }
   }
 
   /**

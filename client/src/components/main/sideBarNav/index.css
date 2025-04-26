@@ -1,43 +1,95 @@
+/* Sidebar Container */
 .sideBarNav {
   display: flex;
   flex-direction: column;
-  width: 15%;
-  border-right: dashed;
-  padding: 4% 0 4% 0;
+  align-items: center;
+  width: 220px;
+  height: calc(100vh - 60px);
+  background-color: #f8f9fa;
+  border-right: 1px solid #d6d9dc;
+  transition: all 0.3s ease;
+}
+
+/* Menu Buttons */
+.menu_button {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  width: 100%;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #525960;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  text-decoration: none;
+}
+
+/* Menu Hover Effect */
+.menu_button:hover {
+  background-color: #e4e6e8;
+  color: #000;
+}
+
+/* Selected Menu */
+.menu_selected {
+  background: #1e7bed !important;
+  color: #ffffff !important;
+}
+
+.dropdown-menu-button {
+  display: flex;
   align-items: center;
 }
 
-.menu_button:first-child {
-  margin-top: 0;
+.dropdown-menu-button .dropdown-menu-icon {
+  margin-left: auto;
 }
 
-.menu_button {
-  height: 40px;
-  width: 80%;
-  margin-top: 20px;
-  border-radius: 5px;
+.dropdown-menu-button.dropown-active .dropdown-menu-icon {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Button */
+.menu_dropdown {
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #000;
+  background: none;
+  border: none;
+  width: 100%;
   text-align: center;
-  line-height: 40px;
-  color: cornflowerblue;
+  transition: color 0.3s ease;
 }
 
-.menu_selected {
-  background: #cccccc;
-}
-
+/* Submenu Container */
 .additional-options {
   display: flex;
   flex-direction: column;
-  padding: 4% 0 4% 0;
   align-items: center;
+  padding: 0;
+  width: 100%;
+  background-color: #f1f2f3;
+  transition: all 0.3s ease;
 }
 
+/* Submenu Items */
 .message-options {
-  width: max-content;
+  padding-left: 30px;
 }
 
 .message-option-selected {
-  background: #3090e2;
-  color: white;
-  width: 110%;
+  background: #1e7bed !important;
+  color: white !important;
+}
+
+.menu-button-icon {
+  width: 1.35rem !important;
+  height: 1.35rem !important;
+  margin-right: 0.5rem;
 }

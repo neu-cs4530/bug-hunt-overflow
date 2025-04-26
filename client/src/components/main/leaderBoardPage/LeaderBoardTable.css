@@ -1,0 +1,94 @@
+.leaderboard-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.leaderboard-heading {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.leaderboard-subheading {
+  margin-bottom: 1.25rem;
+  color: #666;
+}
+
+.leaderboard-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.date-picker,
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 200px;
+}
+
+.leaderboard-table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.leaderboard-table th {
+  background: #007bff;
+  color: white;
+  position: relative;
+}
+
+.view-profile-button {
+  margin-left: 8px;
+  padding: 3px 6px;
+  font-size: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.view-profile-button:hover {
+  background-color: #0056b3;
+}
+
+.sort-button {
+  margin-left: 8px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 16px;
+  font-style: italic;
+  color: #777;
+}

@@ -147,14 +147,24 @@ describe('NimGame tests', () => {
       expect(() => nimGame.join('player3')).toThrow('Cannot join game: already started');
     });
 
-    it('throws an error if trying to join a game the player is already in', () => {
+    it('allows player to rejoin the game', () => {
       // assemble
       nimGame.join('player1');
       expect(nimGame.state.player1).toEqual('player1');
       expect(nimGame.state.status).toEqual('WAITING_TO_START');
 
       // act
-      expect(() => nimGame.join('player1')).toThrow('Cannot join game: player already in game');
+      nimGame.join('player1');
+
+      expect(nimGame.state.player1).toEqual('player1');
+    });
+  });
+
+  describe('start', () => {
+    it('throws an error if trying to start nim manually', () => {
+      expect(() => nimGame.start('player1')).rejects.toThrow(
+        'Cannot start game: Nim cannot be started manually',
+      );
     });
   });
 

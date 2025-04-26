@@ -1,10 +1,105 @@
-The individual and team project for this class are designed to mirror the experiences of a software engineer joining a new development team: you will be “onboarded” to our codebase, make several individual contributions, and then form a team to propose, develop and implement new features. The codebase that we’ll be developing on is a Fake Stack Overflow project (let’s call it HuskyFlow). You will get an opportunity to work with the starter code which provides basic skeleton for the app and then additional features will be proposed and implemented by you! All implementation will take place in the TypeScript programming language, using React for the user interface.
+# Bug Hunt Game
 
-## Getting Started
+A fun and educational game where players compete to find and fix bugs in code snippets. Test your debugging skills, climb the leaderboard, and become the ultimate bug hunter!
 
-Run `npm install` in the root directory to install all dependencies for the `client`, `server`, and `shared` folders.
+## 🎮 Game Features
 
-{ : .note } Refer to [IP1](https://neu-se.github.io/CS4530-Spring-2025/assignments/ip1) and [IP2](https://neu-se.github.io/CS4530-Spring-2025/assignments/ip2) for further instructions related to setting up MongoDB, setting environment variables, and running the client and server.
+### Bug Hunting
+- Find and fix bugs in real code snippets
+- Multiple difficulty levels to challenge players of all skill levels
+- Time-based scoring system to encourage quick thinking
+- Detailed feedback on your solutions
+
+### Leaderboard
+- Global and category-specific leaderboards
+- Track your progress and compare with other players
+- Weekly and all-time high scores
+- Achievement system to reward your bug hunting skills
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js
+- NPM
+- MongoDB
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone [repository-url]
+   ```
+
+2. Install dependencies:
+   ```bash
+   # Install client dependencies
+   cd ./client/
+   npm install
+
+   # Install server dependencies
+   cd ../server
+   npm install
+   ```
+
+3. Set up environment files:
+   - Create `.env` in `./client`:
+     ```
+     REACT_APP_SERVER_URL=http://localhost:8000
+     ```
+   - Create `.env` in `./server`:
+     ```
+     MONGODB_URI=mongodb://127.0.0.1:27017
+     CLIENT_URL=http://localhost:3000
+     PORT=8000
+     ```
+
+4. Initialize the database:
+   ```bash
+   cd ./server/
+   npm run populate-db
+   ```
+
+5. Start the application:
+   ```bash
+   # Start the server
+   cd ./server/
+   npm run start
+
+   # Start the client (in a new terminal)
+   cd ./client/
+   npm run start
+   ```
+
+6. Open http://localhost:3000 in your browser and start bug hunting!
+
+## 🏆 How to Play
+
+1. **Create an Account**: Sign up to track your progress and compete on the leaderboard
+2. **Choose a Challenge**: Select from various difficulty levels and programming languages
+3. **Find the Bug**: Analyze the code and identify the issue
+4. **Submit Your Solution**: Fix the bug and submit your solution
+5. **Earn Points**: Score based on speed and correctness
+6. **Climb the Leaderboard**: Compete with other players and track your progress
+
+## 📊 Leaderboard System
+
+The game features a comprehensive leaderboard system that tracks:
+- Overall ranking
+- Category-specific rankings (by language, difficulty)
+- Weekly high scores
+- Personal bests
+- Achievement progress
+
+## 🛠️ Technical Details
+
+### Project Structure
+- `client/`: Frontend React application
+- `server/`: Backend Node.js application
+- `shared/`: Shared TypeScript type definitions
+
+### API Documentation
+For detailed API documentation, please refer to the [API Routes](#api-routes) section below.
+
 
 ## Codebase Folder Structure
 

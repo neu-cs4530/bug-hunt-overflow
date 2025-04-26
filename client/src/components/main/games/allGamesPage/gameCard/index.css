@@ -1,8 +1,14 @@
 .game-item {
-  border: 1px solid #ddd;
+  border: 1px solid #e7e7eb;
   border-radius: 6px;
-  padding: 15px;
-  background: #f9f9f9;
+  padding: 1rem;
+  background: #f8f8f8;
+}
+
+.game-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .game-item p {
@@ -22,8 +28,42 @@
   border-radius: 4px;
 }
 
-.game-item button {
+.game-item .btn-join-game {
   margin-top: 10px;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.game-players {
+}
+
+.game-players-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.game-players-header h4 {
+  font-weight: 500;
+}
+
+.no-players {
+  color: #808080;
+}
+
+.game-player-item {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  color: #3579f6;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.game-player-item:hover {
+  color: #124bb6;
 }

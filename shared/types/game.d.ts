@@ -4,7 +4,7 @@ import { Request } from 'express';
  * Type representing the possible game types as a literal.
  * This is derived from the GAME_TYPES constant.
  */
-export type GameType = 'Nim';
+export type GameType = 'Nim' | 'BugHunt' | 'BugHuntDaily';
 
 /**
  * Type representing the unique identifier for a game instance.
@@ -17,7 +17,35 @@ export type GameInstanceID = string;
  * - `WAITING_TO_START`: The game is waiting for players to join or ready up.
  * - `OVER`: The game has finished.
  */
-export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER';
+export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'DAILY';
+
+/**
+ * Type represents the possible log types in a game. Should describe the action.
+ * - `CREATED_GAME`: A log indicating the game was created.
+ * - `JOINED`: A log of who joined the game.
+ * - `STARTED`: A log of who started the game.
+ */
+export type LogType = 'CREATED_GAME' | 'JOINED' | 'STARTED';
+
+/**
+ * Interface representing a buggy file for BugHunt, which includes:
+ * code: The code which is partially buggy
+ * description: A description of what the code is supposed to do
+ * buggyLines: The line numbers where bugs are present
+ */
+export interface BuggyFile {
+  _id: string;
+  code: string;
+  description: string;
+  buggyLines: number[];
+}
+
+/**
+ * Provides a BuggyFile without the buggyLines (answers).
+ */
+export type SafeBuggyFile = Omit<BuggyFile, 'buggyLines'> & {
+  numberOfBugs: number;
+};
 
 /**
  * Interface representing the state of a game, which includes:
@@ -89,6 +117,69 @@ export interface NimGameState extends WinnableGameState {
 }
 
 /**
+ * Interface representing a move in a BugHunt game.
+ * - `selectedLines`: The lines selected by the user where
+ *                    they think a bug is present
+ */
+export interface BugHuntMove extends BaseMove {
+  selectedLines: number[];
+  isHint?: boolean;
+}
+
+/**
+ * Interface representing a log entry in a game.
+ * - `player`: Username of who the log relates to.
+ * - `createdAt`: When the log was created.
+ * - `type`: Enum of what the type (or action) the log relates to.
+ */
+export interface GameLog {
+  player: string;
+  createdAt: Date;
+  type: LogType;
+}
+
+/**
+ * Inteface representing a score entry in a Bug Hunt game.
+ * - `player`: Username of the player who scored.
+ * - `timeMilliseconds`: The amount of time (in milliseconds) that it took the user to complete the game.
+ * - `accuracy`: An accuracy percentage (0 - 100) denoting how many correct guesses the player made during the game.
+ */
+export interface BugHuntScore {
+  player: string;
+  timeMilliseconds: number;
+  accuracy: number;
+}
+
+/**
+ * Interface representing the state of a BugHunt game, which inludes:
+ * - `moves`: A list of moves made in the game.
+ * - `buggyFile`: The buggy file the users will play with.
+ * - `createdAt`: When the game sate was initially created.
+ * - `updatedAt`: When the game state was last updated.
+ * - `logs`: A list of logs from player actions in the game.
+ * - `scores`: A list of scores for players that have finished the game.
+ */
+export interface BugHuntGameState extends WinnableGameState {
+  moves: ReadonlyArray<GameMove<BugHuntMove>>;
+  buggyFile?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  logs: ReadonlyArray<GameLog>;
+  scores: ReadonlyArray<BugHuntScore>;
+}
+
+/**
+ * Interface extends the request body when validating line numbers of a buggy file.
+ * - `body`
+ *  - `lines`: The array of line numbers to validate
+ */
+export interface BuggyFileValidateRequest extends Request {
+  body: {
+    lines: number[];
+  };
+}
+
+/**
  * Interface extending the request body when creating a game, which contains:
  * - `gameType`: The type of game to be created (e.g., 'Nim').
  */
@@ -108,6 +199,17 @@ export interface GetGamesRequest extends Request {
   query: {
     gameType: GameType;
     status: GameStatus;
+  };
+}
+
+/**
+ * Interface extending the request path params when retrieving a single game by ID,
+ * which contains:
+ * - `gameId`: The ID of the game to retrieve
+ */
+export interface GetGameByIdRequest extends Request {
+  params: {
+    gameId: string;
   };
 }
 

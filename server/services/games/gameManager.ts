@@ -1,14 +1,19 @@
 import NimModel from '../../models/nim.model';
+import BugHuntModel from '../../models/bughunt.model';
+import GameModel from '../../models/games.model';
 import {
   BaseMove,
+  BugHuntGameState,
   GameInstance,
   GameInstanceID,
   GameMove,
   GameState,
   GameType,
+  NimGameState,
 } from '../../types/types';
 import Game from './game';
 import NimGame from './nim';
+import BugHuntGame from './bughunt';
 
 /**
  * Manages the lifecycle of games, including creation, joining, and leaving games.
@@ -42,8 +47,37 @@ class GameManager {
 
         return newGame;
       }
+      case 'BugHunt':
+      case 'BugHuntDaily': {
+        const newGame = new BugHuntGame(gameType);
+        await BugHuntModel.create(newGame.toModel());
+
+        return newGame;
+      }
       default: {
         throw new Error('Invalid game type');
+      }
+    }
+  }
+
+  /**
+   * Factory method to create a new game object from the provided instance.
+   * @param gameInstance The instance of the game to create.
+   * @returns A promise resolving to the created game instance.
+   * @throws an error for an unsupported game type
+   */
+  private _gameFactoryExisting(gameInstance: GameInstance<GameState>): Game<GameState, BaseMove> {
+    const { gameType } = gameInstance;
+    switch (gameInstance.gameType) {
+      case 'Nim': {
+        return new NimGame(gameInstance as GameInstance<NimGameState>);
+      }
+      case 'BugHunt':
+      case 'BugHuntDaily': {
+        return new BugHuntGame(gameType, gameInstance as GameInstance<BugHuntGameState>);
+      }
+      default: {
+        throw new Error(`Invalid game type: ${gameType}`);
       }
     }
   }
@@ -96,7 +130,7 @@ class GameManager {
     playerID: string,
   ): Promise<GameInstance<GameState> | { error: string }> {
     try {
-      const gameToJoin = this.getGame(gameID);
+      const gameToJoin = await this.getGame(gameID);
 
       if (gameToJoin === undefined) {
         throw new Error('Game requested does not exist.');
@@ -106,6 +140,32 @@ class GameManager {
       await gameToJoin.saveGameState();
 
       return gameToJoin.toModel();
+    } catch (error) {
+      return { error: (error as Error).message };
+    }
+  }
+
+  /**
+   * Starts an existing game.
+   * @param gameID The ID of the game to start.
+   * @param playerID The ID of the player starting the game.
+   * @returns The game instance or an error message.
+   */
+  public async startGame(
+    gameID: GameInstanceID,
+    playerID: string,
+  ): Promise<GameInstance<GameState> | { error: string }> {
+    try {
+      const gameToStart = await this.getGame(gameID);
+
+      if (gameToStart === undefined) {
+        throw new Error('Game requested does not exist.');
+      }
+
+      await gameToStart.start(playerID);
+      await gameToStart.saveGameState();
+
+      return gameToStart.toModel();
     } catch (error) {
       return { error: (error as Error).message };
     }
@@ -122,7 +182,7 @@ class GameManager {
     playerID: string,
   ): Promise<GameInstance<GameState> | { error: string }> {
     try {
-      const gameToLeave = this.getGame(gameID);
+      const gameToLeave = await this.getGame(gameID);
 
       if (gameToLeave === undefined) {
         throw new Error('Game requested does not exist.');
@@ -148,8 +208,19 @@ class GameManager {
    * @param gameID The ID of the game.
    * @returns The game instance or undefined if not found.
    */
-  public getGame(gameID: GameInstanceID): Game<GameState, BaseMove> | undefined {
-    return this._games.get(gameID);
+  public async getGame(gameID: GameInstanceID): Promise<Game<GameState, BaseMove> | undefined> {
+    const game = this._games.get(gameID);
+    if (game === undefined) {
+      const dbGame: GameInstance<GameState> | null = await GameModel.findOne({ gameID }).lean();
+      if (!dbGame) {
+        return undefined;
+      }
+
+      const newGame = this._gameFactoryExisting(dbGame);
+      this._games.set(newGame.id, newGame);
+      return newGame;
+    }
+    return game;
   }
 
   /**

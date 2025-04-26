@@ -6,4 +6,5 @@ module.exports = {
     '^.+.tsx?$': ['ts-jest', {}],
   },
   setupFilesAfterEnv: ['./jest.setup.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
 };

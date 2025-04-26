@@ -24,7 +24,7 @@
 /* Container styles */
 .direct-message-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 60px);
   gap: 16px;
   padding: 16px;
   box-sizing: border-box;

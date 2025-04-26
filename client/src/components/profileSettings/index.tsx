@@ -1,6 +1,8 @@
 import React from 'react';
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
+import DailyGamesBarChart from '../main/barChart';
+import useAllDailyGamesForPlayer from '../../hooks/useAllDailyGamesForPlayer';
 
 const ProfileSettings: React.FC = () => {
   const {
@@ -28,6 +30,8 @@ const ProfileSettings: React.FC = () => {
     handleUpdateBiography,
     handleDeleteUser,
   } = useProfileSettings();
+
+  const { games } = useAllDailyGamesForPlayer(userData?.username || '');
 
   if (loading) {
     return (
@@ -97,6 +101,14 @@ const ProfileSettings: React.FC = () => {
               <strong>Date Joined:</strong>{' '}
               {userData.dateJoined ? new Date(userData.dateJoined).toLocaleDateString() : 'N/A'}
             </p>
+
+            {/* ---- Daily Games Performance Chart ---- */}
+            <h4>Daily Games Performance</h4>
+            {games.length > 0 ? (
+              <DailyGamesBarChart games={games} />
+            ) : (
+              <p>No daily games data available.</p>
+            )}
 
             {/* ---- Reset Password Section ---- */}
             {canEditProfile && (
